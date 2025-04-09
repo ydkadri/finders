@@ -12,3 +12,20 @@ find <dir> \
 ```
 
 Instead, `finders` provides a lightweight wrapper for this common command.
+
+### Usage
+```bash
+Usage: finders [OPTIONS] [PATH]
+
+Arguments:
+  [PATH]  Optional path to operate on, defaults to CWD
+
+Options:
+  -f, --file-pattern <FILE_PATTERN>      File pattern to filter results
+  -s, --search-pattern <SEARCH_PATTERN>  Search pattern to match in result files
+  -r, --regex-pattern <REGEX_PATTERN>    Regex pattern to match in result files
+  -i, --case-insensitive                 Flag for case insensitive search
+  -v, --verbose                          Verbose output details unreadable files
+  -h, --help                             Print help
+  -V, --version                          Print version
+```
