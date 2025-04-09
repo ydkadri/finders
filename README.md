@@ -3,7 +3,7 @@ A tool to replace the complex bash `find` logic which searches for files (option
 
 ### The challenge
 Finding files containing some string is a common use case in the shell, however the command is cumbersome:
-```bash
+```shell
 # Bash command
 find <dir> \
     -type f \
@@ -13,8 +13,14 @@ find <dir> \
 
 Instead, `finders` provides a lightweight wrapper for this common command.
 
+### Installation
+FindeRS can be found on [crates.io][finders_crate] and as such can be installed with
+```shell
+cargo install finders
+```
+
 ### Usage
-```bash
+```shell
 Usage: finders [OPTIONS] [PATH]
 
 Arguments:
@@ -29,3 +35,10 @@ Options:
   -h, --help                             Print help
   -V, --version                          Print version
 ```
+
+### References
+ - [Semantic Versioning][sem_ver]
+
+
+[finders_crate]: https://crates.io/crates/finders
+[sem_ver]: https://doc.rust-lang.org/cargo/reference/semver.html

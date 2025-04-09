@@ -1,7 +1,17 @@
 [package]
 name = "finders"
 version = "1.0.0"
-edition = "2021"
+edition = "2024"
+authors = ["Youcef Kadri <youcef.d.kadri@gmail.com>"]
+readme = "README.md"
+license-file = "LICENSE"
+description = " A tool to shortcut the find command"
+repository = "https://github.com/ydkadri/finders"
+categories = ["command-line-utilities"]
+exclude = [
+    ".github/",
+    ".gitignore"
+]
 
 [dependencies]
 clap = { version = "4.5.3", features = ["derive"] }
