@@ -11,7 +11,7 @@ impl Finder<'_> {
     pub fn new(root: Option<&str>) -> Result<Finder, Error> {
         let path = path_parser::parse(root)?;
 
-        Ok(Finder { path: path })
+        Ok(Finder { path })
     }
 
     fn _find(&self) -> IntoIter {

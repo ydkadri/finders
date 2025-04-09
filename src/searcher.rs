@@ -29,10 +29,10 @@ impl SearchResult {
 }
 
 impl Searcher<'_> {
-    pub fn new<'a>(query: &'a str, case_insensitive: bool) -> Searcher<'a> {
+    pub fn new(query: &str, case_insensitive: bool) -> Searcher<'_> {
         Searcher {
-            query: query,
-            case_insensitive: case_insensitive,
+            query,
+            case_insensitive,
         }
     }
 
