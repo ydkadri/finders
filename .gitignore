@@ -1,1 +1,9 @@
+
+# TODO file
+TODO.md
+
+# Vim swap files
+**/*.swp
+
+# Cargo compiled files
 target/
