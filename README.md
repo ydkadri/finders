@@ -21,7 +21,7 @@ cargo install finders
 
 ### Usage
 ```shell
-Usage: finders [OPTIONS] [PATH]
+Usage: finder [OPTIONS] [PATH]
 
 Arguments:
   [PATH]  Optional path to operate on, defaults to CWD
