@@ -1,5 +1,5 @@
 ### Summary
-<!-- A summary of changes in this PR (e.g. "Allow excluding strings in search" -->
+<!-- A summary of changes in this PR (e.g. "Allow excluding strings in search") -->
 
 ### Reasoning
 <!-- Why was this change needed? Link to issues if needs be -->
