@@ -36,6 +36,10 @@ Options:
   -V, --version                          Print version
 ```
 
+### TODO
+ - [ ] release pipeline
+ - [ ] validate lockfile before merge (build will update this but causes publish issues)
+
 ### References
  - [Semantic Versioning][sem_ver]
 
