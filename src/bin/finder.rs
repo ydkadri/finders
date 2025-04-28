@@ -5,9 +5,17 @@ use finders::file_finder;
 use finders::search_files;
 use finders::searcher;
 
+const FINDERS: &str = r#"
+___________.__            .___    __________  _________
+\_   _____/|__| ____    __| _/____\______   \/   _____/
+ |    __)  |  |/    \  / __ |/ __ \|       _/\_____  \
+ |     \   |  |   |  \/ /_/ \  ___/|    |   \/        \
+ \___  /   |__|___|  /\____ |\___  >____|_  /_______  /
+     \/            \/      \/    \/       \/        \/ "#;
+
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about = None, before_help = FINDERS)]
 struct Cli {
     /// Optional path to operate on, defaults to CWD
     path: Option<String>,
