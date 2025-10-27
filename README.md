@@ -36,6 +36,20 @@ Options:
   -V, --version                          Print version
 ```
 
+### Benchmarking
+FindeRS includes comprehensive benchmarks using Criterion. To run the benchmarks:
+```shell
+cargo bench
+```
+
+The benchmarks cover:
+- File finding operations (all files and filtered by pattern)
+- Search operations (case-sensitive, case-insensitive, and regex)
+- Streaming file processing with various file counts and sizes
+- Line-by-line search performance
+
+Benchmark reports are generated in `target/criterion/` directory with detailed HTML reports.
+
 ### TODO
  - [ ] release pipeline
  - [ ] validate lockfile before merge (build will update this but causes publish issues)
