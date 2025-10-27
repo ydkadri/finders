@@ -8,7 +8,7 @@ pub struct Finder<'a> {
 }
 
 impl Finder<'_> {
-    pub fn new(root: Option<&str>) -> Result<Finder<'_>, Error> {
+    pub fn new(root: Option<&str>) -> Result<Finder, Error> {
         let path = path_parser::parse(root)?;
 
         Ok(Finder { path })
