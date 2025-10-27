@@ -20,7 +20,7 @@ pub struct ReSearcher {
 // Searches trait for things which can perform search functions
 pub trait Searches {
     fn search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult>;
-    
+
     // New method for streaming line-by-line search
     fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult>;
 }
