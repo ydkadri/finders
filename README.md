@@ -82,8 +82,8 @@ To create a new release:
    - Publish to crates.io (requires `CARGO_TOKEN` secret)
 
 ### TODO
- - [ ] release pipeline
- - [ ] validate lockfile before merge (build will update this but causes publish issues)
+ - [x] Release pipeline (completed - see Releasing section above)
+ - [ ] Validate lockfile before merge (build will update this but causes publish issues)
 
 ### References
  - [Semantic Versioning][sem_ver]
