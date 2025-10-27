@@ -93,7 +93,7 @@ mod tests {
         if let Err(e) = Finder::new(Some("path/to/nowhere")) {
             assert!(e.kind() == ErrorKind::NotFound)
         } else {
-            assert!(false)
+            panic!("Expected error for invalid path")
         }
 
         Ok(())
