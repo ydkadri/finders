@@ -1,4 +1,10 @@
 # FindeRS
+
+[![CI](https://github.com/octo-youcef/finders/actions/workflows/pr.yml/badge.svg)](https://github.com/octo-youcef/finders/actions/workflows/pr.yml)
+[![Benchmarks](https://github.com/octo-youcef/finders/actions/workflows/benchmark.yml/badge.svg)](https://github.com/octo-youcef/finders/actions/workflows/benchmark.yml)
+[![Crates.io](https://img.shields.io/crates/v/finders.svg)](https://crates.io/crates/finders)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A tool to replace the complex bash `find` logic which searches for files (optionally) containing some string or regular expression pattern.
 
 ### The challenge
@@ -36,9 +42,52 @@ Options:
   -V, --version                          Print version
 ```
 
-### TODO
- - [ ] release pipeline
- - [ ] validate lockfile before merge (build will update this but causes publish issues)
+### Performance
+
+FindeRS is designed for performance with:
+- Streaming file processing using 8KB chunks
+- Line-by-line searching to minimize memory usage
+- Efficient pattern matching with both simple string search and regex support
+
+Benchmarks are run automatically on every pull request and merge to main. View the latest benchmark results in the [Actions tab](https://github.com/octo-youcef/finders/actions/workflows/benchmark.yml).
+
+Key benchmark categories:
+- **searcher_search_line**: Tests case-sensitive and case-insensitive string matching
+- **regex_searcher_search_line**: Tests regex pattern matching performance
+- **searcher_search_content**: Tests multi-line content searching
+- **file_finder**: Tests file discovery with and without patterns
+
+### Development
+
+To run benchmarks locally:
+```shell
+cargo bench
+```
+
+To run tests:
+```shell
+cargo test
+```
+
+To check code quality:
+```shell
+cargo fmt --all -- --check
+cargo clippy -- -D warnings
+```
+
+### Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Release Process
+
+Releases are automated through GitHub Actions:
+1. Create and push a new tag with semantic versioning: `git tag v2.0.3 && git push origin v2.0.3`
+2. The release workflow will automatically:
+   - Run all tests
+   - Build the release binary
+   - Create a GitHub release with release notes
+   - Publish the new version to crates.io
 
 ### References
  - [Semantic Versioning][sem_ver]
