@@ -6,10 +6,6 @@ on:
   push:
     branches: ["main"]
 
-permissions:
-  contents: write
-  deployments: write
-
 jobs:
   benchmark:
     name: Run Benchmarks
@@ -40,17 +36,4 @@ jobs:
           key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run benchmarks
-        run: cargo bench -- --output-format bencher | tee output.txt
-
-      - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          tool: 'cargo'
-          output-file-path: output.txt
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
-          # Show alert with commit comment on detecting possible performance regression
-          alert-threshold: '200%'
-          comment-on-alert: true
-          fail-on-alert: true
-          alert-comment-cc-users: '@octo-youcef'
+        run: cargo bench
