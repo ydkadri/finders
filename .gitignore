@@ -7,3 +7,7 @@ TODO.md
 
 # Cargo compiled files
 target/
+
+# Benchmark results
+*.bench
+output.txt
