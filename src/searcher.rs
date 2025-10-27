@@ -139,9 +139,7 @@ mod tests {
         let searcher = Searcher::new("line", false);
 
         let observed_result = searcher.search(CONTENTS);
-        let mut expected_result = Vec::new();
-
-        expected_result.push(SearchResult::new(1, "line one".to_string()));
+        let expected_result = vec![SearchResult::new(1, "line one".to_string())];
 
         assert_eq!(observed_result, expected_result);
 
@@ -153,10 +151,10 @@ mod tests {
         let searcher = Searcher::new("line", true);
 
         let observed_result = searcher.search(CONTENTS);
-        let mut expected_result = Vec::new();
-
-        expected_result.push(SearchResult::new(1, "line one".to_string()));
-        expected_result.push(SearchResult::new(2, "LINE TWO".to_string()));
+        let expected_result = vec![
+            SearchResult::new(1, "line one".to_string()),
+            SearchResult::new(2, "LINE TWO".to_string()),
+        ];
 
         assert_eq!(observed_result, expected_result);
 
@@ -168,9 +166,7 @@ mod tests {
         let re_searcher = ReSearcher::new("[a-z]+");
 
         let observed_result = re_searcher.search(CONTENTS);
-        let mut expected_result = Vec::new();
-
-        expected_result.push(SearchResult::new(1, "line one".to_string()));
+        let expected_result = vec![SearchResult::new(1, "line one".to_string())];
 
         assert_eq!(observed_result, expected_result);
 
