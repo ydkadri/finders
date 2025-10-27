@@ -1,7 +1,7 @@
 # FindeRS
 
-[![CI](https://github.com/octo-youcef/finders/actions/workflows/pr.yml/badge.svg)](https://github.com/octo-youcef/finders/actions/workflows/pr.yml)
-[![Benchmarks](https://github.com/octo-youcef/finders/actions/workflows/benchmark.yml/badge.svg)](https://github.com/octo-youcef/finders/actions/workflows/benchmark.yml)
+[![CI](https://github.com/ydkadri/finders/actions/workflows/pr.yml/badge.svg)](https://github.com/ydkadri/finders/actions/workflows/pr.yml)
+[![Benchmarks](https://github.com/ydkadri/finders/actions/workflows/benchmark.yml/badge.svg)](https://github.com/ydkadri/finders/actions/workflows/benchmark.yml)
 [![Crates.io](https://img.shields.io/crates/v/finders.svg)](https://crates.io/crates/finders)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -49,7 +49,7 @@ FindeRS is designed for performance with:
 - Line-by-line searching to minimize memory usage
 - Efficient pattern matching with both simple string search and regex support
 
-Benchmarks are run automatically on every pull request and merge to main. View the latest benchmark results in the [Actions tab](https://github.com/octo-youcef/finders/actions/workflows/benchmark.yml).
+Benchmarks are run automatically on every pull request and merge to main. View the latest benchmark results in the [Actions tab](https://github.com/ydkadri/finders/actions/workflows/benchmark.yml).
 
 Key benchmark categories:
 - **searcher_search_line**: Tests case-sensitive and case-insensitive string matching
