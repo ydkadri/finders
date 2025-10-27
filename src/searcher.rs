@@ -20,6 +20,9 @@ pub struct ReSearcher {
 // Searches trait for things which can perform search functions
 pub trait Searches {
     fn search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult>;
+
+    // New method for streaming line-by-line search
+    fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult>;
 }
 
 impl SearchResult {
@@ -84,6 +87,20 @@ impl Searches for Searcher<'_> {
             self._sensitive_search(contents)
         }
     }
+
+    fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult> {
+        let matches = if self.case_insensitive {
+            line.to_lowercase().contains(&self.query.to_lowercase())
+        } else {
+            line.contains(self.query)
+        };
+
+        if matches {
+            Some(SearchResult::new(rownum, line.to_string()))
+        } else {
+            None
+        }
+    }
 }
 
 impl Searches for ReSearcher {
@@ -100,6 +117,14 @@ impl Searches for ReSearcher {
         }
 
         results
+    }
+
+    fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult> {
+        if self.pattern.is_match(line) {
+            Some(SearchResult::new(rownum, line.to_string()))
+        } else {
+            None
+        }
     }
 }
 
@@ -148,6 +173,46 @@ mod tests {
         expected_result.push(SearchResult::new(1, "line one".to_string()));
 
         assert_eq!(observed_result, expected_result);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_search_line_case_sensitive() -> Result<(), Error> {
+        let searcher = Searcher::new("line", false);
+
+        let result = searcher.search_line("line one", 1);
+        assert!(result.is_some());
+        assert_eq!(result.unwrap().rownum, 1);
+
+        let no_match = searcher.search_line("LINE TWO", 2);
+        assert!(no_match.is_none());
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_search_line_case_insensitive() -> Result<(), Error> {
+        let searcher = Searcher::new("line", true);
+
+        let result1 = searcher.search_line("line one", 1);
+        assert!(result1.is_some());
+
+        let result2 = searcher.search_line("LINE TWO", 2);
+        assert!(result2.is_some());
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_regex_search_line() -> Result<(), Error> {
+        let re_searcher = ReSearcher::new("[a-z]+");
+
+        let result1 = re_searcher.search_line("line one", 1);
+        assert!(result1.is_some());
+
+        let result2 = re_searcher.search_line("LINE TWO", 2);
+        assert!(result2.is_none());
 
         Ok(())
     }
