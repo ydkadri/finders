@@ -7,3 +7,6 @@ TODO.md
 
 # Cargo compiled files
 target/
+
+# Benchmark reports
+criterion_reports/
