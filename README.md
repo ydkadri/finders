@@ -50,6 +50,37 @@ The benchmarks cover:
 
 Benchmark reports are generated in `target/criterion/` directory with detailed HTML reports.
 
+### Development
+
+#### Running Tests
+```shell
+cargo test
+```
+
+#### Linting and Formatting
+```shell
+cargo fmt --all -- --check  # Check formatting
+cargo clippy --all-features -- -D warnings  # Run linter
+```
+
+#### Continuous Integration
+The project uses GitHub Actions for CI/CD:
+- **PR Checks**: Runs on every pull request to validate formatting, linting, tests, and benchmarks
+- **Release Pipeline**: Manual workflow for creating releases and publishing to crates.io
+
+### Releasing
+To create a new release:
+1. Go to GitHub Actions → Release workflow
+2. Click "Run workflow"
+3. Enter the version number (e.g., `2.0.3`)
+4. Optionally run a dry-run first to validate
+5. The workflow will:
+   - Update version in Cargo.toml
+   - Create a git tag
+   - Build release binary
+   - Create GitHub release with release notes
+   - Publish to crates.io (requires `CARGO_TOKEN` secret)
+
 ### TODO
  - [ ] release pipeline
  - [ ] validate lockfile before merge (build will update this but causes publish issues)
