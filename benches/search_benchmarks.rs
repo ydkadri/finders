@@ -1,4 +1,4 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use finders::searcher::Searches;
 use finders::{file_finder, searcher};
 use std::fs;
