@@ -11,3 +11,9 @@ target/
 # Benchmark results
 *.bench
 output.txt
+
+# Claude Code local settings
+.claude/
+
+# Project roadmap (tracked separately)
+ROADMAP.md
