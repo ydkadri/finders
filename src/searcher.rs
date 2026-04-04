@@ -217,10 +217,10 @@ mod tests {
     fn test_invalid_regex_pattern() {
         // Test that invalid regex patterns return an error instead of panicking
         let invalid_patterns = vec![
-            "[invalid(",       // Unclosed character class
-            "(unclosed",       // Unclosed group
+            "[invalid(",      // Unclosed character class
+            "(unclosed",      // Unclosed group
             "(?P<incomplete", // Incomplete named group
-            "*invalid",        // Invalid repetition
+            "*invalid",       // Invalid repetition
         ];
 
         for pattern in invalid_patterns {
