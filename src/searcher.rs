@@ -212,4 +212,46 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn test_invalid_regex_pattern() {
+        // Test that invalid regex patterns return an error instead of panicking
+        let invalid_patterns = vec![
+            "[invalid(",       // Unclosed character class
+            "(unclosed",       // Unclosed group
+            "(?P<incomplete", // Incomplete named group
+            "*invalid",        // Invalid repetition
+        ];
+
+        for pattern in invalid_patterns {
+            let result = ReSearcher::new(pattern);
+            assert!(
+                result.is_err(),
+                "Expected error for invalid pattern: {}",
+                pattern
+            );
+        }
+    }
+
+    #[test]
+    fn test_valid_regex_patterns() {
+        // Test that valid regex patterns work correctly
+        let valid_patterns = vec![
+            "[a-z]+",
+            "(test)",
+            "(?P<name>\\w+)",
+            "test*",
+            "^start",
+            "end$",
+        ];
+
+        for pattern in valid_patterns {
+            let result = ReSearcher::new(pattern);
+            assert!(
+                result.is_ok(),
+                "Expected success for valid pattern: {}",
+                pattern
+            );
+        }
+    }
 }
