@@ -174,6 +174,9 @@ fn bench_comparison(c: &mut Criterion) {
         let fixture_dir = base_dir.join(scenario.config.name);
         let mut group = c.benchmark_group(scenario.name);
 
+        // Configure benchmark settings for faster CI runs
+        group.sample_size(50);
+
         // Benchmark find + grep
         group.bench_function(BenchmarkId::new("find_grep", scenario.pattern_type), |b| {
             b.iter(|| run_find_grep(&fixture_dir, scenario.pattern))

@@ -24,7 +24,7 @@ impl FixtureConfig {
 
     pub const LARGE: Self = Self {
         name: "large",
-        num_files: 10000,
+        num_files: 5000,
         common_pattern_ratio: 0.5,
     };
 }
