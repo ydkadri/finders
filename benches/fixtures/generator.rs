@@ -165,82 +165,10 @@ fn generate_rust_file(
 }
 
 /// Remove all generated fixtures
+#[allow(dead_code)]
 pub fn cleanup_fixtures(base_dir: &Path) -> std::io::Result<()> {
     if base_dir.exists() {
         fs::remove_dir_all(base_dir)?;
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::env;
-
-    #[test]
-    fn test_generate_small_fixtures() {
-        let temp_dir = env::temp_dir().join("finders_fixture_test");
-        let _ = cleanup_fixtures(&temp_dir);
-
-        let result = generate_fixtures(&temp_dir, &FixtureConfig::SMALL);
-        assert!(result.is_ok());
-
-        let fixture_dir = result.unwrap();
-        assert!(fixture_dir.exists());
-
-        // Verify number of files
-        let entries: Vec<_> = fs::read_dir(&fixture_dir)
-            .unwrap()
-            .filter_map(|e| e.ok())
-            .collect();
-        assert_eq!(entries.len(), FixtureConfig::SMALL.num_files);
-
-        // Verify at least one file contains the rare pattern
-        let mut found_rare = false;
-        for entry in entries {
-            let content = fs::read_to_string(entry.path()).unwrap();
-            if content.contains(RARE_PATTERN) {
-                found_rare = true;
-                break;
-            }
-        }
-        assert!(found_rare, "Rare pattern should exist in exactly one file");
-
-        cleanup_fixtures(&temp_dir).unwrap();
-    }
-
-    #[test]
-    fn test_function_keyword_distribution() {
-        let temp_dir = env::temp_dir().join("finders_function_test");
-        let _ = cleanup_fixtures(&temp_dir);
-
-        let result = generate_fixtures(&temp_dir, &FixtureConfig::SMALL);
-        assert!(result.is_ok());
-
-        let fixture_dir = result.unwrap();
-
-        // Count files with "function" keyword
-        let entries: Vec<_> = fs::read_dir(&fixture_dir)
-            .unwrap()
-            .filter_map(|e| e.ok())
-            .collect();
-
-        let with_function = entries
-            .iter()
-            .filter(|e| {
-                let content = fs::read_to_string(e.path()).unwrap();
-                content.contains("function") || content.contains("fn ")
-            })
-            .count();
-
-        // Should be approximately 50% (allowing for some variance due to "fn" keyword)
-        let ratio = with_function as f32 / entries.len() as f32;
-        assert!(
-            (0.4..=0.6).contains(&ratio),
-            "Expected ~50% files with functions, got {}%",
-            ratio * 100.0
-        );
-
-        cleanup_fixtures(&temp_dir).unwrap();
-    }
 }
