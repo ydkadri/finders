@@ -60,6 +60,10 @@ jobs:
 
       - name: Create and push tag
         if: steps.version-check.outputs.changed == 'true' && steps.tag-check.outputs.exists == 'false'
+        env:
+          # Use PAT to trigger release workflow
+          # GitHub's default GITHUB_TOKEN doesn't trigger other workflows
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           TAG_NAME="v${{ steps.version-check.outputs.current_version }}"
           echo "Creating tag $TAG_NAME"
@@ -68,7 +72,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
-          git push origin "$TAG_NAME"
+
+          # Push using PAT to trigger release workflow
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git "$TAG_NAME"
 
           echo "✅ Created and pushed tag $TAG_NAME"
 
