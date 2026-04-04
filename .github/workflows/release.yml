@@ -25,7 +25,7 @@ jobs:
             target: x86_64-unknown-linux-gnu
             archive: tar.gz
             binary: finder
-          - os: macos-13
+          - os: macos-12
             target: x86_64-apple-darwin
             archive: tar.gz
             binary: finder
