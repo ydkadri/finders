@@ -138,18 +138,15 @@ fn run_finder(dir: &PathBuf, pattern: &str, finder_bin: &Path) -> std::io::Resul
 
     let stdout = String::from_utf8_lossy(&output.stdout);
 
-    // finder outputs: "   4: /path/to/file.rs content..."
-    // Format: <line_num>: <path> <content>
-    // Extract unique file paths (all paths end with .rs in this benchmark)
+    // v3.0.0 format: "/path/to/file.rs:4: content"
+    // Format: <path>:<line_num>: <content>
+    // Extract unique file paths
     let mut files = std::collections::HashSet::new();
     for line in stdout.lines() {
-        // Find first colon (after line number)
-        if let Some(colon_pos) = line.find(": ") {
-            let after_colon = &line[colon_pos + 2..];
-            // Path ends with .rs - find the last occurrence
-            if let Some(rs_pos) = after_colon.rfind(".rs") {
-                // Include ".rs" in the path
-                let file_path = &after_colon[..rs_pos + 3];
+        // Split on first colon to get path
+        if let Some(colon_pos) = line.find(':') {
+            let file_path = &line[..colon_pos];
+            if !file_path.is_empty() {
                 files.insert(file_path.trim().to_string());
             }
         }
