@@ -12,6 +12,9 @@ target/
 *.bench
 output.txt
 
+# Generated benchmark fixtures
+benches/fixtures/data/
+
 # Claude Code local settings
 .claude/
 
