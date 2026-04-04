@@ -72,10 +72,10 @@ impl Searcher<'_> {
 }
 
 impl ReSearcher {
-    pub fn new(pattern: &str) -> ReSearcher {
-        ReSearcher {
-            pattern: Regex::new(pattern).unwrap(),
-        }
+    pub fn new(pattern: &str) -> Result<ReSearcher, regex::Error> {
+        Ok(ReSearcher {
+            pattern: Regex::new(pattern)?,
+        })
     }
 }
 
@@ -163,7 +163,7 @@ mod tests {
 
     #[test]
     fn test_regex_match() -> Result<(), Error> {
-        let re_searcher = ReSearcher::new("[a-z]+");
+        let re_searcher = ReSearcher::new("[a-z]+").expect("Valid regex pattern");
 
         let observed_result = re_searcher.search(CONTENTS);
         let expected_result = vec![SearchResult::new(1, "line one".to_string())];
@@ -202,7 +202,7 @@ mod tests {
 
     #[test]
     fn test_regex_search_line() -> Result<(), Error> {
-        let re_searcher = ReSearcher::new("[a-z]+");
+        let re_searcher = ReSearcher::new("[a-z]+").expect("Valid regex pattern");
 
         let result1 = re_searcher.search_line("line one", 1);
         assert!(result1.is_some());
