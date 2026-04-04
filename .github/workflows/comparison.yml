@@ -46,7 +46,7 @@ jobs:
         run: cargo build --release
 
       - name: Run comparison benchmarks
-        run: cargo bench --bench comparison_benchmarks -- --output-format bencher | tee bench_output.txt
+        run: cargo bench --bench comparison_benchmarks
 
       - name: Extract benchmark metrics
         id: metrics
@@ -66,6 +66,8 @@ jobs:
           echo "Benchmark completed for version $VERSION"
 
       - name: Checkout gh-pages branch
+        id: checkout-gh-pages
+        continue-on-error: true
         uses: actions/checkout@v4
         with:
           ref: gh-pages
@@ -73,12 +75,18 @@ jobs:
 
       - name: Initialize gh-pages if needed
         run: |
-          if [ ! -d "gh-pages-deploy/.git" ]; then
-            echo "Creating gh-pages branch..."
+          if [ ! -d "gh-pages-deploy" ] || [ ! -d "gh-pages-deploy/.git" ]; then
+            echo "Creating new gh-pages branch..."
+            rm -rf gh-pages-deploy
             mkdir -p gh-pages-deploy
             cd gh-pages-deploy
             git init
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout -b gh-pages
+            echo "# FindeRS Benchmarks" > README.md
+            git add README.md
+            git commit -m "Initialize gh-pages branch"
           fi
 
       - name: Update benchmark history
