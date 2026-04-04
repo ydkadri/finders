@@ -40,8 +40,74 @@ Options:
   -r, --regex-pattern <REGEX_PATTERN>    Regex pattern to match in result files
   -i, --case-insensitive                 Flag for case insensitive search
   -v, --verbose                          Verbose output details unreadable files
+  -l, --files-with-matches               Output only file paths with matches (like grep -l)
+  -c, --count                            Output match count per file (like grep -c)
+      --json                             Output results as JSON
+      --colour                           Enable coloured output (force on)
+      --no-colour                        Disable coloured output (force off)
   -h, --help                             Print help
   -V, --version                          Print version
+```
+
+### Features
+
+#### Coloured Output
+FindeRS supports coloured output for better readability:
+- **File paths**: Green
+- **Line numbers**: Cyan  
+- **Matches**: Bold white on blue background
+
+Colours auto-detect when outputting to a terminal and disable when piped. Control with:
+```shell
+# Force colours on (useful for piping to less)
+finder . -s "pattern" --colour | less -R
+
+# Force colours off
+finder . -s "pattern" --no-colour
+
+# Respect NO_COLOR environment variable
+NO_COLOR=1 finder . -s "pattern"
+```
+
+Respects [NO_COLOR](https://no-color.org/) and [CLICOLORS](https://bixense.com/clicolors/) standards.
+
+#### Multiple Output Modes
+
+**Standard output (default):**
+```shell
+finder . -s "TODO"
+# Output: path:line: content
+# src/lib.rs:42: // TODO: implement this
+```
+
+**Files-only mode (`-l`):**
+```shell
+finder . -s "TODO" -l
+# Output: file paths only
+# src/lib.rs
+# src/main.rs
+```
+
+**Count mode (`-c`):**
+```shell
+finder . -s "FIXME" -c
+# Output: path:count
+# src/lib.rs:3
+# src/main.rs:7
+```
+
+**JSON mode (`--json`):**
+```shell
+finder . -s "error" --json | jq
+# Output: structured JSON
+[
+  {
+    "path": "src/lib.rs",
+    "matches": [
+      {"line": 42, "content": "error handling"}
+    ]
+  }
+]
 ```
 
 ### Performance
