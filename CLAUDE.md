@@ -41,6 +41,7 @@ These principles guide how we work together:
 - **Code Quality**: rustfmt, clippy
 - **CI/CD**: GitHub Actions (personal project)
 - **Distribution**: crates.io, GitHub releases with binaries
+- **Spelling**: British English (colour, behaviour, optimise, etc.) for all documentation, comments, and user-facing text. Preserve US spelling only in external crate names, environment variable standards, and code identifiers where required by convention.
 
 ---
 
@@ -487,5 +488,5 @@ Before pushing code or marking PR ready:
 
 ---
 
-**Last Updated**: 2026-04-04  
-**Current Version**: 2.1.2
+**Last Updated**: 2026-04-05  
+**Current Version**: 3.0.0
