@@ -46,9 +46,10 @@ fn test_search_files_handles_valid_search() -> Result<(), std::io::Error> {
     // Search for the term
     let searcher = Searcher::new("search", false);
     let paths = vec![test_file.clone()];
+    let mut output = finders::output::StandardOutput::new(finders::output::ColourMode::Never);
 
     // Should complete without panicking
-    let result = search_files(searcher, paths, false);
+    let result = search_files(searcher, paths, false, &mut output);
 
     // Clean up
     fs::remove_file(&test_file)?;
@@ -74,9 +75,10 @@ fn test_search_files_handles_binary_file() -> Result<(), std::io::Error> {
     // Try to search it - should handle gracefully with verbose=true
     let searcher = Searcher::new("test", false);
     let paths = vec![test_file.clone()];
+    let mut output = finders::output::StandardOutput::new(finders::output::ColourMode::Never);
 
     // Should not panic, even with invalid UTF-8
-    let result = search_files(searcher, paths, true);
+    let result = search_files(searcher, paths, true, &mut output);
 
     // Clean up
     fs::remove_file(&test_file)?;

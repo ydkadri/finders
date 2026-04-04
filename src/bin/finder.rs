@@ -2,6 +2,9 @@ use clap::Parser;
 use std::io::Error;
 
 use finders::file_finder;
+use finders::output::{
+    ColourMode, CountOutput, FilesOnlyOutput, JsonOutput, Outputs, StandardOutput,
+};
 use finders::search_files;
 use finders::searcher;
 
@@ -39,6 +42,26 @@ struct Cli {
     /// Verbose output details unreadable files
     #[arg(short, long)]
     verbose: bool,
+
+    /// Enable coloured output (force on)
+    #[arg(long, conflicts_with = "no_colour")]
+    colour: bool,
+
+    /// Disable coloured output (force off)
+    #[arg(long, conflicts_with = "colour")]
+    no_colour: bool,
+
+    /// Output only file paths with matches (like grep -l)
+    #[arg(short = 'l', long, conflicts_with = "count")]
+    files_with_matches: bool,
+
+    /// Output match count per file (like grep -c)
+    #[arg(short = 'c', long, conflicts_with = "files_with_matches")]
+    count: bool,
+
+    /// Output results as JSON
+    #[arg(long, conflicts_with_all = ["files_with_matches", "count"])]
+    json: bool,
 }
 
 fn main() -> Result<(), Error> {
@@ -54,11 +77,25 @@ fn main() -> Result<(), Error> {
     // Determine if verbose or not
     let verbose = cli.verbose;
 
+    // Determine colour mode from flags and environment
+    let colour_mode = ColourMode::from_env(cli.colour, cli.no_colour);
+
+    // Create output handler based on output mode flags
+    let mut output: Box<dyn Outputs> = if cli.json {
+        Box::new(JsonOutput::new(colour_mode))
+    } else if cli.files_with_matches {
+        Box::new(FilesOnlyOutput::new(colour_mode))
+    } else if cli.count {
+        Box::new(CountOutput::new(colour_mode))
+    } else {
+        Box::new(StandardOutput::new(colour_mode))
+    };
+
     if let Some(query) = cli.search_pattern.as_deref() {
         let case_insensitive = cli.case_insensitive;
         let searcher = searcher::Searcher::new(query, case_insensitive);
 
-        search_files(searcher, paths, verbose)?;
+        search_files(searcher, paths, verbose, &mut *output)?;
     } else if let Some(pattern) = cli.regex_pattern.as_deref() {
         let re_searcher = match searcher::ReSearcher::new(pattern) {
             Ok(searcher) => searcher,
@@ -68,10 +105,11 @@ fn main() -> Result<(), Error> {
             }
         };
 
-        search_files(re_searcher, paths, verbose)?;
+        search_files(re_searcher, paths, verbose, &mut *output)?;
     } else {
+        // File-only mode (no search pattern)
         for path in paths {
-            println!("{:?}", path);
+            output.write_file(&path);
         }
     }
 
