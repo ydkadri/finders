@@ -5,6 +5,7 @@ use regex::Regex;
 pub struct SearchResult {
     pub rownum: usize,
     pub line: String,
+    pub match_positions: Vec<(usize, usize)>, // (start, end) byte positions of matches
 }
 
 // Structs for basic and regex searchers
@@ -26,8 +27,12 @@ pub trait Searches {
 }
 
 impl SearchResult {
-    fn new(rownum: usize, line: String) -> SearchResult {
-        SearchResult { rownum, line }
+    fn new(rownum: usize, line: String, match_positions: Vec<(usize, usize)>) -> SearchResult {
+        SearchResult {
+            rownum,
+            line,
+            match_positions,
+        }
     }
 }
 
@@ -45,13 +50,38 @@ impl Searcher<'_> {
 
         for line in contents.lines() {
             if line.contains(self.query) {
-                let result = SearchResult::new(rownum, line.to_string());
+                let match_positions = self.find_match_positions(line, false);
+                let result = SearchResult::new(rownum, line.to_string(), match_positions);
                 results.push(result)
             }
             rownum += 1;
         }
 
         results
+    }
+
+    fn find_match_positions(&self, line: &str, case_insensitive: bool) -> Vec<(usize, usize)> {
+        let mut positions = Vec::new();
+        let search_line = if case_insensitive {
+            line.to_lowercase()
+        } else {
+            line.to_string()
+        };
+        let search_query = if case_insensitive {
+            self.query.to_lowercase()
+        } else {
+            self.query.to_string()
+        };
+
+        let mut start = 0;
+        while let Some(pos) = search_line[start..].find(&search_query) {
+            let match_start = start + pos;
+            let match_end = match_start + self.query.len();
+            positions.push((match_start, match_end));
+            start = match_end;
+        }
+
+        positions
     }
 
     fn insensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
@@ -61,7 +91,8 @@ impl Searcher<'_> {
 
         for line in contents.lines() {
             if line.to_lowercase().contains(&query) {
-                let result = SearchResult::new(rownum, line.to_string());
+                let match_positions = self.find_match_positions(line, true);
+                let result = SearchResult::new(rownum, line.to_string(), match_positions);
                 results.push(result)
             }
             rownum += 1;
@@ -76,6 +107,13 @@ impl ReSearcher {
         Ok(ReSearcher {
             pattern: Regex::new(pattern)?,
         })
+    }
+
+    fn find_regex_match_positions(&self, line: &str) -> Vec<(usize, usize)> {
+        self.pattern
+            .find_iter(line)
+            .map(|m| (m.start(), m.end()))
+            .collect()
     }
 }
 
@@ -96,7 +134,8 @@ impl Searches for Searcher<'_> {
         };
 
         if matches {
-            Some(SearchResult::new(rownum, line.to_string()))
+            let match_positions = self.find_match_positions(line, self.case_insensitive);
+            Some(SearchResult::new(rownum, line.to_string(), match_positions))
         } else {
             None
         }
@@ -110,7 +149,8 @@ impl Searches for ReSearcher {
 
         for line in contents.lines() {
             if self.pattern.is_match(line) {
-                let result = SearchResult::new(rownum, line.to_string());
+                let match_positions = self.find_regex_match_positions(line);
+                let result = SearchResult::new(rownum, line.to_string(), match_positions);
                 results.push(result)
             }
             rownum += 1;
@@ -121,7 +161,8 @@ impl Searches for ReSearcher {
 
     fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult> {
         if self.pattern.is_match(line) {
-            Some(SearchResult::new(rownum, line.to_string()))
+            let match_positions = self.find_regex_match_positions(line);
+            Some(SearchResult::new(rownum, line.to_string(), match_positions))
         } else {
             None
         }
@@ -139,7 +180,7 @@ mod tests {
         let searcher = Searcher::new("line", false);
 
         let observed_result = searcher.search(CONTENTS);
-        let expected_result = vec![SearchResult::new(1, "line one".to_string())];
+        let expected_result = vec![SearchResult::new(1, "line one".to_string(), vec![(0, 4)])];
 
         assert_eq!(observed_result, expected_result);
 
@@ -152,8 +193,8 @@ mod tests {
 
         let observed_result = searcher.search(CONTENTS);
         let expected_result = vec![
-            SearchResult::new(1, "line one".to_string()),
-            SearchResult::new(2, "LINE TWO".to_string()),
+            SearchResult::new(1, "line one".to_string(), vec![(0, 4)]),
+            SearchResult::new(2, "LINE TWO".to_string(), vec![(0, 4)]),
         ];
 
         assert_eq!(observed_result, expected_result);
@@ -166,7 +207,11 @@ mod tests {
         let re_searcher = ReSearcher::new("[a-z]+").expect("Valid regex pattern");
 
         let observed_result = re_searcher.search(CONTENTS);
-        let expected_result = vec![SearchResult::new(1, "line one".to_string())];
+        let expected_result = vec![SearchResult::new(
+            1,
+            "line one".to_string(),
+            vec![(0, 4), (5, 8)],
+        )];
 
         assert_eq!(observed_result, expected_result);
 
