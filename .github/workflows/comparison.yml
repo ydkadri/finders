@@ -10,6 +10,8 @@ jobs:
   benchmark:
     name: Run Comparison Benchmarks
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout sources
