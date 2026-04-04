@@ -1,6 +1,6 @@
 [package]
 name = "finders"
-version = "2.1.2"
+version = "3.0.0"
 edition = "2024"
 authors = ["Youcef Kadri <youcef.d.kadri@gmail.com>"]
 readme = "README.md"
@@ -16,6 +16,9 @@ exclude = [
 [dependencies]
 clap = { version = "4.5.3", features = ["derive"] }
 regex = "1.8.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+termcolor = "1.4"
 walkdir = "2.5.0"
 
 [dev-dependencies]

@@ -3,6 +3,7 @@ use std::io::{BufRead, BufReader, Error, ErrorKind};
 use std::path::PathBuf;
 
 pub mod file_finder;
+pub mod output;
 pub mod searcher;
 
 const CHUNK_SIZE: usize = 8192; // 8KB chunks for reading files
@@ -11,10 +12,11 @@ pub fn search_files(
     searcher: impl searcher::Searches,
     paths: Vec<PathBuf>,
     verbose: bool,
+    output: &mut dyn output::Outputs,
 ) -> Result<(), Error> {
     // Process files one at a time in a streaming fashion
     for path in paths {
-        if let Err(e) = search_file(&searcher, &path, verbose) {
+        if let Err(e) = search_file(&searcher, &path, verbose, output) {
             if e.kind() == ErrorKind::InvalidData {
                 if verbose {
                     println!("Cannot read file: {:?}", path);
@@ -26,6 +28,7 @@ pub fn search_files(
         }
     }
 
+    output.finalize();
     Ok(())
 }
 
@@ -33,6 +36,7 @@ fn search_file(
     searcher: &impl searcher::Searches,
     path: &PathBuf,
     verbose: bool,
+    output: &mut dyn output::Outputs,
 ) -> Result<(), Error> {
     // Open file and create buffered reader for efficient streaming
     let file = match File::open(path) {
@@ -54,12 +58,13 @@ fn search_file(
             Ok(content) => {
                 // Search this single line
                 if let Some(result) = searcher.search_line(&content, rownum) {
-                    println!(
-                        "{:>4}: {:<56} {}",
-                        result.rownum,
-                        path.as_path().to_string_lossy(),
-                        result.line
-                    );
+                    let search_match = output::SearchMatch {
+                        path: path.as_path(),
+                        line_number: result.rownum,
+                        content: &result.line,
+                        match_positions: &result.match_positions,
+                    };
+                    output.write_match(&search_match);
                 }
                 rownum += 1;
             }
@@ -102,9 +107,10 @@ mod tests {
         // Test searching with case-sensitive searcher
         let searcher = searcher::Searcher::new("line", false);
         let paths = vec![test_file.clone()];
+        let mut output = output::StandardOutput::new(output::ColourMode::Never);
 
         // This should find 2 matches (lines 1 and 3)
-        let result = search_files(searcher, paths, false);
+        let result = search_files(searcher, paths, false, &mut output);
 
         // Clean up
         fs::remove_file(&test_file)?;
@@ -142,8 +148,9 @@ mod tests {
 
         let searcher = searcher::Searcher::new("line 500", false);
         let paths = vec![test_file.clone()];
+        let mut output = output::StandardOutput::new(output::ColourMode::Never);
 
-        let result = search_files(searcher, paths, false);
+        let result = search_files(searcher, paths, false, &mut output);
 
         // Clean up
         fs::remove_file(&test_file)?;
