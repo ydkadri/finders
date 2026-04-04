@@ -14,7 +14,7 @@ impl Finder<'_> {
         Ok(Finder { path })
     }
 
-    fn _find(&self) -> IntoIter {
+    fn find_internal(&self) -> IntoIter {
         WalkDir::new(self.path).follow_links(true).into_iter()
     }
 
@@ -22,7 +22,7 @@ impl Finder<'_> {
         // Recursively find files from the finder root
         let mut results = Vec::new();
         let filepath_iterator = self
-            ._find()
+            .find_internal()
             .filter_map(|e| e.ok())
             .filter_map(|e| {
                 match e.metadata() {
@@ -47,7 +47,7 @@ impl Finder<'_> {
         // filtering to filenames containing some value
         let mut results = Vec::new();
         let filepath_iterator = self
-            ._find()
+            .find_internal()
             .filter_map(|e| e.ok())
             .filter_map(|e| {
                 match e.metadata() {

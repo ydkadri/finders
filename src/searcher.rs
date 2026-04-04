@@ -39,7 +39,7 @@ impl Searcher<'_> {
         }
     }
 
-    fn _sensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
+    fn sensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
         let mut results = Vec::new();
         let mut rownum = 1;
 
@@ -54,7 +54,7 @@ impl Searcher<'_> {
         results
     }
 
-    fn _insensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
+    fn insensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
         let mut results = Vec::new();
         let query = self.query.to_lowercase();
         let mut rownum = 1;
@@ -82,9 +82,9 @@ impl ReSearcher {
 impl Searches for Searcher<'_> {
     fn search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
         if self.case_insensitive {
-            self._insensitive_search(contents)
+            self.insensitive_search(contents)
         } else {
-            self._sensitive_search(contents)
+            self.sensitive_search(contents)
         }
     }
 
