@@ -51,7 +51,7 @@ FindeRS is designed for performance with:
 - Line-by-line searching to minimize memory usage
 - Efficient pattern matching with both simple string search and regex support
 
-Benchmarks are run automatically on every pull request and merge to main. View the latest benchmark results in the [Actions tab](https://github.com/ydkadri/finders/actions/workflows/benchmark.yml).
+**Internal Benchmarks**: Run automatically on every pull request and merge to main. View the latest results in the [Actions tab](https://github.com/ydkadri/finders/actions/workflows/benchmark.yml).
 
 Key benchmark categories:
 - **searcher_search_line**: Tests case-sensitive and case-insensitive string matching
@@ -59,11 +59,25 @@ Key benchmark categories:
 - **searcher_search_content**: Tests multi-line content searching
 - **file_finder**: Tests file discovery with and without patterns
 
+**Comparison Benchmarks**: See how `finder` performs against `find+grep` and `ripgrep` at [ydkadri.github.io/finders](https://ydkadri.github.io/finders/)
+
+Comparison benchmarks test 6 scenarios:
+- 3 repository sizes: small (~100 files), medium (~1K files), large (~10K files)
+- 2 search patterns: common (found in ~50% of files), rare (found in 1 file)
+
+Benchmarks run automatically on new releases and can be triggered manually via GitHub Actions.
+
 ### Development
 
-To run benchmarks locally:
+To run internal benchmarks locally:
 ```shell
 cargo bench
+```
+
+To run comparison benchmarks (requires `ripgrep` installed):
+```shell
+cargo build --release  # Build finder first
+cargo bench --bench comparison_benchmarks
 ```
 
 To run tests:

@@ -384,7 +384,8 @@ cargo run -- [args]      # Run with arguments
 # Testing & Quality
 cargo test               # Run all tests
 cargo test --lib         # Run library tests only
-cargo bench              # Run benchmarks
+cargo bench              # Run internal benchmarks
+cargo bench --bench comparison_benchmarks  # Run comparison benchmarks (requires ripgrep)
 cargo fmt                # Format code
 cargo clippy -- -D warnings  # Lint with warnings as errors
 
