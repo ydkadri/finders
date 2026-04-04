@@ -1,6 +1,8 @@
 # FindeRS
 
 [![CI](https://github.com/ydkadri/finders/actions/workflows/pr.yml/badge.svg)](https://github.com/ydkadri/finders/actions/workflows/pr.yml)
+![Tests](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ydkadri/5616380737bada94e84764d02b816b38/raw/finders-tests.json)
+![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ydkadri/5616380737bada94e84764d02b816b38/raw/finders-coverage.json)
 [![Benchmarks](https://github.com/ydkadri/finders/actions/workflows/benchmark.yml/badge.svg)](https://github.com/ydkadri/finders/actions/workflows/benchmark.yml)
 [![Crates.io](https://img.shields.io/crates/v/finders.svg)](https://crates.io/crates/finders)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
