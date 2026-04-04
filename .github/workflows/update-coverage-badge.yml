@@ -1,0 +1,110 @@
+name: Update Coverage Badge
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install cargo-llvm-cov
+        run: cargo install cargo-llvm-cov
+
+      - name: Run tests and generate coverage
+        run: |
+          cargo llvm-cov --all-features --workspace --json --output-path coverage.json > test-output.txt 2>&1 || true
+          cargo test --all-features 2>&1 | tee -a test-output.txt || true
+
+      - name: Extract test count and coverage
+        id: metrics
+        run: |
+          # Extract test count (e.g., "test result: ok. 45 passed")
+          TEST_COUNT=$(grep -oP '\d+(?= passed)' test-output.txt | head -1 || echo "0")
+          echo "test_count=$TEST_COUNT" >> $GITHUB_OUTPUT
+          echo "Tests: $TEST_COUNT passing"
+
+          # Extract coverage percentage from JSON
+          COVERAGE=$(jq -r '.data[0].totals.lines.percent' coverage.json)
+          echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+          echo "Coverage: $COVERAGE%"
+
+      - name: Determine coverage badge color
+        id: color
+        run: |
+          COVERAGE=${{ steps.metrics.outputs.coverage }}
+          if (( $(echo "$COVERAGE >= 90" | bc -l) )); then
+            COLOR="brightgreen"
+          elif (( $(echo "$COVERAGE >= 75" | bc -l) )); then
+            COLOR="green"
+          elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
+            COLOR="yellow"
+          elif (( $(echo "$COVERAGE >= 40" | bc -l) )); then
+            COLOR="orange"
+          else
+            COLOR="red"
+          fi
+          echo "color=$COLOR" >> $GITHUB_OUTPUT
+          echo "Coverage badge color: $COLOR"
+
+      - name: Update gist with badges
+        env:
+          GIST_ID: 5616380737bada94e84764d02b816b38
+          GITHUB_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          # Create test badge JSON
+          cat > tests.json << EOF
+          {
+            "schemaVersion": 1,
+            "label": "tests",
+            "message": "${{ steps.metrics.outputs.test_count }} passing",
+            "color": "success"
+          }
+          EOF
+
+          # Create coverage badge JSON
+          cat > coverage.json << EOF
+          {
+            "schemaVersion": 1,
+            "label": "coverage",
+            "message": "${{ steps.metrics.outputs.coverage }}%",
+            "color": "${{ steps.color.outputs.color }}"
+          }
+          EOF
+
+          # Update both gist files
+          curl -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/gists/$GIST_ID" \
+            -d @- << EOF
+          {
+            "files": {
+              "finders-tests.json": {
+                "content": $(cat tests.json | jq -Rs .)
+              },
+              "finders-coverage.json": {
+                "content": $(cat coverage.json | jq -Rs .)
+              }
+            }
+          }
+          EOF
