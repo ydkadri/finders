@@ -1,5 +1,5 @@
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 mod fixtures;
@@ -13,6 +13,65 @@ fn is_tool_available(tool: &str) -> bool {
         .output()
         .map(|output| output.status.success())
         .unwrap_or(false)
+}
+
+/// Find the finder binary for benchmarking
+fn find_finder_binary() -> Option<PathBuf> {
+    // Try multiple locations in order of preference
+    let candidates = vec![
+        // 1. Release build (preferred for benchmarks)
+        std::env::current_dir()
+            .ok()
+            .map(|p| p.join("target").join("release").join("finder")),
+        // 2. Debug build (fallback)
+        std::env::current_dir()
+            .ok()
+            .map(|p| p.join("target").join("debug").join("finder")),
+        // 3. Relative to benchmark executable
+        std::env::current_exe().ok().and_then(|p| {
+            p.parent()
+                .and_then(|p| p.parent())
+                .map(|p| p.join("release").join("finder"))
+        }),
+        // 4. In PATH
+        Some(PathBuf::from("finder")),
+    ];
+
+    // Find first existing binary
+    for candidate in candidates.into_iter().flatten() {
+        if candidate.exists() {
+            return Some(candidate);
+        }
+    }
+
+    // Check if finder is in PATH
+    if is_tool_available("finder") {
+        return Some(PathBuf::from("finder"));
+    }
+
+    None
+}
+
+/// Validate that a binary exists and is executable
+fn validate_binary(path: &Path) -> Result<(), String> {
+    if !path.exists() {
+        return Err(format!("Binary not found at: {}", path.display()));
+    }
+
+    // Try to get version to verify it's executable
+    let output = Command::new(path)
+        .arg("--version")
+        .output()
+        .map_err(|e| format!("Failed to execute {}: {}", path.display(), e))?;
+
+    if !output.status.success() {
+        return Err(format!(
+            "Binary at {} is not executable or returned error",
+            path.display()
+        ));
+    }
+
+    Ok(())
 }
 
 /// Run find + grep command
@@ -58,37 +117,45 @@ fn run_ripgrep(dir: &PathBuf, pattern: &str) -> std::io::Result<Vec<String>> {
 }
 
 /// Run finder command
-fn run_finder(dir: &PathBuf, pattern: &str) -> std::io::Result<Vec<String>> {
-    // Get the finder binary path
-    let finder_bin = std::env::current_exe()
-        .ok()
-        .and_then(|p| {
-            p.parent()
-                .and_then(|p| p.parent())
-                .map(|p| p.join("debug").join("finder"))
-        })
-        .or_else(|| {
-            // Fallback: try to find in target/release
-            std::env::current_dir()
-                .ok()
-                .map(|p| p.join("target").join("release").join("finder"))
-        })
-        .unwrap_or_else(|| PathBuf::from("finder"));
-
-    let output = Command::new(&finder_bin)
+fn run_finder(dir: &PathBuf, pattern: &str, finder_bin: &Path) -> std::io::Result<Vec<String>> {
+    let output = Command::new(finder_bin)
         .arg(dir)
         .arg("--file-pattern")
-        .arg("*.rs")
+        .arg(".rs") // finder uses contains(), not globs, so ".rs" matches "*.rs"
         .arg("--search-pattern")
         .arg(pattern)
         .output()?;
 
     if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!(
+            "⚠️  finder command failed:\n  Binary: {}\n  Stderr: {}",
+            finder_bin.display(),
+            stderr
+        );
         return Ok(Vec::new());
     }
 
     let stdout = String::from_utf8_lossy(&output.stdout);
-    Ok(stdout.lines().map(|s| s.to_string()).collect())
+
+    // finder outputs: "   4: /path/to/file.rs content..."
+    // Format: <line_num>: <path> <content>
+    // Extract unique file paths (all paths end with .rs in this benchmark)
+    let mut files = std::collections::HashSet::new();
+    for line in stdout.lines() {
+        // Find first colon (after line number)
+        if let Some(colon_pos) = line.find(": ") {
+            let after_colon = &line[colon_pos + 2..];
+            // Path ends with .rs - find the last occurrence
+            if let Some(rs_pos) = after_colon.rfind(".rs") {
+                // Include ".rs" in the path
+                let file_path = &after_colon[..rs_pos + 3];
+                files.insert(file_path.trim().to_string());
+            }
+        }
+    }
+
+    Ok(files.into_iter().collect())
 }
 
 /// Benchmark configuration for a test scenario
@@ -164,10 +231,76 @@ fn bench_comparison(c: &mut Criterion) {
         eprintln!("   Skipping ripgrep benchmarks...\n");
     }
 
+    // Find and validate finder binary
+    let finder_bin = match find_finder_binary() {
+        Some(path) => {
+            println!("✓ Found finder binary at: {}", path.display());
+            if let Err(e) = validate_binary(&path) {
+                panic!("❌ Finder binary validation failed: {}\n   Build finder first with: cargo build --release", e);
+            }
+            path
+        }
+        None => {
+            panic!(
+                "❌ Could not find finder binary!\n   Build it first with: cargo build --release"
+            );
+        }
+    };
+
     // Setup fixtures once
     println!("Generating benchmark fixtures...");
     let base_dir = setup_fixtures();
     println!("Fixtures ready at: {}", base_dir.display());
+
+    // Sanity check: verify all tools produce similar results on small dataset
+    println!("\nValidating tools produce similar results...");
+    let small_dir = base_dir.join("small");
+    let test_pattern = "function";
+
+    let find_grep_results = run_find_grep(&small_dir, test_pattern)
+        .expect("find+grep sanity check failed");
+    let finder_results = run_finder(&small_dir, test_pattern, &finder_bin)
+        .expect("finder sanity check failed");
+
+    println!("  find+grep found: {} files", find_grep_results.len());
+    println!("  finder found:    {} files", finder_results.len());
+
+    if has_rg {
+        let rg_results = run_ripgrep(&small_dir, test_pattern)
+            .expect("ripgrep sanity check failed");
+        println!("  ripgrep found:   {} files", rg_results.len());
+
+        // Verify all tools found similar number of files (within 10%)
+        let max_count = find_grep_results.len().max(finder_results.len()).max(rg_results.len());
+        let min_count = find_grep_results.len().min(finder_results.len()).min(rg_results.len());
+
+        if max_count > 0 && (max_count - min_count) as f64 / max_count as f64 > 0.1 {
+            panic!(
+                "❌ Tools found significantly different results!\n\
+                 This suggests a bug in one of the implementations.\n\
+                 find+grep: {}, ripgrep: {}, finder: {}",
+                find_grep_results.len(),
+                rg_results.len(),
+                finder_results.len()
+            );
+        }
+    } else {
+        // Without ripgrep, just verify finder and find+grep match
+        let max_count = find_grep_results.len().max(finder_results.len());
+        let min_count = find_grep_results.len().min(finder_results.len());
+
+        if max_count > 0 && (max_count - min_count) as f64 / max_count as f64 > 0.1 {
+            panic!(
+                "❌ finder and find+grep found significantly different results!\n\
+                 This suggests a bug in the implementation.\n\
+                 find+grep: {}, finder: {}",
+                find_grep_results.len(),
+                finder_results.len()
+            );
+        }
+    }
+
+    println!("✓ All tools validated - results match within tolerance\n");
 
     // Run benchmarks for each scenario
     for scenario in BenchmarkScenario::SCENARIOS {
@@ -190,8 +323,9 @@ fn bench_comparison(c: &mut Criterion) {
         }
 
         // Benchmark finder
+        let finder_bin_clone = finder_bin.clone();
         group.bench_function(BenchmarkId::new("finder", scenario.pattern_type), |b| {
-            b.iter(|| run_finder(&fixture_dir, scenario.pattern))
+            b.iter(|| run_finder(&fixture_dir, scenario.pattern, &finder_bin_clone))
         });
 
         group.finish();
