@@ -97,6 +97,7 @@ fn generate_rust_file(
     if has_functions {
         // Simple function
         writeln!(file, "/// Processes data for module {}", index)?;
+        writeln!(file, "/// This function handles string transformations")?;
         writeln!(
             file,
             "pub fn process_data(input: &str) -> Result<String> {{"
@@ -109,6 +110,7 @@ fn generate_rust_file(
 
         // Complex function with more code
         writeln!(file, "/// Analyzes data and returns statistics")?;
+        writeln!(file, "/// This function computes aggregate values")?;
         writeln!(
             file,
             "pub fn analyze_data(values: &[i32]) -> HashMap<String, f64> {{"
