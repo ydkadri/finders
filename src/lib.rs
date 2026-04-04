@@ -57,7 +57,7 @@ fn search_file(
                     println!(
                         "{:>4}: {:<56} {}",
                         result.rownum,
-                        path.as_path().to_str().unwrap(),
+                        path.as_path().to_string_lossy(),
                         result.line
                     );
                 }
