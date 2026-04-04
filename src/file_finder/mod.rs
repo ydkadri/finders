@@ -21,19 +21,20 @@ impl Finder<'_> {
     fn unfiltered_find(&self) -> Vec<PathBuf> {
         // Recursively find files from the finder root
         let mut results = Vec::new();
-        let filepath_iterator = self
-            .find_internal()
-            .filter_map(|e| e.ok())
-            .filter_map(|e| {
-                match e.metadata() {
-                    Ok(metadata) if metadata.is_file() => Some(e),
-                    Ok(_) => None, // Not a file (directory, symlink, etc.)
-                    Err(err) => {
-                        eprintln!("Warning: Cannot read metadata: {} ({})", e.path().display(), err);
-                        None
-                    }
+        let filepath_iterator = self.find_internal().filter_map(|e| e.ok()).filter_map(|e| {
+            match e.metadata() {
+                Ok(metadata) if metadata.is_file() => Some(e),
+                Ok(_) => None, // Not a file (directory, symlink, etc.)
+                Err(err) => {
+                    eprintln!(
+                        "Warning: Cannot read metadata: {} ({})",
+                        e.path().display(),
+                        err
+                    );
+                    None
                 }
-            });
+            }
+        });
 
         for entry in filepath_iterator {
             results.push(entry.into_path());
@@ -54,7 +55,11 @@ impl Finder<'_> {
                     Ok(metadata) if metadata.is_file() => Some(e),
                     Ok(_) => None, // Not a file (directory, symlink, etc.)
                     Err(err) => {
-                        eprintln!("Warning: Cannot read metadata: {} ({})", e.path().display(), err);
+                        eprintln!(
+                            "Warning: Cannot read metadata: {} ({})",
+                            e.path().display(),
+                            err
+                        );
                         None
                     }
                 }
@@ -64,7 +69,10 @@ impl Finder<'_> {
                     Some(name) if name.contains(query) => Some(e),
                     Some(_) => None, // Filename doesn't match query
                     None => {
-                        eprintln!("Warning: Skipping file with non-UTF8 name: {}", e.path().display());
+                        eprintln!(
+                            "Warning: Skipping file with non-UTF8 name: {}",
+                            e.path().display()
+                        );
                         None
                     }
                 }
