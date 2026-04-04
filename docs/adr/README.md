@@ -43,10 +43,7 @@ ADRs are **encouraged but not required**. Consider writing an ADR for:
 ## ADRs in This Project
 
 - [Template](template.md) - ADR template for new decisions
-
-<!-- Add links to ADRs as they are created:
-- [0001: Title](0001-title.md) - Brief description
--->
+- [0001: Comparison Benchmark Architecture](0001-comparison-benchmark-architecture.md) - Release-based benchmarks with GitHub Pages deployment
 
 ## Status Workflow
 
