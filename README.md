@@ -62,7 +62,7 @@ Key benchmark categories:
 **Comparison Benchmarks**: See how `finder` performs against `find+grep` and `ripgrep` at [ydkadri.github.io/finders](https://ydkadri.github.io/finders/)
 
 Comparison benchmarks test 6 scenarios:
-- 3 repository sizes: small (~100 files), medium (~1K files), large (~10K files)
+- 3 repository sizes: small (~100 files), medium (~1K files), large (~5K files)
 - 2 search patterns: common (found in ~50% of files), rare (found in 1 file)
 
 Benchmarks run automatically on new releases and can be triggered manually via GitHub Actions.
