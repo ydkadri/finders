@@ -24,7 +24,16 @@ impl Finder<'_> {
         let filepath_iterator = self
             ._find()
             .filter_map(|e| e.ok())
-            .filter(|e| e.metadata().unwrap().is_file());
+            .filter_map(|e| {
+                match e.metadata() {
+                    Ok(metadata) if metadata.is_file() => Some(e),
+                    Ok(_) => None, // Not a file (directory, symlink, etc.)
+                    Err(err) => {
+                        eprintln!("Warning: Cannot read metadata: {} ({})", e.path().display(), err);
+                        None
+                    }
+                }
+            });
 
         for entry in filepath_iterator {
             results.push(entry.into_path());
@@ -40,8 +49,26 @@ impl Finder<'_> {
         let filepath_iterator = self
             ._find()
             .filter_map(|e| e.ok())
-            .filter(|e| e.metadata().unwrap().is_file())
-            .filter(|e| e.file_name().to_str().unwrap().contains(query));
+            .filter_map(|e| {
+                match e.metadata() {
+                    Ok(metadata) if metadata.is_file() => Some(e),
+                    Ok(_) => None, // Not a file (directory, symlink, etc.)
+                    Err(err) => {
+                        eprintln!("Warning: Cannot read metadata: {} ({})", e.path().display(), err);
+                        None
+                    }
+                }
+            })
+            .filter_map(|e| {
+                match e.file_name().to_str() {
+                    Some(name) if name.contains(query) => Some(e),
+                    Some(_) => None, // Filename doesn't match query
+                    None => {
+                        eprintln!("Warning: Skipping file with non-UTF8 name: {}", e.path().display());
+                        None
+                    }
+                }
+            });
 
         for entry in filepath_iterator {
             results.push(entry.into_path());
