@@ -60,7 +60,13 @@ fn main() -> Result<(), Error> {
 
         search_files(searcher, paths, verbose)?;
     } else if let Some(pattern) = cli.regex_pattern.as_deref() {
-        let re_searcher = searcher::ReSearcher::new(pattern);
+        let re_searcher = match searcher::ReSearcher::new(pattern) {
+            Ok(searcher) => searcher,
+            Err(e) => {
+                eprintln!("Error: Invalid regex pattern: {}", e);
+                std::process::exit(1);
+            }
+        };
 
         search_files(re_searcher, paths, verbose)?;
     } else {

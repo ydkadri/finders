@@ -44,7 +44,7 @@ fn bench_searcher_search_line(c: &mut Criterion) {
 }
 
 fn bench_regex_searcher_search_line(c: &mut Criterion) {
-    let regex_searcher = searcher::ReSearcher::new(r"search\w+");
+    let regex_searcher = searcher::ReSearcher::new(r"search\w+").expect("Valid regex pattern");
     let line = "This is a line with some searchable content in it";
 
     c.bench_function("regex_searcher_search_line", |b| {
