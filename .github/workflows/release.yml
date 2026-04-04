@@ -15,9 +15,28 @@ permissions:
   contents: write
 
 jobs:
-  create-release:
-    name: Create Release
-    runs-on: ubuntu-latest
+  build-binaries:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            archive: tar.gz
+            binary: finder
+          - os: macos-13
+            target: x86_64-apple-darwin
+            archive: tar.gz
+            binary: finder
+          - os: macos-14
+            target: aarch64-apple-darwin
+            archive: tar.gz
+            binary: finder
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            archive: zip
+            binary: finder.exe
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -51,12 +70,56 @@ jobs:
       - name: Build release binary
         run: cargo build --release
 
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}-binary
+          path: target/release/${{ matrix.binary }}
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish Release
+    runs-on: ubuntu-latest
+    needs: build-binaries
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create archives and checksums
+        run: |
+          mkdir -p release
+          VERSION="${{ github.event.inputs.tag || github.ref_name }}"
+
+          # Linux x86_64
+          tar -czf release/finder-${VERSION}-x86_64-linux.tar.gz -C artifacts/x86_64-unknown-linux-gnu-binary finder
+          sha256sum release/finder-${VERSION}-x86_64-linux.tar.gz > release/finder-${VERSION}-x86_64-linux.tar.gz.sha256
+
+          # macOS x86_64
+          tar -czf release/finder-${VERSION}-x86_64-macos.tar.gz -C artifacts/x86_64-apple-darwin-binary finder
+          sha256sum release/finder-${VERSION}-x86_64-macos.tar.gz > release/finder-${VERSION}-x86_64-macos.tar.gz.sha256
+
+          # macOS aarch64
+          tar -czf release/finder-${VERSION}-aarch64-macos.tar.gz -C artifacts/aarch64-apple-darwin-binary finder
+          sha256sum release/finder-${VERSION}-aarch64-macos.tar.gz > release/finder-${VERSION}-aarch64-macos.tar.gz.sha256
+
+          # Windows x86_64
+          cd artifacts/x86_64-pc-windows-msvc-binary
+          zip ../../release/finder-${VERSION}-x86_64-windows.zip finder.exe
+          cd ../..
+          sha256sum release/finder-${VERSION}-x86_64-windows.zip > release/finder-${VERSION}-x86_64-windows.zip.sha256
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
-          files: |
-            target/release/finder
+          files: release/*
           draft: false
           prerelease: false
           generate_release_notes: true
@@ -66,7 +129,7 @@ jobs:
   publish-crate:
     name: Publish to crates.io
     runs-on: ubuntu-latest
-    needs: create-release
+    needs: publish-release
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
