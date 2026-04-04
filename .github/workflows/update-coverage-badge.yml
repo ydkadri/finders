@@ -43,8 +43,9 @@ jobs:
           echo "test_count=$TEST_COUNT" >> $GITHUB_OUTPUT
           echo "Tests: $TEST_COUNT passing"
 
-          # Extract coverage percentage from JSON
-          COVERAGE=$(jq -r '.data[0].totals.lines.percent' coverage.json)
+          # Extract coverage percentage from JSON and round to nearest integer
+          COVERAGE_RAW=$(jq -r '.data[0].totals.lines.percent' coverage.json)
+          COVERAGE=$(printf "%.0f" "$COVERAGE_RAW")
           echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
           echo "Coverage: $COVERAGE%"
 
