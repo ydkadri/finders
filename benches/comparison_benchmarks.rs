@@ -236,7 +236,10 @@ fn bench_comparison(c: &mut Criterion) {
         Some(path) => {
             println!("✓ Found finder binary at: {}", path.display());
             if let Err(e) = validate_binary(&path) {
-                panic!("❌ Finder binary validation failed: {}\n   Build finder first with: cargo build --release", e);
+                panic!(
+                    "❌ Finder binary validation failed: {}\n   Build finder first with: cargo build --release",
+                    e
+                );
             }
             path
         }
@@ -257,22 +260,28 @@ fn bench_comparison(c: &mut Criterion) {
     let small_dir = base_dir.join("small");
     let test_pattern = "function";
 
-    let find_grep_results = run_find_grep(&small_dir, test_pattern)
-        .expect("find+grep sanity check failed");
-    let finder_results = run_finder(&small_dir, test_pattern, &finder_bin)
-        .expect("finder sanity check failed");
+    let find_grep_results =
+        run_find_grep(&small_dir, test_pattern).expect("find+grep sanity check failed");
+    let finder_results =
+        run_finder(&small_dir, test_pattern, &finder_bin).expect("finder sanity check failed");
 
     println!("  find+grep found: {} files", find_grep_results.len());
     println!("  finder found:    {} files", finder_results.len());
 
     if has_rg {
-        let rg_results = run_ripgrep(&small_dir, test_pattern)
-            .expect("ripgrep sanity check failed");
+        let rg_results =
+            run_ripgrep(&small_dir, test_pattern).expect("ripgrep sanity check failed");
         println!("  ripgrep found:   {} files", rg_results.len());
 
         // Verify all tools found similar number of files (within 10%)
-        let max_count = find_grep_results.len().max(finder_results.len()).max(rg_results.len());
-        let min_count = find_grep_results.len().min(finder_results.len()).min(rg_results.len());
+        let max_count = find_grep_results
+            .len()
+            .max(finder_results.len())
+            .max(rg_results.len());
+        let min_count = find_grep_results
+            .len()
+            .min(finder_results.len())
+            .min(rg_results.len());
 
         if max_count > 0 && (max_count - min_count) as f64 / max_count as f64 > 0.1 {
             panic!(
