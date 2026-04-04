@@ -65,29 +65,25 @@ jobs:
           # Note: Detailed results are in target/criterion/
           echo "Benchmark completed for version $VERSION"
 
-      - name: Checkout gh-pages branch
-        id: checkout-gh-pages
-        continue-on-error: true
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages-deploy
-
-      - name: Initialize gh-pages if needed
+      - name: Setup gh-pages deployment directory
         run: |
-          if [ ! -d "gh-pages-deploy" ] || [ ! -d "gh-pages-deploy/.git" ]; then
-            echo "Creating new gh-pages branch..."
-            rm -rf gh-pages-deploy
-            mkdir -p gh-pages-deploy
-            cd gh-pages-deploy
-            git init
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git checkout -b gh-pages
-            echo "# FindeRS Benchmarks" > README.md
-            git add README.md
-            git commit -m "Initialize gh-pages branch"
-          fi
+          # Remove any existing directory and start fresh
+          rm -rf gh-pages-deploy
+          mkdir -p gh-pages-deploy
+          cd gh-pages-deploy
+
+          # Initialize git repo
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b gh-pages
+
+          # Try to fetch existing gh-pages content if it exists
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git fetch origin gh-pages:gh-pages 2>/dev/null || echo "No existing gh-pages branch, will create new one"
+
+          # If branch exists, check it out; otherwise we already have an empty gh-pages
+          git checkout gh-pages 2>/dev/null || echo "Starting with new gh-pages branch"
 
       - name: Update benchmark history
         run: |
