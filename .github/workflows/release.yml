@@ -25,18 +25,22 @@ jobs:
             target: x86_64-unknown-linux-gnu
             archive: tar.gz
             binary: finder
-          - os: macos-12
+            cross_compile: false
+          - os: macos-latest
             target: x86_64-apple-darwin
             archive: tar.gz
             binary: finder
-          - os: macos-14
+            cross_compile: true
+          - os: macos-latest
             target: aarch64-apple-darwin
             archive: tar.gz
             binary: finder
+            cross_compile: false
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             archive: zip
             binary: finder.exe
+            cross_compile: false
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -45,6 +49,10 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cross-compilation target
+        if: matrix.cross_compile
+        run: rustup target add ${{ matrix.target }}
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -64,17 +72,22 @@ jobs:
           path: target
           key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
+      # Skip tests when cross-compiling because we can't run x86_64 binaries on ARM64 runner
+      # Tests still run for native builds (Linux, Windows, macOS ARM64)
       - name: Run tests
+        if: ${{ !matrix.cross_compile }}
         run: cargo test --all-features -- --test-threads=1
 
+      # Always use --target flag for consistent paths: target/<target>/release/binary
       - name: Build release binary
-        run: cargo build --release
+        run: cargo build --release --target ${{ matrix.target }}
 
+      # Binary is always at: target/<target>/release/finder (or finder.exe)
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}-binary
-          path: target/release/${{ matrix.binary }}
+          path: target/${{ matrix.target }}/release/${{ matrix.binary }}
           if-no-files-found: error
 
   publish-release:
