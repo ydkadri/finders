@@ -135,7 +135,7 @@ jobs:
         run: cargo install cargo-llvm-cov
 
       - name: Generate coverage report
-        run: cargo llvm-cov --all-features --workspace --json --output-path coverage.json
+        run: cargo llvm-cov --all-features --workspace --json --output-path coverage.json -- --test-threads=1
 
       - name: Check coverage threshold
         run: |
