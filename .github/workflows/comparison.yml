@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout sources
@@ -63,9 +64,204 @@ jobs:
           echo "date=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
           echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
 
-          # Parse Criterion output for summary metrics
-          # Note: Detailed results are in target/criterion/
-          echo "Benchmark completed for version $VERSION"
+          # Parse Criterion JSON output and create summary
+          cat > parse_benchmarks.py << 'PYTHON_EOF'
+          import json
+          import os
+          from pathlib import Path
+
+          # Scenarios and their sizes
+          scenarios = [
+              ("small_common", "Small (~100 files)", "common"),
+              ("small_rare", "Small (~100 files)", "rare"),
+              ("medium_common", "Medium (~1K files)", "common"),
+              ("medium_rare", "Medium (~1K files)", "rare"),
+              ("large_common", "Large (~5K files)", "common"),
+              ("large_rare", "Large (~5K files)", "rare"),
+          ]
+
+          results = []
+          criterion_base = Path("target/criterion")
+
+          for scenario_name, size_label, pattern_type in scenarios:
+              row = {
+                  "scenario": scenario_name,
+                  "size": size_label,
+                  "pattern": pattern_type,
+              }
+
+              # Extract metrics for each tool
+              for tool in ["finder", "find_grep", "ripgrep"]:
+                  estimates_file = criterion_base / scenario_name / tool / pattern_type / "base" / "estimates.json"
+
+                  if estimates_file.exists():
+                      with open(estimates_file) as f:
+                          data = json.load(f)
+                          # Convert nanoseconds to milliseconds
+                          mean_ns = data["mean"]["point_estimate"]
+                          mean_ms = round(mean_ns / 1_000_000, 0)
+                          row[tool] = int(mean_ms)
+                  else:
+                      row[tool] = None
+
+              results.append(row)
+
+          # Output as JSON
+          print(json.dumps(results, indent=2))
+          PYTHON_EOF
+
+          python3 parse_benchmarks.py > benchmark_results.json
+          cat benchmark_results.json
+
+          echo "Benchmark parsing complete"
+
+      - name: Upload benchmark data to gist
+        env:
+          GIST_ID: 5616380737bada94e84764d02b816b38
+          GITHUB_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          # Add metadata to JSON
+          DATE="${{ steps.metrics.outputs.date }}"
+          VERSION="${{ steps.metrics.outputs.version }}"
+
+          jq --arg date "$DATE" --arg version "$VERSION" \
+            '{date: $date, version: $version, results: .}' \
+            benchmark_results.json > benchmark_data.json
+
+          # Update gist
+          curl -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/gists/$GIST_ID" \
+            -d @- << EOF
+          {
+            "files": {
+              "finders-benchmarks.json": {
+                "content": $(cat benchmark_data.json | jq -Rs .)
+              }
+            }
+          }
+          EOF
+
+      - name: Create branch for README update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Fetch main and create new branch
+          git fetch origin main
+          BRANCH_NAME="benchmarks/update-${{ steps.metrics.outputs.version }}"
+          git checkout -b "$BRANCH_NAME" origin/main
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Update README with benchmark table
+        run: |
+          # Generate the new table
+          python3 << 'PYTHON_EOF' > new_table.md
+          import json
+
+          # Read benchmark results
+          with open('benchmark_results.json', 'r') as f:
+              data = json.load(f)
+
+          # Group by size and pattern
+          table_rows = {}
+          for item in data:
+              key = (item["pattern"], item["size"])
+              if key not in table_rows:
+                  table_rows[key] = item
+
+          # Generate markdown table
+          print("### Performance Summary (as of ${{ steps.metrics.outputs.date }})")
+          print()
+          print("| Scenario | Repository Size | finder | find+grep | ripgrep |")
+          print("|----------|----------------|--------|-----------|---------|")
+
+          # Order: common patterns first, then rare
+          for pattern in ["common", "rare"]:
+              for size in ["Small (~100 files)", "Medium (~1K files)", "Large (~5K files)"]:
+                  key = (pattern, size)
+                  if key in table_rows:
+                      row = table_rows[key]
+                      pattern_label = "Common pattern" if pattern == "common" else "Rare pattern"
+                      finder_val = f"{row['finder']}ms" if row['finder'] else "N/A"
+                      grep_val = f"{row['find_grep']}ms" if row['find_grep'] else "N/A"
+                      rg_val = f"{row['ripgrep']}ms" if row['ripgrep'] else "N/A"
+                      print(f"| {pattern_label} | {size} | {finder_val} | {grep_val} | {rg_val} |")
+          PYTHON_EOF
+
+          # Replace the table in README.md
+          # Find the section between "### Performance Summary" and the next "###" or end
+          python3 << 'PYTHON_EOF'
+          import re
+
+          # Read README
+          with open('README.md', 'r') as f:
+              readme = f.read()
+
+          # Read new table
+          with open('new_table.md', 'r') as f:
+              new_table = f.read()
+
+          # Pattern to match the performance summary section
+          # Match from "### Performance Summary" to the next section or comparison benchmarks text
+          pattern = r'### Performance Summary \(as of [0-9-]+\)\n\n\| Scenario.*?\n(?=\n(?:Comparison benchmarks|###|\Z))'
+
+          # Replace with new table
+          updated_readme = re.sub(pattern, new_table, readme, flags=re.DOTALL)
+
+          # Write back
+          with open('README.md', 'w') as f:
+              f.write(updated_readme)
+
+          print("✅ README.md updated with new benchmark data")
+          PYTHON_EOF
+
+      - name: Commit and push README changes
+        run: |
+          git add README.md
+
+          if git diff --staged --quiet; then
+            echo "No changes to README.md"
+            echo "skip_pr=true" >> $GITHUB_ENV
+          else
+            git commit -m "Update benchmark results for ${{ steps.metrics.outputs.version }}"
+            git push origin "${{ env.branch_name }}"
+            echo "✅ README.md updated and pushed to ${{ env.branch_name }}"
+            echo "skip_pr=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create Pull Request
+        if: env.skip_pr == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "${{ env.branch_name }}" \
+            --title "Update benchmark results for ${{ steps.metrics.outputs.version }}" \
+            --body "$(cat <<'EOF'
+          ## Automated Benchmark Update
+
+          This PR updates the performance summary table in README.md with the latest benchmark results.
+
+          **Version:** ${{ steps.metrics.outputs.version }}
+          **Date:** ${{ steps.metrics.outputs.date }}
+
+          ### Changes
+          - Updated Performance Summary table with fresh benchmark data
+          - Data also uploaded to [gist](https://gist.github.com/ydkadri/5616380737bada94e84764d02b816b38)
+
+          ### How to review
+          1. Check that the table format looks correct
+          2. Verify the numbers seem reasonable compared to previous results
+          3. Merge when ready
+
+          🤖 Generated automatically by comparison benchmarks workflow
+          EOF
+          )"
+
+          echo "✅ Pull request created for benchmark updates"
 
       - name: Setup gh-pages deployment directory
         run: |
