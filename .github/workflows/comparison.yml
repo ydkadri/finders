@@ -286,10 +286,11 @@ jobs:
       - name: Update benchmark history
         run: |
           cd gh-pages-deploy
+          mkdir -p benchmarks
 
           # Create history.json if it doesn't exist
-          if [ ! -f history.json ]; then
-            echo "[]" > history.json
+          if [ ! -f benchmarks/history.json ]; then
+            echo "[]" > benchmarks/history.json
           fi
 
           # Append new entry to history
@@ -300,21 +301,21 @@ jobs:
           # Read existing history, append new entry, write back
           jq --arg ver "$VERSION" --arg date "$DATE" --arg ts "$TIMESTAMP" \
             '. += [{version: $ver, date: $date, timestamp: $ts, url: "./latest/report/index.html"}]' \
-            history.json > history_tmp.json
-          mv history_tmp.json history.json
+            benchmarks/history.json > benchmarks/history_tmp.json
+          mv benchmarks/history_tmp.json benchmarks/history.json
 
       - name: Copy Criterion HTML reports
         run: |
-          # Remove old latest/ directory
-          rm -rf gh-pages-deploy/latest
+          # Remove old benchmarks/latest/ directory
+          rm -rf gh-pages-deploy/benchmarks/latest
 
           # Copy new Criterion HTML output
-          mkdir -p gh-pages-deploy/latest
-          cp -r target/criterion/* gh-pages-deploy/latest/ || echo "No criterion output found"
+          mkdir -p gh-pages-deploy/benchmarks/latest
+          cp -r target/criterion/* gh-pages-deploy/benchmarks/latest/ || echo "No criterion output found"
 
       - name: Generate index page
         run: |
-          cd gh-pages-deploy
+          cd gh-pages-deploy/benchmarks
 
           cat > index.html << 'EOF'
           <!DOCTYPE html>
@@ -474,4 +475,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Update benchmarks for ${{ steps.metrics.outputs.version }}" || echo "No changes to commit"
-          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages:gh-pages
+          git push --force-with-lease "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages:gh-pages

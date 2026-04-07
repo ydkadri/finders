@@ -23,7 +23,7 @@ I live in the terminal and I got sick of typing `find . -type f -name "*.py" -ex
 
 ## 📚 Quick Links
 
-- **[Performance Benchmarks](https://ydkadri.github.io/finders/)** - See how it compares
+- **[Performance Benchmarks](https://ydkadri.github.io/finders/benchmarks/)** - See how it compares
 - **[Contributing Guide](CONTRIBUTING.md)** - Help make it better
 - **[Changelog](CHANGELOG.md)** - What's new
 - **[Architecture Decisions](docs/adr/)** - Why things work the way they do
@@ -252,7 +252,7 @@ Key benchmark categories:
 - **searcher_search_content**: Tests multi-line content searching
 - **file_finder**: Tests file discovery with and without patterns
 
-**Comparison Benchmarks**: See how `finder` performs against `find+grep` and `ripgrep` at [ydkadri.github.io/finders](https://ydkadri.github.io/finders/)
+**Comparison Benchmarks**: See how `finder` performs against `find+grep` and `ripgrep` at [ydkadri.github.io/finders/benchmarks](https://ydkadri.github.io/finders/benchmarks/)
 
 ### Performance Summary (as of 2026-04-05)
 

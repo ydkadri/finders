@@ -15,6 +15,9 @@ output.txt
 # Generated benchmark fixtures
 benches/fixtures/data/
 
+# mdBook build output
+docs/book/
+
 # Claude Code local settings
 .claude/
 
