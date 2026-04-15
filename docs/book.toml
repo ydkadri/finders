@@ -1,0 +1,25 @@
+[book]
+title = "FindeRS Documentation"
+authors = ["Youcef Kadri"]
+language = "en"
+src = "src"
+description = "User guide and documentation for FindeRS, a simple command-line file finder and searcher"
+
+[build]
+build-dir = "book"
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
+git-repository-url = "https://github.com/ydkadri/finders"
+edit-url-template = "https://github.com/ydkadri/finders/edit/main/docs/{path}"
+site-url = "/finders/"
+
+[output.html.search]
+enable = true
+limit-results = 30
+use-boolean-and = true
+
+[output.html.fold]
+enable = true
+level = 0
