@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-04-15
+
+### Documentation
+
+- Add comprehensive mdBook documentation site
+  - User guide: Installation, Quick Start, CLI Reference, Output Modes, Colour Configuration
+  - Examples: Common Use Cases, Advanced Patterns, CI/CD Integration
+  - Reference: Tool Comparison, Performance, Troubleshooting
+  - Contributing guide for external contributors
+- Set up GitHub Pages deployment for documentation
+- Move benchmark results to /benchmarks subdirectory for better organisation
+- Update README benchmark links to new location
+
 ## [3.0.0] - 2026-04-05
 
 ### ⚠️ BREAKING CHANGES
