@@ -23,6 +23,7 @@ I live in the terminal and I got sick of typing `find . -type f -name "*.py" -ex
 
 ## 📚 Quick Links
 
+- **[Documentation](https://ydkadri.github.io/finders/)** - Complete user guide, examples, and reference
 - **[Performance Benchmarks](https://ydkadri.github.io/finders/benchmarks/)** - See how it compares
 - **[Contributing Guide](CONTRIBUTING.md)** - Help make it better
 - **[Changelog](CHANGELOG.md)** - What's new

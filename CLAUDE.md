@@ -488,5 +488,5 @@ Before pushing code or marking PR ready:
 
 ---
 
-**Last Updated**: 2026-04-05  
-**Current Version**: 3.0.0
+**Last Updated**: 2026-04-15  
+**Current Version**: 3.0.1
