@@ -265,23 +265,23 @@ jobs:
 
       - name: Setup gh-pages deployment directory
         run: |
-          # Remove any existing directory and start fresh
+          # Clone existing gh-pages branch to preserve docs and other content
           rm -rf gh-pages-deploy
-          mkdir -p gh-pages-deploy
-          cd gh-pages-deploy
 
-          # Initialize git repo
-          git init
+          git clone --branch gh-pages --single-branch \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            gh-pages-deploy 2>/dev/null || {
+            # Branch doesn't exist yet, create empty directory
+            mkdir -p gh-pages-deploy
+            cd gh-pages-deploy
+            git init
+            git checkout -b gh-pages
+            git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          }
+
+          cd gh-pages-deploy
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b gh-pages
-
-          # Try to fetch existing gh-pages content if it exists
-          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git fetch origin gh-pages:gh-pages 2>/dev/null || echo "No existing gh-pages branch, will create new one"
-
-          # If branch exists, check it out; otherwise we already have an empty gh-pages
-          git checkout gh-pages 2>/dev/null || echo "Starting with new gh-pages branch"
 
       - name: Update benchmark history
         run: |
