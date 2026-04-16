@@ -255,16 +255,16 @@ Key benchmark categories:
 
 **Comparison Benchmarks**: See how `finder` performs against `find+grep` and `ripgrep` at [ydkadri.github.io/finders/benchmarks](https://ydkadri.github.io/finders/benchmarks/)
 
-### Performance Summary (as of 2026-04-05)
+### Performance Summary (as of 2026-04-16)
 
 | Scenario | Repository Size | finder | find+grep | ripgrep |
 |----------|----------------|--------|-----------|---------|
-| Common pattern | Small (~100 files) | 2ms | 90ms | 5ms |
-| Common pattern | Medium (~1K files) | 9ms | 902ms | 8ms |
-| Common pattern | Large (~5K files) | 43ms | 4624ms | 22ms |
-| Rare pattern | Small (~100 files) | 1ms | 91ms | 5ms |
-| Rare pattern | Medium (~1K files) | 6ms | 907ms | 7ms |
-| Rare pattern | Large (~5K files) | 28ms | 4645ms | 15ms |
+| Common pattern | Small (~100 files) | 2ms | 131ms | 5ms |
+| Common pattern | Medium (~1K files) | 14ms | 1305ms | 8ms |
+| Common pattern | Large (~5K files) | 70ms | 6679ms | 26ms |
+| Rare pattern | Small (~100 files) | 2ms | 131ms | 4ms |
+| Rare pattern | Medium (~1K files) | 10ms | 1312ms | 7ms |
+| Rare pattern | Large (~5K files) | 50ms | 6712ms | 18ms |
 
 Comparison benchmarks test 6 scenarios:
 - 3 repository sizes: small (~100 files), medium (~1K files), large (~5K files)
