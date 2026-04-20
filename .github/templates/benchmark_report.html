@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindeRS Benchmark Results</title>
+    <link rel="stylesheet" href="./benchmark_report.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 FindeRS Benchmark Results</h1>
+            <p class="subtitle">Version {{ version }} • {{ date }}</p>
+        </header>
+
+        <section>
+            <h2>📊 Latest Results</h2>
+
+            {% if results %}
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Repository Size</th>
+                        <th>finder</th>
+                        <th>find+grep</th>
+                        <th>ripgrep</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.pattern_label }}</td>
+                        <td>{{ result.size }}</td>
+                        <td class="result-cell">{{ result.finder_display|safe }}</td>
+                        <td class="result-cell">{{ result.find_grep_display|safe }}</td>
+                        <td class="result-cell">{{ result.ripgrep_display|safe }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <p>
+                    <strong>Legend:</strong>
+                    <span class="change-better">↓ Better (faster)</span> •
+                    <span class="change-neutral">→ Similar (±5%)</span> •
+                    <span class="change-worse">↑ Worse (slower)</span>
+                </p>
+            </div>
+            {% else %}
+            <p>No benchmark data available yet.</p>
+            {% endif %}
+        </section>
+
+        <section>
+            {% if history_count >= 2 %}
+            <h2>📈 Performance Trends (finder)</h2>
+            <p>Showing last {{ runs_shown }} benchmark runs</p>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Trend</th>
+                        <th>Change</th>
+                        <th>Latest</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trend in trends %}
+                    <tr>
+                        <td>{{ trend.scenario_label }}</td>
+                        <td class="sparkline">{{ trend.sparkline|safe }}</td>
+                        <td class="{{ trend.trend_class }}">{{ trend.trend_text }}</td>
+                        <td>{{ trend.latest }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="info-box">
+                <p>Historical trends will appear after multiple benchmark runs.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <div class="links">
+            <p><strong>Detailed Reports:</strong> <a href="./latest/report/index.html">View Criterion benchmark reports →</a></p>
+        </div>
+
+        <section class="about">
+            <h3>About These Benchmarks</h3>
+            <p>
+                Benchmarks compare <code>finder</code> against <code>find+grep</code> and <code>ripgrep</code>
+                across different repository sizes and search patterns. All tools search for patterns in
+                <code>*.rs</code> files.
+            </p>
+            <ul>
+                <li><strong>Common pattern:</strong> Found in ~50% of files</li>
+                <li><strong>Rare pattern:</strong> Found in 1 file</li>
+                <li><strong>Small:</strong> ~100 files</li>
+                <li><strong>Medium:</strong> ~1,000 files</li>
+                <li><strong>Large:</strong> ~5,000 files</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Generated automatically by comparison benchmarks workflow •
+            <a href="https://github.com/ydkadri/finders">View repository →</a></p>
+        </footer>
+    </div>
+</body>
+</html>

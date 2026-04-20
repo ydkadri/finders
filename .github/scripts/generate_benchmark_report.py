@@ -12,6 +12,7 @@ import json
 import sys
 from pathlib import Path
 from typing import List, Dict, Any
+from jinja2 import Environment, FileSystemLoader
 
 
 def load_history(history_file: Path) -> List[Dict[str, Any]]:
@@ -26,7 +27,7 @@ def load_history(history_file: Path) -> List[Dict[str, Any]]:
 def calculate_change(current: float, previous: float) -> Dict[str, Any]:
     """Calculate percentage change and determine status."""
     if previous == 0:
-        return {"percent": 0, "status": "neutral"}
+        return {"percent": 0, "status": "neutral", "symbol": "→"}
 
     change_percent = ((current - previous) / previous) * 100
 
@@ -51,19 +52,30 @@ def format_ms(value: int) -> str:
     return f"{value}ms"
 
 
-def generate_summary_table(history: List[Dict[str, Any]]) -> str:
-    """Generate HTML summary table for latest results."""
+def format_cell(value, change):
+    """Format a table cell with value and optional change indicator."""
+    if value is None:
+        return "N/A"
+
+    result = format_ms(value)
+    if change:
+        result += f' <span class="change-{change["status"]}" title="{change["percent"]:.1f}%">{change["symbol"]}</span>'
+
+    return result
+
+
+def prepare_summary_data(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Prepare data for summary table."""
     if not history:
-        return "<p>No benchmark data available yet.</p>"
+        return []
 
     latest = history[-1]
     previous = history[-2] if len(history) > 1 else None
 
-    rows = []
+    results = []
     for result in latest["results"]:
         scenario = result["scenario"]
-        size = result["size"]
-        pattern = result["pattern"]
+        pattern_label = "Common pattern" if result["pattern"] == "common" else "Rare pattern"
 
         # Get values
         finder = result.get("finder")
@@ -82,63 +94,25 @@ def generate_summary_table(history: List[Dict[str, Any]]) -> str:
                 if ripgrep is not None and prev_result.get("ripgrep"):
                     changes["ripgrep"] = calculate_change(ripgrep, prev_result["ripgrep"])
 
-        # Format cells with change indicators
-        def format_cell(value, tool):
-            if value is None:
-                return "N/A"
+        results.append({
+            "pattern_label": pattern_label,
+            "size": result["size"],
+            "finder_display": format_cell(finder, changes.get("finder")),
+            "find_grep_display": format_cell(find_grep, changes.get("find_grep")),
+            "ripgrep_display": format_cell(ripgrep, changes.get("ripgrep")),
+        })
 
-            change_html = ""
-            if tool in changes:
-                change = changes[tool]
-                color_class = f"change-{change['status']}"
-                change_html = f' <span class="{color_class}" title="{change["percent"]:.1f}%">{change["symbol"]}</span>'
-
-            return f"{format_ms(value)}{change_html}"
-
-        pattern_label = "Common pattern" if pattern == "common" else "Rare pattern"
-
-        rows.append(f"""
-        <tr>
-            <td>{pattern_label}</td>
-            <td>{size}</td>
-            <td class="result-cell">{format_cell(finder, "finder")}</td>
-            <td class="result-cell">{format_cell(find_grep, "find_grep")}</td>
-            <td class="result-cell">{format_cell(ripgrep, "ripgrep")}</td>
-        </tr>
-        """)
-
-    return f"""
-    <table class="summary-table">
-        <thead>
-            <tr>
-                <th>Scenario</th>
-                <th>Repository Size</th>
-                <th>finder</th>
-                <th>find+grep</th>
-                <th>ripgrep</th>
-            </tr>
-        </thead>
-        <tbody>
-            {''.join(rows)}
-        </tbody>
-    </table>
-    """
+    return results
 
 
-def generate_history_section(history: List[Dict[str, Any]]) -> str:
-    """Generate history section showing trends over time."""
+def prepare_trend_data(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Prepare data for trend section."""
     if len(history) < 2:
-        return """
-        <div class="info-box">
-            <p>Historical trends will appear after multiple benchmark runs.</p>
-        </div>
-        """
+        return []
 
     # Show last 5 runs
     recent = history[-5:]
-
-    # Build table with sparkline-style trends
-    rows = []
+    trends = []
 
     # Get unique scenarios from latest run
     latest = history[-1]
@@ -168,292 +142,55 @@ def generate_history_section(history: List[Dict[str, Any]]) -> str:
         # Create mini bar chart
         if finder_trend:
             max_val = max(finder_trend)
-            bars = ' '.join([
+            bars = ''.join([
                 f'<span class="bar" style="height: {(val/max_val)*100}%" title="{val}ms"></span>'
                 for val in finder_trend
             ])
         else:
             bars = "—"
 
-        rows.append(f"""
-        <tr>
-            <td>{scenario_label}</td>
-            <td class="sparkline">{bars}</td>
-            <td class="{trend_class}">{trend_text}</td>
-            <td>{format_ms(finder_trend[-1]) if finder_trend else 'N/A'}</td>
-        </tr>
-        """)
+        trends.append({
+            "scenario_label": scenario_label,
+            "sparkline": bars,
+            "trend_class": trend_class,
+            "trend_text": trend_text,
+            "latest": format_ms(finder_trend[-1]) if finder_trend else "N/A",
+        })
 
-    return f"""
-    <h2>📈 Performance Trends (finder)</h2>
-    <p>Showing last {len(recent)} benchmark runs</p>
-    <table class="history-table">
-        <thead>
-            <tr>
-                <th>Scenario</th>
-                <th>Trend</th>
-                <th>Change</th>
-                <th>Latest</th>
-            </tr>
-        </thead>
-        <tbody>
-            {''.join(rows)}
-        </tbody>
-    </table>
-    """
+    return trends
 
 
-def generate_html(history: List[Dict[str, Any]]) -> str:
-    """Generate complete HTML report."""
+def generate_html(history: List[Dict[str, Any]], template_dir: Path, output_dir: Path) -> str:
+    """Generate complete HTML report using Jinja2 template."""
     latest = history[-1] if history else None
     version = latest["version"] if latest else "Unknown"
     date = latest["date"] if latest else "Unknown"
 
-    summary_table = generate_summary_table(history)
-    history_section = generate_history_section(history)
+    # Prepare data for template
+    results = prepare_summary_data(history)
+    trends = prepare_trend_data(history)
 
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FindeRS Benchmark Results</title>
-    <style>
-        * {{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }}
+    # Set up Jinja2 environment
+    env = Environment(loader=FileSystemLoader(template_dir))
+    template = env.get_template('benchmark_report.html')
 
-        body {{
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f5f5f5;
-        }}
+    # Render template
+    html = template.render(
+        version=version,
+        date=date,
+        results=results,
+        history_count=len(history),
+        runs_shown=min(5, len(history)),
+        trends=trends,
+    )
 
-        .container {{
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: white;
-            min-height: 100vh;
-        }}
+    # Copy CSS file to output directory
+    css_src = template_dir / 'benchmark_report.css'
+    css_dst = output_dir / 'benchmark_report.css'
+    if css_src.exists():
+        css_dst.write_text(css_src.read_text())
 
-        header {{
-            border-bottom: 3px solid #0066cc;
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }}
-
-        h1 {{
-            font-size: 2.5rem;
-            font-weight: 300;
-            color: #0066cc;
-            margin-bottom: 0.5rem;
-        }}
-
-        .subtitle {{
-            color: #666;
-            font-size: 1rem;
-        }}
-
-        h2 {{
-            font-size: 1.8rem;
-            font-weight: 400;
-            color: #333;
-            margin: 2rem 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #ddd;
-        }}
-
-        .info-box {{
-            background: #e6f2ff;
-            border-left: 4px solid #0066cc;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 4px;
-        }}
-
-        .info-box p {{
-            margin: 0;
-        }}
-
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }}
-
-        th, td {{
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }}
-
-        th {{
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #495057;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            letter-spacing: 0.5px;
-        }}
-
-        tr:hover {{
-            background: #f8f9fa;
-        }}
-
-        .result-cell {{
-            font-family: "SF Mono", Monaco, "Courier New", monospace;
-            font-size: 0.95rem;
-        }}
-
-        .change-better {{
-            color: #28a745;
-            font-weight: bold;
-        }}
-
-        .change-worse {{
-            color: #dc3545;
-            font-weight: bold;
-        }}
-
-        .change-neutral {{
-            color: #6c757d;
-        }}
-
-        .trend-better {{
-            color: #28a745;
-            font-weight: 600;
-        }}
-
-        .trend-worse {{
-            color: #dc3545;
-            font-weight: 600;
-        }}
-
-        .trend-neutral {{
-            color: #6c757d;
-        }}
-
-        .sparkline {{
-            width: 200px;
-        }}
-
-        .sparkline .bar {{
-            display: inline-block;
-            width: 8px;
-            margin: 0 1px;
-            background: #0066cc;
-            vertical-align: bottom;
-            min-height: 2px;
-        }}
-
-        .links {{
-            margin: 2rem 0;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 4px;
-        }}
-
-        .links a {{
-            color: #0066cc;
-            text-decoration: none;
-            font-weight: 500;
-        }}
-
-        .links a:hover {{
-            text-decoration: underline;
-        }}
-
-        .about {{
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #ddd;
-            color: #666;
-            font-size: 0.9rem;
-        }}
-
-        .about h3 {{
-            font-size: 1.2rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }}
-
-        code {{
-            background: #f4f4f4;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-family: "SF Mono", Monaco, "Courier New", monospace;
-            font-size: 0.9em;
-        }}
-
-        footer {{
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            color: #999;
-            font-size: 0.875rem;
-        }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>🔍 FindeRS Benchmark Results</h1>
-            <p class="subtitle">Version {version} • {date}</p>
-        </header>
-
-        <section>
-            <h2>📊 Latest Results</h2>
-            {summary_table}
-
-            <div class="info-box">
-                <p>
-                    <strong>Legend:</strong>
-                    <span class="change-better">↓ Better (faster)</span> •
-                    <span class="change-neutral">→ Similar (±5%)</span> •
-                    <span class="change-worse">↑ Worse (slower)</span>
-                </p>
-            </div>
-        </section>
-
-        <section>
-            {history_section}
-        </section>
-
-        <div class="links">
-            <p><strong>Detailed Reports:</strong> <a href="./latest/report/index.html">View Criterion benchmark reports →</a></p>
-        </div>
-
-        <section class="about">
-            <h3>About These Benchmarks</h3>
-            <p>
-                Benchmarks compare <code>finder</code> against <code>find+grep</code> and <code>ripgrep</code>
-                across different repository sizes and search patterns. All tools search for patterns in
-                <code>*.rs</code> files.
-            </p>
-            <ul style="margin: 1rem 0; padding-left: 2rem;">
-                <li><strong>Common pattern:</strong> Found in ~50% of files</li>
-                <li><strong>Rare pattern:</strong> Found in 1 file</li>
-                <li><strong>Small:</strong> ~100 files</li>
-                <li><strong>Medium:</strong> ~1,000 files</li>
-                <li><strong>Large:</strong> ~5,000 files</li>
-            </ul>
-        </section>
-
-        <footer>
-            <p>Generated automatically by comparison benchmarks workflow •
-            <a href="https://github.com/ydkadri/finders">View repository →</a></p>
-        </footer>
-    </div>
-</body>
-</html>
-"""
+    return html
 
 
 def main():
@@ -468,8 +205,13 @@ def main():
     # Load history
     history = load_history(history_file)
 
+    # Template directory is relative to this script
+    script_dir = Path(__file__).parent
+    template_dir = script_dir.parent / 'templates'
+    output_dir = output_file.parent
+
     # Generate HTML
-    html = generate_html(history)
+    html = generate_html(history, template_dir, output_dir)
 
     # Write output
     output_file.parent.mkdir(parents=True, exist_ok=True)
@@ -478,7 +220,9 @@ def main():
 
     print(f"✓ Generated benchmark report: {output_file}")
     print(f"  Processed {len(history)} historical entries")
+    print(f"  CSS copied to: {output_dir / 'benchmark_report.css'}")
 
 
 if __name__ == "__main__":
     main()
+
