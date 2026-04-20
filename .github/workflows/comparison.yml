@@ -316,6 +316,9 @@ jobs:
 
       - name: Generate custom benchmark report
         run: |
+          # Install jinja2 for template rendering
+          pip install jinja2
+
           # Generate HTML report from history
           python3 .github/scripts/generate_benchmark_report.py \
             gh-pages-deploy/benchmarks/history.json \
