@@ -1,0 +1,2348 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>FindeRS Documentation</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="User guide and documentation for FindeRS, a simple command-line file finder and searcher">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "ayu";
+            window.path_to_searchindex_js = "searchindex-072a11f1.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-22fd0f9f.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">FindeRS Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/ydkadri/finders" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p><strong>A simpler way to find files and search content from the command line.</strong></p>
+<p>I live in the terminal and I got sick of typing <code>find . -type f -name "*.py" -exec grep -iH "..." {} \;</code> every day. This is what I use these days and you should get involved.</p>
+<h2 id="what-is-finders"><a class="header" href="#what-is-finders">What is FindeRS?</a></h2>
+<p>FindeRS (<code>finder</code>) is a command-line tool that simplifies file searching. It combines the power of <code>find</code> and <code>grep</code> with a cleaner, more intuitive interface.</p>
+<p>Instead of this:</p>
+<pre><code class="language-bash">find . -type f -name "*.py" -exec grep -iH "TODO" {} \;
+</code></pre>
+<p>You write this:</p>
+<pre><code class="language-bash">finder -f ".py" -s "TODO"
+</code></pre>
+<h2 id="key-features"><a class="header" href="#key-features">Key Features</a></h2>
+<ul>
+<li><strong>Simple interface</strong>: <code>-f</code> finds files, <code>-s</code> searches content</li>
+<li><strong>Colored output</strong>: Matches highlighted, easy to scan</li>
+<li><strong>Multiple output modes</strong>: JSON, count-only, files-only</li>
+<li><strong>Fast and efficient</strong>: Streaming file processing</li>
+<li><strong>Single binary</strong>: No dependencies, just download and run</li>
+</ul>
+<h2 id="quick-example"><a class="header" href="#quick-example">Quick Example</a></h2>
+<p>Search for “TODO” comments in all Python files:</p>
+<pre><code class="language-bash">finder -f ".py" -s "TODO"
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs:42: // TODO: implement this feature
+src/main.rs:15: // TODO: add better error handling
+</code></pre>
+<h2 id="why-choose-finders"><a class="header" href="#why-choose-finders">Why Choose FindeRS?</a></h2>
+<ul>
+<li><strong>Learnable</strong>: Simple flags, no complex syntax</li>
+<li><strong>Practical</strong>: Built for daily use, not edge cases</li>
+<li><strong>Predictable</strong>: Sensible defaults, colored output when needed</li>
+<li><strong>Fast enough</strong>: Streaming processing, efficient search algorithms</li>
+</ul>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<ul>
+<li><a href="#installation">Install FindeRS</a> on your system</li>
+<li>Follow the <a href="#quick-start">Quick Start</a> guide</li>
+<li>Explore <a href="#common-use-cases">common use cases</a></li>
+</ul>
+<h2 id="getting-help"><a class="header" href="#getting-help">Getting Help</a></h2>
+<ul>
+<li><a href="https://github.com/ydkadri/finders/issues">GitHub Issues</a> - Bug reports and feature requests</li>
+<li><a href="#contributing">Contributing Guide</a> - Help make it better</li>
+<li><a href="#troubleshooting-1">Troubleshooting</a> - Common problems and solutions</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<p>There are several ways to install FindeRS. Choose the method that works best for you.</p>
+<h2 id="from-pre-built-binaries-recommended"><a class="header" href="#from-pre-built-binaries-recommended">From Pre-built Binaries (Recommended)</a></h2>
+<p>Download the latest release for your platform from <a href="https://github.com/ydkadri/finders/releases">GitHub Releases</a>:</p>
+<pre><code class="language-bash"># Linux (x86_64)
+wget https://github.com/ydkadri/finders/releases/latest/download/finder-&lt;version&gt;-x86_64-linux.tar.gz
+
+# macOS (Apple Silicon)
+wget https://github.com/ydkadri/finders/releases/latest/download/finder-&lt;version&gt;-aarch64-macos.tar.gz
+
+# macOS (Intel)
+wget https://github.com/ydkadri/finders/releases/latest/download/finder-&lt;version&gt;-x86_64-macos.tar.gz
+
+# Windows
+wget https://github.com/ydkadri/finders/releases/latest/download/finder-&lt;version&gt;-x86_64-windows.zip
+</code></pre>
+<p><strong>Available architectures:</strong></p>
+<ul>
+<li><code>x86_64-linux</code> - Linux (x86_64)</li>
+<li><code>aarch64-macos</code> - macOS (Apple Silicon)</li>
+<li><code>x86_64-macos</code> - macOS (Intel)</li>
+<li><code>x86_64-windows</code> - Windows (use <code>.zip</code> instead of <code>.tar.gz</code>)</li>
+</ul>
+<h3 id="extract-and-install"><a class="header" href="#extract-and-install">Extract and Install</a></h3>
+<pre><code class="language-bash">tar -xzf finder-&lt;version&gt;-&lt;arch&gt;.tar.gz  # or unzip for Windows
+sudo mv finder /usr/local/bin/           # or add to PATH on Windows
+</code></pre>
+<h3 id="verify-checksum-optional"><a class="header" href="#verify-checksum-optional">Verify Checksum (Optional)</a></h3>
+<pre><code class="language-bash">wget https://github.com/ydkadri/finders/releases/latest/download/finder-&lt;version&gt;-&lt;arch&gt;.tar.gz.sha256
+sha256sum -c finder-&lt;version&gt;-&lt;arch&gt;.tar.gz.sha256
+</code></pre>
+<h2 id="from-source-via-cargo"><a class="header" href="#from-source-via-cargo">From Source (via Cargo)</a></h2>
+<p>If you have Rust installed:</p>
+<pre><code class="language-bash">cargo install finders
+</code></pre>
+<p>This compiles from source and installs the binary in <code>~/.cargo/bin/</code>. Make sure this directory is in your <code>PATH</code>.</p>
+<h2 id="from-source-manual-build"><a class="header" href="#from-source-manual-build">From Source (Manual Build)</a></h2>
+<pre><code class="language-bash"># Clone the repository
+git clone https://github.com/ydkadri/finders.git
+cd finders
+
+# Build in release mode
+cargo build --release
+
+# The binary will be at target/release/finder
+sudo cp target/release/finder /usr/local/bin/
+</code></pre>
+<h2 id="verify-installation"><a class="header" href="#verify-installation">Verify Installation</a></h2>
+<p>After installing, verify it works:</p>
+<pre><code class="language-bash">finder --version
+</code></pre>
+<p>You should see output like:</p>
+<pre><code>finder 3.0.0
+</code></pre>
+<h2 id="updating"><a class="header" href="#updating">Updating</a></h2>
+<h3 id="binary-installation"><a class="header" href="#binary-installation">Binary Installation</a></h3>
+<p>Download and install the latest release following the same steps above.</p>
+<h3 id="cargo-installation"><a class="header" href="#cargo-installation">Cargo Installation</a></h3>
+<pre><code class="language-bash">cargo install finders --force
+</code></pre>
+<h2 id="uninstalling"><a class="header" href="#uninstalling">Uninstalling</a></h2>
+<h3 id="binary-installation-1"><a class="header" href="#binary-installation-1">Binary Installation</a></h3>
+<pre><code class="language-bash">sudo rm /usr/local/bin/finder
+</code></pre>
+<h3 id="cargo-installation-1"><a class="header" href="#cargo-installation-1">Cargo Installation</a></h3>
+<pre><code class="language-bash">cargo uninstall finders
+</code></pre>
+<h2 id="next-steps-1"><a class="header" href="#next-steps-1">Next Steps</a></h2>
+<ul>
+<li>Follow the <a href="#quick-start">Quick Start</a> guide to learn the basics</li>
+<li>Explore <a href="#common-use-cases">common use cases</a></li>
+<li>Check the <a href="#cli-reference">CLI Reference</a> for all available options</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h1>
+<p>Get started with FindeRS in minutes. This guide covers the most common usage patterns.</p>
+<h2 id="basic-concepts"><a class="header" href="#basic-concepts">Basic Concepts</a></h2>
+<p>FindeRS has two main operations:</p>
+<ol>
+<li><strong>Finding files</strong> - Filter by filename pattern with <code>-f</code></li>
+<li><strong>Searching content</strong> - Search for text patterns with <code>-s</code></li>
+</ol>
+<p>You can use them separately or together.</p>
+<h2 id="find-files-by-pattern"><a class="header" href="#find-files-by-pattern">Find Files by Pattern</a></h2>
+<p>Find all Python files in the current directory:</p>
+<pre><code class="language-bash">finder -f ".py"
+</code></pre>
+<p>Find all Markdown files:</p>
+<pre><code class="language-bash">finder -f ".md"
+</code></pre>
+<p>Find files in a specific directory:</p>
+<pre><code class="language-bash">finder src/ -f ".rs"
+</code></pre>
+<h2 id="search-content"><a class="header" href="#search-content">Search Content</a></h2>
+<p>Search for “TODO” in all files:</p>
+<pre><code class="language-bash">finder -s "TODO"
+</code></pre>
+<p>Case-insensitive search:</p>
+<pre><code class="language-bash">finder -s "error" -i
+</code></pre>
+<h2 id="combine-both"><a class="header" href="#combine-both">Combine Both</a></h2>
+<p>Find “TODO” comments in Python files:</p>
+<pre><code class="language-bash">finder -f ".py" -s "TODO"
+</code></pre>
+<p>Find “FIXME” in Rust files within the src directory:</p>
+<pre><code class="language-bash">finder src/ -f ".rs" -s "FIXME"
+</code></pre>
+<h2 id="output-modes"><a class="header" href="#output-modes">Output Modes</a></h2>
+<h3 id="standard-output-default"><a class="header" href="#standard-output-default">Standard Output (Default)</a></h3>
+<p>Shows file path, line number, and matching content:</p>
+<pre><code class="language-bash">finder -s "TODO"
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs:42: // TODO: implement this feature
+src/main.rs:15: // TODO: add better error handling
+</code></pre>
+<h3 id="files-only--l"><a class="header" href="#files-only--l">Files Only (<code>-l</code>)</a></h3>
+<p>List only the file paths (like <code>grep -l</code>):</p>
+<pre><code class="language-bash">finder -s "TODO" -l
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs
+src/main.rs
+</code></pre>
+<h3 id="count-matches--c"><a class="header" href="#count-matches--c">Count Matches (<code>-c</code>)</a></h3>
+<p>Show match count per file (like <code>grep -c</code>):</p>
+<pre><code class="language-bash">finder -s "TODO" -c
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs:3
+src/main.rs:2
+</code></pre>
+<h3 id="json-output---json"><a class="header" href="#json-output---json">JSON Output (<code>--json</code>)</a></h3>
+<p>Structured output for scripts:</p>
+<pre><code class="language-bash">finder -s "error" --json
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">[
+  {
+    "path": "src/lib.rs",
+    "matches": [
+      {"line": 42, "content": "handle error cases"}
+    ]
+  }
+]
+</code></pre>
+<h2 id="working-with-colors"><a class="header" href="#working-with-colors">Working with Colors</a></h2>
+<p>Colors are automatic - on by default when outputting to a terminal, off when piping.</p>
+<p>Force colors on (useful with <code>less -R</code>):</p>
+<pre><code class="language-bash">finder -s "pattern" --colour | less -R
+</code></pre>
+<p>Force colors off:</p>
+<pre><code class="language-bash">finder -s "pattern" --no-colour
+</code></pre>
+<p>Respect <code>NO_COLOR</code> environment variable:</p>
+<pre><code class="language-bash">NO_COLOR=1 finder -s "pattern"
+</code></pre>
+<h2 id="using-with-other-tools"><a class="header" href="#using-with-other-tools">Using with Other Tools</a></h2>
+<h3 id="pipe-to-jq"><a class="header" href="#pipe-to-jq">Pipe to jq</a></h3>
+<pre><code class="language-bash">finder -s "error" --json | jq '.[] | .path'
+</code></pre>
+<h3 id="count-total-matches"><a class="header" href="#count-total-matches">Count total matches</a></h3>
+<pre><code class="language-bash">finder -s "TODO" -c | awk -F: '{sum+=$2} END {print sum}'
+</code></pre>
+<h3 id="find-and-open-in-editor"><a class="header" href="#find-and-open-in-editor">Find and open in editor</a></h3>
+<pre><code class="language-bash">vim $(finder -f "config" -l)
+</code></pre>
+<h2 id="common-patterns"><a class="header" href="#common-patterns">Common Patterns</a></h2>
+<h3 id="find-configuration-files"><a class="header" href="#find-configuration-files">Find configuration files</a></h3>
+<pre><code class="language-bash">finder -f "config"
+</code></pre>
+<h3 id="search-for-api-keys-be-careful"><a class="header" href="#search-for-api-keys-be-careful">Search for API keys (be careful!)</a></h3>
+<pre><code class="language-bash">finder -s "api_key" -i
+</code></pre>
+<h3 id="find-large-log-files"><a class="header" href="#find-large-log-files">Find large log files</a></h3>
+<pre><code class="language-bash">finder -f ".log" | xargs ls -lh
+</code></pre>
+<h3 id="search-in-specific-file-types"><a class="header" href="#search-in-specific-file-types">Search in specific file types</a></h3>
+<pre><code class="language-bash">finder -f ".ts" -s "interface"  # TypeScript
+finder -f ".go" -s "func"        # Go
+finder -f ".py" -s "class"       # Python
+</code></pre>
+<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
+<ul>
+<li>Explore <a href="#common-use-cases">common use cases</a> in detail</li>
+<li>Check the <a href="#cli-reference">CLI Reference</a> for all options</li>
+<li>Learn about <a href="color-config.html">color configuration</a></li>
+<li>See <a href="#advanced-patterns">advanced patterns</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="cli-reference"><a class="header" href="#cli-reference">CLI Reference</a></h1>
+<p>Complete reference for all FindeRS command-line options.</p>
+<h2 id="synopsis"><a class="header" href="#synopsis">Synopsis</a></h2>
+<pre><code>finder [OPTIONS] [PATH]
+</code></pre>
+<h2 id="arguments"><a class="header" href="#arguments">Arguments</a></h2>
+<h3 id="path"><a class="header" href="#path"><code>[PATH]</code></a></h3>
+<p>Optional path to operate on. Defaults to the current working directory.</p>
+<p><strong>Examples:</strong></p>
+<pre><code class="language-bash">finder              # Search in current directory
+finder src/         # Search in src/ directory
+finder ../project/  # Search in ../project/ directory
+</code></pre>
+<h2 id="options"><a class="header" href="#options">Options</a></h2>
+<h3 id="file-filtering"><a class="header" href="#file-filtering">File Filtering</a></h3>
+<h4 id="-f---file-pattern-pattern"><a class="header" href="#-f---file-pattern-pattern"><code>-f, --file-pattern &lt;PATTERN&gt;</code></a></h4>
+<p>Filter files by pattern in filename.</p>
+<p><strong>Examples:</strong></p>
+<pre><code class="language-bash">finder -f ".rs"     # All Rust files
+finder -f "test"    # Files containing "test" in name
+finder -f ".config" # All config files
+</code></pre>
+<h3 id="content-searching"><a class="header" href="#content-searching">Content Searching</a></h3>
+<h4 id="-s---search-pattern-pattern"><a class="header" href="#-s---search-pattern-pattern"><code>-s, --search-pattern &lt;PATTERN&gt;</code></a></h4>
+<p>Search for a literal string pattern in file contents.</p>
+<p><strong>Examples:</strong></p>
+<pre><code class="language-bash">finder -s "TODO"            # Find all TODOs
+finder -s "function main"   # Find main functions
+finder -s "api_key"         # Find API key references
+</code></pre>
+<h4 id="-r---regex-pattern-pattern"><a class="header" href="#-r---regex-pattern-pattern"><code>-r, --regex-pattern &lt;PATTERN&gt;</code></a></h4>
+<p>Search using a regular expression pattern.</p>
+<p><strong>Examples:</strong></p>
+<pre><code class="language-bash">finder -r "TODO|FIXME"          # Find TODOs or FIXMEs
+finder -r "fn \w+\("            # Find Rust functions
+finder -r "[0-9]{3}-[0-9]{4}"   # Find phone numbers
+</code></pre>
+<h4 id="-i---case-insensitive"><a class="header" href="#-i---case-insensitive"><code>-i, --case-insensitive</code></a></h4>
+<p>Make search case-insensitive.</p>
+<p><strong>Examples:</strong></p>
+<pre><code class="language-bash">finder -s "error" -i     # Matches "Error", "ERROR", "error"
+finder -r "todo" -i      # Case-insensitive regex search
+</code></pre>
+<h3 id="output-control"><a class="header" href="#output-control">Output Control</a></h3>
+<h4 id="-l---files-with-matches"><a class="header" href="#-l---files-with-matches"><code>-l, --files-with-matches</code></a></h4>
+<p>Output only file paths that contain matches (like <code>grep -l</code>).</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">finder -s "TODO" -l
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs
+src/main.rs
+</code></pre>
+<h4 id="-c---count"><a class="header" href="#-c---count"><code>-c, --count</code></a></h4>
+<p>Output match count per file (like <code>grep -c</code>).</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">finder -s "error" -c
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs:5
+src/main.rs:2
+</code></pre>
+<h4 id="--json"><a class="header" href="#--json"><code>--json</code></a></h4>
+<p>Output results in JSON format for programmatic processing.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">finder -s "error" --json
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">[
+  {
+    "path": "src/lib.rs",
+    "matches": [
+      {"line": 42, "content": "handle error"}
+    ]
+  }
+]
+</code></pre>
+<h3 id="color-control"><a class="header" href="#color-control">Color Control</a></h3>
+<h4 id="--colour"><a class="header" href="#--colour"><code>--colour</code></a></h4>
+<p>Force colored output on (useful when piping to <code>less -R</code>).</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">finder -s "pattern" --colour | less -R
+</code></pre>
+<h4 id="--no-colour"><a class="header" href="#--no-colour"><code>--no-colour</code></a></h4>
+<p>Force colored output off.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">finder -s "pattern" --no-colour &gt; results.txt
+</code></pre>
+<p><strong>Note:</strong> Colors auto-detect by default - on for terminals, off for pipes.</p>
+<h3 id="verbosity"><a class="header" href="#verbosity">Verbosity</a></h3>
+<h4 id="-v---verbose"><a class="header" href="#-v---verbose"><code>-v, --verbose</code></a></h4>
+<p>Show verbose output including files that couldn’t be read.</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">finder -s "pattern" -v
+</code></pre>
+<h3 id="information"><a class="header" href="#information">Information</a></h3>
+<h4 id="-h---help"><a class="header" href="#-h---help"><code>-h, --help</code></a></h4>
+<p>Print help information and exit.</p>
+<pre><code class="language-bash">finder --help
+</code></pre>
+<h4 id="-v---version"><a class="header" href="#-v---version"><code>-V, --version</code></a></h4>
+<p>Print version information and exit.</p>
+<pre><code class="language-bash">finder --version
+</code></pre>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<h3 id="basic-usage"><a class="header" href="#basic-usage">Basic Usage</a></h3>
+<pre><code class="language-bash"># Find Python files
+finder -f ".py"
+
+# Search for TODO in all files
+finder -s "TODO"
+
+# Find TODOs in Python files
+finder -f ".py" -s "TODO"
+</code></pre>
+<h3 id="advanced-usage"><a class="header" href="#advanced-usage">Advanced Usage</a></h3>
+<pre><code class="language-bash"># Case-insensitive regex search in TypeScript files
+finder -f ".ts" -r "interface \w+" -i
+
+# Get JSON output for processing
+finder -s "error" --json | jq '.[] | .path'
+
+# Count all TODOs across the project
+finder -s "TODO" -c | awk -F: '{sum+=$2} END {print sum}'
+
+# Find files and open in vim
+vim $(finder -f "config" -l)
+</code></pre>
+<h3 id="working-with-directories"><a class="header" href="#working-with-directories">Working with Directories</a></h3>
+<pre><code class="language-bash"># Search in specific directory
+finder src/ -s "TODO"
+
+# Search in multiple patterns
+finder -f ".rs" -s "TODO" &amp;&amp; finder -f ".md" -s "TODO"
+
+# Search specific directory with file type
+finder src/ -f ".rs" -s "TODO"
+</code></pre>
+<h2 id="environment-variables"><a class="header" href="#environment-variables">Environment Variables</a></h2>
+<p>FindeRS respects standard color environment variables:</p>
+<ul>
+<li><code>NO_COLOR</code> - Disable colors entirely</li>
+<li><code>CLICOLOR</code> - Enable/disable color support</li>
+<li><code>CLICOLOR_FORCE</code> - Force colors on</li>
+</ul>
+<p>See <a href="color-config.html">Color Configuration</a> for details.</p>
+<h2 id="exit-codes"><a class="header" href="#exit-codes">Exit Codes</a></h2>
+<ul>
+<li><code>0</code> - Success, matches found</li>
+<li><code>1</code> - Error occurred</li>
+<li><code>0</code> - No matches found (not an error)</li>
+</ul>
+<h2 id="see-also"><a class="header" href="#see-also">See Also</a></h2>
+<ul>
+<li><a href="#quick-start">Quick Start</a> - Getting started guide</li>
+<li><a href="#output-modes-1">Output Modes</a> - Detailed output format examples</li>
+<li><a href="color-config.html">Color Configuration</a> - Color customization</li>
+<li><a href="#common-use-cases">Examples</a> - Real-world usage patterns</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="output-modes-1"><a class="header" href="#output-modes-1">Output Modes</a></h1>
+<p>FindeRS supports multiple output modes to suit different use cases.</p>
+<h2 id="standard-output-default-1"><a class="header" href="#standard-output-default-1">Standard Output (Default)</a></h2>
+<p>Shows file path, line number, and matching content.</p>
+<pre><code class="language-bash">finder -s "TODO"
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs:42: // TODO: implement this
+src/main.rs:15: // TODO: add error handling
+</code></pre>
+<h2 id="files-only-mode--l"><a class="header" href="#files-only-mode--l">Files Only Mode (<code>-l</code>)</a></h2>
+<p>Lists only file paths containing matches, similar to <code>grep -l</code>.</p>
+<pre><code class="language-bash">finder -s "TODO" -l
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs
+src/main.rs
+</code></pre>
+<h2 id="count-mode--c"><a class="header" href="#count-mode--c">Count Mode (<code>-c</code>)</a></h2>
+<p>Shows the number of matches per file, similar to <code>grep -c</code>.</p>
+<pre><code class="language-bash">finder -s "TODO" -c
+</code></pre>
+<p>Output:</p>
+<pre><code>src/lib.rs:3
+src/main.rs:2
+</code></pre>
+<h2 id="json-mode---json"><a class="header" href="#json-mode---json">JSON Mode (<code>--json</code>)</a></h2>
+<p>Structured JSON output for programmatic processing.</p>
+<pre><code class="language-bash">finder -s "error" --json
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">[
+  {
+    "path": "src/lib.rs",
+    "matches": [
+      {"line": 42, "content": "handle error cases"},
+      {"line": 87, "content": "return error result"}
+    ]
+  }
+]
+</code></pre>
+<h2 id="combining-modes"><a class="header" href="#combining-modes">Combining Modes</a></h2>
+<p>Output modes are mutually exclusive. Use one at a time:</p>
+<pre><code class="language-bash"># ✓ Valid
+finder -s "TODO" -l
+finder -s "TODO" -c
+finder -s "TODO" --json
+
+# ✗ Invalid (last one wins)
+finder -s "TODO" -l -c
+</code></pre>
+<h2 id="use-cases"><a class="header" href="#use-cases">Use Cases</a></h2>
+<ul>
+<li><strong>Standard</strong>: Interactive terminal use, reading results</li>
+<li><strong>Files only (<code>-l</code>)</strong>: Piping to other commands, opening in editor</li>
+<li><strong>Count (<code>-c</code>)</strong>: Statistics, understanding distribution</li>
+<li><strong>JSON (<code>--json</code>)</strong>: Scripting, integration with other tools</li>
+</ul>
+<h2 id="next-steps-3"><a class="header" href="#next-steps-3">Next Steps</a></h2>
+<ul>
+<li><a href="color-config.html">Color Configuration</a> - Customize output colors</li>
+<li><a href="#integration-examples">Integration Examples</a> - Use with other tools</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="colour-configuration"><a class="header" href="#colour-configuration">Colour Configuration</a></h1>
+<p>FindeRS provides coloured output for better readability. This page explains how to configure and control colours.</p>
+<h2 id="default-behaviour"><a class="header" href="#default-behaviour">Default Behaviour</a></h2>
+<p>Colours are <strong>automatic</strong> by default:</p>
+<ul>
+<li><strong>On</strong> when outputting to a terminal (TTY)</li>
+<li><strong>Off</strong> when piping to another command or file</li>
+</ul>
+<p>This “just works” for most use cases without any configuration.</p>
+<h2 id="colour-scheme"><a class="header" href="#colour-scheme">Colour Scheme</a></h2>
+<p>When colours are enabled:</p>
+<ul>
+<li><strong>File paths</strong>: Green</li>
+<li><strong>Line numbers</strong>: Cyan</li>
+<li><strong>Match highlights</strong>: Bold white on blue background</li>
+</ul>
+<h2 id="force-colours-on"><a class="header" href="#force-colours-on">Force Colours On</a></h2>
+<p>Use <code>--colour</code> to force colours on, even when piping:</p>
+<pre><code class="language-bash">finder -s "pattern" --colour | less -R
+</code></pre>
+<p>The <code>-R</code> flag tells <code>less</code> to display colours correctly.</p>
+<h2 id="force-colours-off"><a class="header" href="#force-colours-off">Force Colours Off</a></h2>
+<p>Use <code>--no-colour</code> to force colours off:</p>
+<pre><code class="language-bash">finder -s "pattern" --no-colour
+</code></pre>
+<p>Useful for:</p>
+<ul>
+<li>Saving output to files</li>
+<li>Ensuring plain text in scripts</li>
+<li>Terminal compatibility issues</li>
+</ul>
+<h2 id="environment-variables-1"><a class="header" href="#environment-variables-1">Environment Variables</a></h2>
+<p>FindeRS respects standard colour environment variables.</p>
+<h3 id="no_color"><a class="header" href="#no_color"><code>NO_COLOR</code></a></h3>
+<p>Disables all colours when set (any value):</p>
+<pre><code class="language-bash">NO_COLOR=1 finder -s "pattern"
+</code></pre>
+<p>Learn more at <a href="https://no-colour.org/">no-colour.org</a>.</p>
+<h3 id="clicolor"><a class="header" href="#clicolor"><code>CLICOLOR</code></a></h3>
+<p>Controls colour support:</p>
+<pre><code class="language-bash">CLICOLOR=0 finder -s "pattern"  # Disable colours
+CLICOLOR=1 finder -s "pattern"  # Enable colours (with TTY detection)
+</code></pre>
+<h3 id="clicolor_force"><a class="header" href="#clicolor_force"><code>CLICOLOR_FORCE</code></a></h3>
+<p>Forces colours on, even when not outputting to a terminal:</p>
+<pre><code class="language-bash">CLICOLOR_FORCE=1 finder -s "pattern"
+</code></pre>
+<p>Learn more at <a href="https://bixense.com/clicolours/">bixense.com/clicolours</a>.</p>
+<h2 id="priority-order"><a class="header" href="#priority-order">Priority Order</a></h2>
+<p>When multiple settings conflict, FindeRS uses this priority:</p>
+<ol>
+<li><strong>CLI flags</strong> (<code>--colour</code> or <code>--no-colour</code>)</li>
+<li><strong>NO_COLOR</strong> environment variable</li>
+<li><strong>CLICOLOR_FORCE</strong> environment variable</li>
+<li><strong>CLICOLOR</strong> environment variable</li>
+<li><strong>Auto-detection</strong> (default)</li>
+</ol>
+<h2 id="examples-1"><a class="header" href="#examples-1">Examples</a></h2>
+<h3 id="force-colours-for-paging"><a class="header" href="#force-colours-for-paging">Force colours for paging</a></h3>
+<pre><code class="language-bash">finder -s "TODO" --colour | less -R
+</code></pre>
+<h3 id="disable-colours-for-file-output"><a class="header" href="#disable-colours-for-file-output">Disable colours for file output</a></h3>
+<pre><code class="language-bash">finder -s "error" --no-colour &gt; errors.txt
+</code></pre>
+<h3 id="respect-no_color-in-scripts"><a class="header" href="#respect-no_color-in-scripts">Respect NO_COLOR in scripts</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+export NO_COLOR=1
+finder -s "pattern"  # No colours
+</code></pre>
+<h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
+<h3 id="colors-dont-work-in-my-terminal"><a class="header" href="#colors-dont-work-in-my-terminal">Colors don’t work in my terminal</a></h3>
+<ul>
+<li>Check your terminal supports ANSI colours</li>
+<li>Try forcing colours: <code>finder --colour</code></li>
+<li>Check if <code>NO_COLOR</code> is set: <code>echo $NO_COLOR</code></li>
+</ul>
+<h3 id="colors-show-as-weird-characters"><a class="header" href="#colors-show-as-weird-characters">Colors show as weird characters</a></h3>
+<p>Your terminal doesn’t support ANSI escape codes. Use <code>--no-colour</code>.</p>
+<h3 id="colors-persist-after-piping"><a class="header" href="#colors-persist-after-piping">Colors persist after piping</a></h3>
+<p>This is expected behavior. Use <code>--no-colour</code> if needed.</p>
+<h2 id="see-also-1"><a class="header" href="#see-also-1">See Also</a></h2>
+<ul>
+<li><a href="#output-modes-1">Output Modes</a> - Different output formats</li>
+<li><a href="#cli-reference">CLI Reference</a> - All command-line options</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="common-use-cases"><a class="header" href="#common-use-cases">Common Use Cases</a></h1>
+<p>Real-world examples of how to use FindeRS effectively.</p>
+<h2 id="development-workflows"><a class="header" href="#development-workflows">Development Workflows</a></h2>
+<h3 id="find-todos-and-fixmes"><a class="header" href="#find-todos-and-fixmes">Find TODOs and FIXMEs</a></h3>
+<p>Track technical debt across your codebase:</p>
+<pre><code class="language-bash">finder -s "TODO" -l
+finder -s "FIXME" -c
+finder -r "TODO|FIXME" -i
+</code></pre>
+<h3 id="find-configuration-files-1"><a class="header" href="#find-configuration-files-1">Find Configuration Files</a></h3>
+<p>Locate all config files in a project:</p>
+<pre><code class="language-bash">finder -f "config"
+finder -f ".json" -s "database"
+finder -f ".yaml" -s "api"
+</code></pre>
+<h3 id="search-for-function-definitions"><a class="header" href="#search-for-function-definitions">Search for Function Definitions</a></h3>
+<p>Find function definitions across different languages:</p>
+<pre><code class="language-bash"># Rust functions
+finder -f ".rs" -r "fn \w+\("
+
+# Python functions
+finder -f ".py" -r "def \w+\("
+
+# JavaScript functions
+finder -f ".js" -r "function \w+\("
+</code></pre>
+<h2 id="code-review-and-refactoring"><a class="header" href="#code-review-and-refactoring">Code Review and Refactoring</a></h2>
+<h3 id="find-all-usages"><a class="header" href="#find-all-usages">Find All Usages</a></h3>
+<p>Locate all references to a variable or function:</p>
+<pre><code class="language-bash">finder -s "old_function_name"
+finder -f ".rs" -s "OldStruct"
+</code></pre>
+<h3 id="find-deprecated-apis"><a class="header" href="#find-deprecated-apis">Find Deprecated APIs</a></h3>
+<p>Search for deprecated API usage:</p>
+<pre><code class="language-bash">finder -s "deprecated" -i
+finder -r "@deprecated|DEPRECATED"
+</code></pre>
+<h3 id="find-error-handling"><a class="header" href="#find-error-handling">Find Error Handling</a></h3>
+<p>Review error handling patterns:</p>
+<pre><code class="language-bash">finder -s "unwrap()"
+finder -s "expect("
+finder -r "panic!|unwrap|expect"
+</code></pre>
+<h2 id="security-and-compliance"><a class="header" href="#security-and-compliance">Security and Compliance</a></h2>
+<h3 id="find-sensitive-data"><a class="header" href="#find-sensitive-data">Find Sensitive Data</a></h3>
+<p><strong>⚠️ Be careful not to commit findings!</strong></p>
+<pre><code class="language-bash"># Find potential API keys
+finder -r "[A-Za-z0-9]{32,}" -i
+
+# Find passwords in config
+finder -s "password" -i -f ".env"
+
+# Find secrets
+finder -r "secret|token|key" -i
+</code></pre>
+<h3 id="audit-logging"><a class="header" href="#audit-logging">Audit Logging</a></h3>
+<p>Find logging statements:</p>
+<pre><code class="language-bash">finder -s "log::" -f ".rs"
+finder -r "console\.(log|error|warn)"
+</code></pre>
+<h2 id="documentation"><a class="header" href="#documentation">Documentation</a></h2>
+<h3 id="find-undocumented-code"><a class="header" href="#find-undocumented-code">Find Undocumented Code</a></h3>
+<p>Locate public APIs without documentation:</p>
+<pre><code class="language-bash"># Rust public items without docs
+finder -f ".rs" -r "pub (fn|struct|enum|trait) \w+" -l | \
+  xargs -I {} sh -c 'grep -B1 "pub" {} | grep -q "///" || echo {}'
+</code></pre>
+<h3 id="find-broken-links"><a class="header" href="#find-broken-links">Find Broken Links</a></h3>
+<p>Search for old URLs or references:</p>
+<pre><code class="language-bash">finder -s "oldcompany.com"
+finder -s "http://" -f ".md"
+</code></pre>
+<h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
+<h3 id="find-test-coverage-gaps"><a class="header" href="#find-test-coverage-gaps">Find Test Coverage Gaps</a></h3>
+<p>Locate modules without tests:</p>
+<pre><code class="language-bash"># Find modules without test modules
+finder -f ".rs" -l | while read f; do
+  grep -q "#\[cfg(test)\]" "$f" || echo "$f"
+done
+</code></pre>
+<h3 id="find-disabled-tests"><a class="header" href="#find-disabled-tests">Find Disabled Tests</a></h3>
+<p>Locate ignored or disabled tests:</p>
+<pre><code class="language-bash">finder -s "#[ignore]"
+finder -s "skip_test" -i
+</code></pre>
+<h2 id="data-processing"><a class="header" href="#data-processing">Data Processing</a></h2>
+<h3 id="count-patterns-across-files"><a class="header" href="#count-patterns-across-files">Count Patterns Across Files</a></h3>
+<p>Get statistics about pattern usage:</p>
+<pre><code class="language-bash"># Total TODO count
+finder -s "TODO" -c | awk -F: '{sum+=$2} END {print sum}'
+
+# Files with most errors
+finder -s "error" -c | sort -t: -k2 -nr | head
+</code></pre>
+<h3 id="extract-structured-data"><a class="header" href="#extract-structured-data">Extract Structured Data</a></h3>
+<p>Pull specific data from files:</p>
+<pre><code class="language-bash"># Extract all email addresses
+finder -r "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}" --json | \
+  jq -r '.[].matches[].content'
+
+# Extract version numbers
+finder -s "version" --json | jq
+</code></pre>
+<h2 id="integration-with-other-tools"><a class="header" href="#integration-with-other-tools">Integration with Other Tools</a></h2>
+<h3 id="open-files-in-editor"><a class="header" href="#open-files-in-editor">Open Files in Editor</a></h3>
+<pre><code class="language-bash"># Edit all files with TODOs
+vim $(finder -s "TODO" -l)
+
+# Open files with errors
+code $(finder -s "ERROR" -l)
+</code></pre>
+<h3 id="pipe-to-other-commands"><a class="header" href="#pipe-to-other-commands">Pipe to Other Commands</a></h3>
+<pre><code class="language-bash"># Count lines in matched files
+finder -f ".rs" -l | xargs wc -l
+
+# Find largest files
+finder -f ".log" -l | xargs ls -lh | sort -k5 -hr
+</code></pre>
+<h3 id="create-reports"><a class="header" href="#create-reports">Create Reports</a></h3>
+<pre><code class="language-bash"># Generate TODO report
+finder -s "TODO" &gt; todos.txt
+
+# JSON report for CI
+finder -s "FIXME" --json &gt; fixmes.json
+</code></pre>
+<h2 id="performance-optimization"><a class="header" href="#performance-optimization">Performance Optimization</a></h2>
+<h3 id="find-large-files"><a class="header" href="#find-large-files">Find Large Files</a></h3>
+<p>Identify files that might slow down searches:</p>
+<pre><code class="language-bash">finder -f ".log" -l | xargs ls -lh | awk '$5 ~ /M|G/'
+</code></pre>
+<h3 id="profile-pattern-complexity"><a class="header" href="#profile-pattern-complexity">Profile Pattern Complexity</a></h3>
+<p>Test search performance:</p>
+<pre><code class="language-bash">time finder -r "complex.*regex.*pattern"
+time finder -s "simple string"
+</code></pre>
+<h2 id="next-steps-4"><a class="header" href="#next-steps-4">Next Steps</a></h2>
+<ul>
+<li>Check <a href="#advanced-patterns">Advanced Patterns</a> for more complex use cases</li>
+<li>See <a href="#integration-examples">Integration Examples</a> for CI/CD workflows</li>
+<li>Review <a href="#cli-reference">CLI Reference</a> for all available options</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="advanced-patterns"><a class="header" href="#advanced-patterns">Advanced Patterns</a></h1>
+<p>Complex workflows and advanced techniques for power users.</p>
+<h2 id="regex-patterns"><a class="header" href="#regex-patterns">Regex Patterns</a></h2>
+<h3 id="character-classes-and-quantifiers"><a class="header" href="#character-classes-and-quantifiers">Character Classes and Quantifiers</a></h3>
+<pre><code class="language-bash"># Find phone numbers
+finder -r "\d{3}-\d{3}-\d{4}"
+
+# Find hex colors
+finder -r "#[0-9a-fA-F]{6}"
+
+# Find email addresses
+finder -r "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+</code></pre>
+<h3 id="lookahead-and-lookbehind"><a class="header" href="#lookahead-and-lookbehind">Lookahead and Lookbehind</a></h3>
+<pre><code class="language-bash"># Find TODO comments with ticket numbers
+finder -r "TODO: \w+-\d+"
+
+# Find functions with specific parameters
+finder -r "fn \w+\([^)]*&amp;str[^)]*\)"
+</code></pre>
+<h3 id="word-boundaries"><a class="header" href="#word-boundaries">Word Boundaries</a></h3>
+<pre><code class="language-bash"># Find exact word matches
+finder -r "\berror\b"
+
+# Find variable names
+finder -r "\b[a-z_][a-z0-9_]*\b"
+</code></pre>
+<h2 id="combining-multiple-searches"><a class="header" href="#combining-multiple-searches">Combining Multiple Searches</a></h2>
+<h3 id="boolean-logic"><a class="header" href="#boolean-logic">Boolean Logic</a></h3>
+<pre><code class="language-bash"># Files with pattern A OR pattern B
+finder -r "pattern_a|pattern_b"
+
+# Multiple patterns (run separate searches)
+finder -f ".rs" -s "TODO"
+finder -f ".md" -s "TODO"
+</code></pre>
+<h2 id="working-with-structured-output"><a class="header" href="#working-with-structured-output">Working with Structured Output</a></h2>
+<h3 id="processing-json-output"><a class="header" href="#processing-json-output">Processing JSON Output</a></h3>
+<pre><code class="language-bash"># Extract file paths only
+finder -s "error" --json | jq -r '.[].path'
+
+# Count matches per file
+finder -s "TODO" --json | jq '.[] | {path: .path, count: (.matches | length)}'
+
+# Filter by line number
+finder -s "error" --json | jq '.[] | select(.matches[].line &gt; 100)'
+</code></pre>
+<h3 id="building-custom-reports"><a class="header" href="#building-custom-reports">Building Custom Reports</a></h3>
+<pre><code class="language-bash"># Create CSV report
+finder -s "TODO" --json | jq -r '.[] | .matches[] | [.line, .content] | @csv' &gt; report.csv
+
+# Generate HTML report
+echo "&lt;html&gt;&lt;body&gt;&lt;ul&gt;" &gt; report.html
+finder -s "TODO" -l | while read f; do
+  echo "&lt;li&gt;&lt;a href='$f'&gt;$f&lt;/a&gt;&lt;/li&gt;" &gt;&gt; report.html
+done
+echo "&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;" &gt;&gt; report.html
+</code></pre>
+<h2 id="shell-integration"><a class="header" href="#shell-integration">Shell Integration</a></h2>
+<h3 id="custom-aliases"><a class="header" href="#custom-aliases">Custom Aliases</a></h3>
+<p>Add to your <code>.bashrc</code> or <code>.zshrc</code>:</p>
+<pre><code class="language-bash"># Find and edit
+alias fe='vim $(finder -l)'
+
+# Find todos in current project
+alias todos='finder -s "TODO" -c'
+
+# Search with context
+alias search='finder -s'
+</code></pre>
+<h3 id="functions"><a class="header" href="#functions">Functions</a></h3>
+<pre><code class="language-bash"># Find and replace across files
+find-replace() {
+  local pattern="$1"
+  local replacement="$2"
+  finder -s "$pattern" -l | xargs sed -i "s/$pattern/$replacement/g"
+}
+
+# Count pattern occurrences
+count-pattern() {
+  finder -s "$1" -c | awk -F: '{sum+=$2} END {print sum}'
+}
+</code></pre>
+<h2 id="performance-optimization-1"><a class="header" href="#performance-optimization-1">Performance Optimization</a></h2>
+<h3 id="limiting-search-scope"><a class="header" href="#limiting-search-scope">Limiting Search Scope</a></h3>
+<pre><code class="language-bash"># Search specific directory
+finder src/ -s "pattern"
+
+# Search specific file types in directory
+finder src/ -f ".rs" -s "pattern"
+
+# Search only recently modified files
+find . -mtime -7 -type f | xargs finder -s "pattern"
+</code></pre>
+<h3 id="parallel-processing"><a class="header" href="#parallel-processing">Parallel Processing</a></h3>
+<pre><code class="language-bash"># Process results in parallel with xargs
+finder -s "pattern" -l | xargs -P 4 -I {} sh -c 'process {}'
+
+# GNU parallel for complex operations
+finder -s "pattern" -l | parallel 'complex-operation {}'
+</code></pre>
+<h2 id="cicd-integration"><a class="header" href="#cicd-integration">CI/CD Integration</a></h2>
+<h3 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h3>
+<pre><code class="language-yaml">- name: Check for TODOs
+  run: |
+    if finder -s "TODO" -l &gt; /dev/null; then
+      echo "Found TODOs in code"
+      finder -s "TODO"
+      exit 1
+    fi
+</code></pre>
+<h3 id="gitlab-ci"><a class="header" href="#gitlab-ci">GitLab CI</a></h3>
+<pre><code class="language-yaml">check-todos:
+  script:
+    - finder -s "TODO" &gt; todos.txt
+    - test ! -s todos.txt
+  artifacts:
+    paths:
+      - todos.txt
+    when: on_failure
+</code></pre>
+<h3 id="pre-commit-hooks"><a class="header" href="#pre-commit-hooks">Pre-commit Hooks</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+# .git/hooks/pre-commit
+
+if finder -s "NOCOMMIT" &gt; /dev/null; then
+  echo "Error: Found NOCOMMIT markers"
+  finder -s "NOCOMMIT"
+  exit 1
+fi
+</code></pre>
+<h2 id="code-quality-checks"><a class="header" href="#code-quality-checks">Code Quality Checks</a></h2>
+<h3 id="detect-anti-patterns"><a class="header" href="#detect-anti-patterns">Detect Anti-patterns</a></h3>
+<pre><code class="language-bash"># Find unwrap() in Rust
+finder -f ".rs" -s "unwrap()" -c
+
+# Find console.log in production JS
+finder -f ".js" -s "console.log" | grep -v "test"
+
+# Find SQL injection risks
+finder -r "execute.*\+.*\$"
+</code></pre>
+<h3 id="complexity-metrics"><a class="header" href="#complexity-metrics">Complexity Metrics</a></h3>
+<pre><code class="language-bash"># Find deeply nested code
+finder -r "^\s{12,}" -c
+
+# Count function definitions
+finder -f ".rs" -r "fn \w+\(" -c
+</code></pre>
+<h2 id="documentation-generation"><a class="header" href="#documentation-generation">Documentation Generation</a></h2>
+<h3 id="extract-api-documentation"><a class="header" href="#extract-api-documentation">Extract API Documentation</a></h3>
+<pre><code class="language-bash"># Extract all doc comments
+finder -f ".rs" -r "///.*" --json | \
+  jq -r '.[] | .matches[] | .content' &gt; api-docs.txt
+</code></pre>
+<h3 id="generate-index"><a class="header" href="#generate-index">Generate Index</a></h3>
+<pre><code class="language-bash"># Create module index
+finder -f ".rs" -r "pub mod \w+" | \
+  sed 's/.*pub mod /- /' &gt; modules.md
+</code></pre>
+<h2 id="debugging-and-diagnostics"><a class="header" href="#debugging-and-diagnostics">Debugging and Diagnostics</a></h2>
+<h3 id="trace-code-flow"><a class="header" href="#trace-code-flow">Trace Code Flow</a></h3>
+<pre><code class="language-bash"># Find all log statements
+finder -r "(log|debug|info|warn|error)::" -f ".rs"
+
+# Find panic locations
+finder -s "panic!" -f ".rs"
+</code></pre>
+<h3 id="dependency-analysis"><a class="header" href="#dependency-analysis">Dependency Analysis</a></h3>
+<pre><code class="language-bash"># Find external crate usage
+finder -r "use \w+::" -f ".rs" | sort | uniq
+
+# Find module dependencies
+finder -r "mod \w+;" -f ".rs"
+</code></pre>
+<h2 id="working-with-large-codebases"><a class="header" href="#working-with-large-codebases">Working with Large Codebases</a></h2>
+<h3 id="incremental-search"><a class="header" href="#incremental-search">Incremental Search</a></h3>
+<pre><code class="language-bash"># Search one directory at a time
+for dir in src/*/ ; do
+  echo "Searching $dir"
+  finder "$dir" -s "pattern"
+done
+</code></pre>
+<h3 id="caching-results"><a class="header" href="#caching-results">Caching Results</a></h3>
+<pre><code class="language-bash"># Cache file list for repeated searches
+finder -f ".rs" -l &gt; rust-files.txt
+cat rust-files.txt | xargs finder -s "pattern"
+</code></pre>
+<h2 id="next-steps-5"><a class="header" href="#next-steps-5">Next Steps</a></h2>
+<ul>
+<li>Review <a href="#common-use-cases">Common Use Cases</a> for everyday patterns</li>
+<li>See <a href="#integration-examples">Integration Examples</a> for CI/CD workflows</li>
+<li>Check <a href="#performance">Performance</a> for optimization tips</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="integration-examples"><a class="header" href="#integration-examples">Integration Examples</a></h1>
+<p>Integrate FindeRS into your development workflows, CI/CD pipelines, and automation scripts.</p>
+<h2 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous Integration</a></h2>
+<h3 id="github-actions-1"><a class="header" href="#github-actions-1">GitHub Actions</a></h3>
+<h4 id="check-for-forbidden-patterns"><a class="header" href="#check-for-forbidden-patterns">Check for Forbidden Patterns</a></h4>
+<pre><code class="language-yaml">name: Code Quality Checks
+
+on: [push, pull_request]
+
+jobs:
+  check-patterns:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install FindeRS
+        run: |
+          wget https://github.com/ydkadri/finders/releases/latest/download/finder-x86_64-linux.tar.gz
+          tar -xzf finder-x86_64-linux.tar.gz
+          sudo mv finder /usr/local/bin/
+      
+      - name: Check for debug statements
+        run: |
+          if finder -s "console.log" -l -f ".js" &gt; /dev/null; then
+            echo "❌ Found console.log statements"
+            finder -s "console.log" -f ".js"
+            exit 1
+          fi
+      
+      - name: Check for TODOs
+        run: |
+          finder -s "TODO" -c &gt; todo-count.txt
+          cat todo-count.txt
+</code></pre>
+<h4 id="generate-reports"><a class="header" href="#generate-reports">Generate Reports</a></h4>
+<pre><code class="language-yaml">      - name: Generate TODO Report
+        run: |
+          echo "# TODO Report" &gt; todo-report.md
+          echo "" &gt;&gt; todo-report.md
+          finder -s "TODO" --json | \
+            jq -r '.[] | "## \(.path)\n\(.matches[] | "- Line \(.line): \(.content)")\n"' \
+            &gt;&gt; todo-report.md
+      
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-report
+          path: todo-report.md
+</code></pre>
+<h3 id="gitlab-ci-1"><a class="header" href="#gitlab-ci-1">GitLab CI</a></h3>
+<pre><code class="language-yaml">code-quality:
+  stage: test
+  image: ubuntu:latest
+  before_script:
+    - apt-get update &amp;&amp; apt-get install -y wget
+    - wget https://github.com/ydkadri/finders/releases/latest/download/finder-x86_64-linux.tar.gz
+    - tar -xzf finder-x86_64-linux.tar.gz
+    - mv finder /usr/local/bin/
+  script:
+    - finder -s "FIXME" &gt; fixmes.txt
+    - test ! -s fixmes.txt || (cat fixmes.txt &amp;&amp; exit 1)
+  artifacts:
+    paths:
+      - fixmes.txt
+    when: on_failure
+</code></pre>
+<h3 id="circleci"><a class="header" href="#circleci">CircleCI</a></h3>
+<pre><code class="language-yaml">version: 2.1
+
+jobs:
+  code-quality:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
+      - run:
+          name: Install FindeRS
+          command: |
+            apt-get update &amp;&amp; apt-get install -y wget
+            wget https://github.com/ydkadri/finders/releases/latest/download/finder-x86_64-linux.tar.gz
+            tar -xzf finder-x86_64-linux.tar.gz
+            mv finder /usr/local/bin/
+      - run:
+          name: Check patterns
+          command: |
+            finder -s "TODO" -c
+</code></pre>
+<h2 id="git-hooks"><a class="header" href="#git-hooks">Git Hooks</a></h2>
+<h3 id="pre-commit-hook"><a class="header" href="#pre-commit-hook">Pre-commit Hook</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+# .git/hooks/pre-commit
+
+echo "Running pre-commit checks..."
+
+# Check for NOCOMMIT markers
+if finder -s "NOCOMMIT" &gt; /dev/null; then
+  echo "❌ Error: Found NOCOMMIT markers"
+  finder -s "NOCOMMIT"
+  exit 1
+fi
+
+# Check for debug statements
+if finder -s "debugger" -f ".js" &gt; /dev/null; then
+  echo "❌ Error: Found debugger statements"
+  finder -s "debugger" -f ".js"
+  exit 1
+fi
+
+# Check for unwrap() in Rust (warning only)
+unwrap_count=$(finder -s "unwrap()" -f ".rs" -c | awk -F: '{sum+=$2} END {print sum}')
+if [ "$unwrap_count" -gt 0 ]; then
+  echo "⚠️  Warning: Found $unwrap_count unwrap() calls"
+fi
+
+echo "✅ Pre-commit checks passed"
+</code></pre>
+<h3 id="pre-push-hook"><a class="header" href="#pre-push-hook">Pre-push Hook</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+# .git/hooks/pre-push
+
+echo "Running pre-push checks..."
+
+# Generate security report
+if finder -r "password|secret|api_key" -i --json &gt; security-scan.json; then
+  match_count=$(jq '[.[] | .matches | length] | add // 0' security-scan.json)
+  if [ "$match_count" -gt 0 ]; then
+    echo "⚠️  Warning: Found $match_count potential security issues"
+    echo "Review security-scan.json before pushing"
+  fi
+fi
+
+echo "✅ Pre-push checks complete"
+</code></pre>
+<h2 id="editor-integration"><a class="header" href="#editor-integration">Editor Integration</a></h2>
+<h3 id="vs-code-tasks"><a class="header" href="#vs-code-tasks">VS Code Tasks</a></h3>
+<p>Create <code>.vscode/tasks.json</code>:</p>
+<pre><code class="language-json">{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Find TODOs",
+      "type": "shell",
+      "command": "finder -s TODO",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Find in Files",
+      "type": "shell",
+      "command": "finder",
+      "args": [
+        "-s",
+        "${input:searchPattern}"
+      ],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "searchPattern",
+      "type": "promptString",
+      "description": "Enter search pattern"
+    }
+  ]
+}
+</code></pre>
+<h3 id="vim-integration"><a class="header" href="#vim-integration">Vim Integration</a></h3>
+<p>Add to <code>.vimrc</code>:</p>
+<pre><code class="language-vim">" Search with FindeRS and populate quickfix
+command! -nargs=1 FindeRS cexpr system('finder -s ' . shellescape(&lt;q-args&gt;))
+
+" Find word under cursor
+nnoremap &lt;leader&gt;f :FindeRS &lt;C-R&gt;&lt;C-W&gt;&lt;CR&gt;
+
+" Find TODOs
+nnoremap &lt;leader&gt;t :FindeRS TODO&lt;CR&gt;
+</code></pre>
+<h2 id="shell-scripts"><a class="header" href="#shell-scripts">Shell Scripts</a></h2>
+<h3 id="batch-processing"><a class="header" href="#batch-processing">Batch Processing</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+# process-matches.sh
+
+# Find all files matching pattern and process them
+finder -s "$1" -l | while read file; do
+  echo "Processing $file..."
+  # Your processing logic here
+  process_file "$file"
+done
+</code></pre>
+<h3 id="report-generation"><a class="header" href="#report-generation">Report Generation</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+# generate-report.sh
+
+OUTPUT_FILE="code-quality-report.html"
+
+cat &gt; "$OUTPUT_FILE" &lt;&lt; 'EOF'
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Code Quality Report&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: sans-serif; margin: 2em; }
+    .section { margin: 2em 0; }
+    .count { font-weight: bold; color: #d73a49; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Code Quality Report&lt;/h1&gt;
+EOF
+
+echo "&lt;div class='section'&gt;" &gt;&gt; "$OUTPUT_FILE"
+echo "&lt;h2&gt;TODOs&lt;/h2&gt;" &gt;&gt; "$OUTPUT_FILE"
+TODO_COUNT=$(finder -s "TODO" -c | awk -F: '{sum+=$2} END {print sum}')
+echo "&lt;p class='count'&gt;Total: $TODO_COUNT&lt;/p&gt;" &gt;&gt; "$OUTPUT_FILE"
+echo "&lt;pre&gt;" &gt;&gt; "$OUTPUT_FILE"
+finder -s "TODO" &gt;&gt; "$OUTPUT_FILE"
+echo "&lt;/pre&gt;" &gt;&gt; "$OUTPUT_FILE"
+echo "&lt;/div&gt;" &gt;&gt; "$OUTPUT_FILE"
+
+echo "&lt;/body&gt;&lt;/html&gt;" &gt;&gt; "$OUTPUT_FILE"
+
+echo "Report generated: $OUTPUT_FILE"
+</code></pre>
+<h2 id="make-integration"><a class="header" href="#make-integration">Make Integration</a></h2>
+<pre><code class="language-makefile">.PHONY: check-todos check-fixmes check-patterns
+
+check-todos:
+	@echo "Checking for TODOs..."
+	@finder -s "TODO" -c || true
+
+check-fixmes:
+	@echo "Checking for FIXMEs..."
+	@finder -s "FIXME" -c || true
+
+check-patterns: check-todos check-fixmes
+	@echo "Checking for unwrap()..."
+	@finder -f ".rs" -s "unwrap()" -c || true
+
+check: check-patterns
+	@echo "All checks complete"
+</code></pre>
+<h2 id="docker-integration"><a class="header" href="#docker-integration">Docker Integration</a></h2>
+<h3 id="dockerfile"><a class="header" href="#dockerfile">Dockerfile</a></h3>
+<pre><code class="language-dockerfile">FROM rust:latest as builder
+
+# Install FindeRS
+RUN wget https://github.com/ydkadri/finders/releases/latest/download/finder-x86_64-linux.tar.gz &amp;&amp; \
+    tar -xzf finder-x86_64-linux.tar.gz &amp;&amp; \
+    mv finder /usr/local/bin/
+
+# Use in build steps
+RUN finder -s "TODO" -c
+</code></pre>
+<h3 id="docker-compose"><a class="header" href="#docker-compose">Docker Compose</a></h3>
+<pre><code class="language-yaml">version: '3'
+services:
+  code-quality:
+    image: ubuntu:latest
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: &gt;
+      bash -c "
+        apt-get update &amp;&amp; apt-get install -y wget &amp;&amp;
+        wget https://github.com/ydkadri/finders/releases/latest/download/finder-x86_64-linux.tar.gz &amp;&amp;
+        tar -xzf finder-x86_64-linux.tar.gz &amp;&amp;
+        mv finder /usr/local/bin/ &amp;&amp;
+        finder -s TODO -c
+      "
+</code></pre>
+<h2 id="monitoring-and-alerting"><a class="header" href="#monitoring-and-alerting">Monitoring and Alerting</a></h2>
+<h3 id="track-technical-debt"><a class="header" href="#track-technical-debt">Track Technical Debt</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+# track-debt.sh
+
+# Count TODOs and FIXMEs over time
+DATE=$(date +%Y-%m-%d)
+TODO_COUNT=$(finder -s "TODO" -c | awk -F: '{sum+=$2} END {print sum}')
+FIXME_COUNT=$(finder -s "FIXME" -c | awk -F: '{sum+=$2} END {print sum}')
+
+echo "$DATE,$TODO_COUNT,$FIXME_COUNT" &gt;&gt; debt-tracking.csv
+
+# Alert if count exceeds threshold
+if [ "$TODO_COUNT" -gt 100 ]; then
+  echo "⚠️  Warning: TODO count exceeded 100!"
+  # Send alert (email, Slack, etc.)
+fi
+</code></pre>
+<h3 id="slack-integration"><a class="header" href="#slack-integration">Slack Integration</a></h3>
+<pre><code class="language-bash">#!/bin/bash
+# slack-alert.sh
+
+WEBHOOK_URL="your-slack-webhook-url"
+
+TODO_COUNT=$(finder -s "TODO" -c | awk -F: '{sum+=$2} END {print sum}')
+
+curl -X POST "$WEBHOOK_URL" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"text\": \"Daily Code Quality Report\",
+    \"blocks\": [
+      {
+        \"type\": \"section\",
+        \"text\": {
+          \"type\": \"mrkdwn\",
+          \"text\": \"*TODO Count:* $TODO_COUNT\"
+        }
+      }
+    ]
+  }"
+</code></pre>
+<h2 id="next-steps-6"><a class="header" href="#next-steps-6">Next Steps</a></h2>
+<ul>
+<li>Explore <a href="#common-use-cases">Common Use Cases</a> for more patterns</li>
+<li>Check <a href="#advanced-patterns">Advanced Patterns</a> for complex workflows</li>
+<li>Review <a href="#troubleshooting-1">Troubleshooting</a> for common issues</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="comparison-with-other-tools"><a class="header" href="#comparison-with-other-tools">Comparison with Other Tools</a></h1>
+<p>How FindeRS compares to other file and content search tools.</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>FindeRS is designed as a simpler alternative to <code>find</code> + <code>grep</code> combinations, with colored output and intuitive flags. It’s not trying to be the fastest tool, but rather the most convenient for daily use.</p>
+<h2 id="vs-find--grep"><a class="header" href="#vs-find--grep">vs. find + grep</a></h2>
+<p><strong>Traditional approach:</strong></p>
+<pre><code class="language-bash">find . -type f -name "*.py" -exec grep -iH "TODO" {} \;
+</code></pre>
+<p><strong>FindeRS approach:</strong></p>
+<pre><code class="language-bash">finder -f ".py" -s "TODO"
+</code></pre>
+<p><strong>Advantages of FindeRS:</strong></p>
+<ul>
+<li>Simpler syntax, easier to remember</li>
+<li>Colored output by default</li>
+<li>Single command instead of composition</li>
+<li>Multiple output modes (JSON, count, files-only)</li>
+<li>Consistent interface across platforms</li>
+</ul>
+<p><strong>Advantages of find + grep:</strong></p>
+<ul>
+<li>More flexible for complex queries</li>
+<li>Universally available on Unix systems</li>
+<li>More control over search behavior</li>
+<li>Better for shell scripting with advanced features</li>
+</ul>
+<p><strong>When to use FindeRS:</strong></p>
+<ul>
+<li>Daily development tasks</li>
+<li>Quick searches in projects</li>
+<li>When you want readable, colored output</li>
+<li>When you prefer simplicity over flexibility</li>
+</ul>
+<p><strong>When to use find + grep:</strong></p>
+<ul>
+<li>Complex directory traversal logic</li>
+<li>Advanced grep features (context lines, binary files)</li>
+<li>Shell scripts requiring POSIX compatibility</li>
+<li>Systems where installing new tools is restricted</li>
+</ul>
+<h2 id="vs-ripgrep-rg"><a class="header" href="#vs-ripgrep-rg">vs. ripgrep (rg)</a></h2>
+<p><strong>ripgrep:</strong></p>
+<pre><code class="language-bash">rg "TODO" --type py
+</code></pre>
+<p><strong>FindeRS:</strong></p>
+<pre><code class="language-bash">finder -f ".py" -s "TODO"
+</code></pre>
+<p><strong>Advantages of ripgrep:</strong></p>
+<ul>
+<li>Much faster (optimized Rust implementation)</li>
+<li>Respects .gitignore by default</li>
+<li>Advanced features (multiline search, context)</li>
+<li>Better regex performance</li>
+<li>More mature and feature-complete</li>
+</ul>
+<p><strong>Advantages of FindeRS:</strong></p>
+<ul>
+<li>Simpler mental model (files vs. content)</li>
+<li>Smaller learning curve</li>
+<li>Explicit about what it searches</li>
+<li>Good enough for most daily tasks</li>
+</ul>
+<p><strong>When to use ripgrep:</strong></p>
+<ul>
+<li>Large codebases (100k+ files)</li>
+<li>Need maximum performance</li>
+<li>Complex regex patterns</li>
+<li>Want .gitignore integration</li>
+<li>Replacing grep in workflows</li>
+</ul>
+<p><strong>When to use FindeRS:</strong></p>
+<ul>
+<li>Small to medium projects</li>
+<li>Learning command-line search tools</li>
+<li>Want explicit control over file filtering</li>
+<li>Prefer simplicity over speed</li>
+</ul>
+<h2 id="vs-the-silver-searcher-ag"><a class="header" href="#vs-the-silver-searcher-ag">vs. The Silver Searcher (ag)</a></h2>
+<p><strong>ag:</strong></p>
+<pre><code class="language-bash">ag "TODO" --python
+</code></pre>
+<p><strong>FindeRS:</strong></p>
+<pre><code class="language-bash">finder -f ".py" -s "TODO"
+</code></pre>
+<p>Similar trade-offs to ripgrep:</p>
+<ul>
+<li>ag is faster and more feature-rich</li>
+<li>FindeRS is simpler and more explicit</li>
+<li>ag respects .gitignore, FindeRS searches everything</li>
+<li>ag is better for large codebases</li>
+</ul>
+<h2 id="vs-ack"><a class="header" href="#vs-ack">vs. ack</a></h2>
+<p><strong>ack:</strong></p>
+<pre><code class="language-bash">ack "TODO" --type=python
+</code></pre>
+<p><strong>FindeRS:</strong></p>
+<pre><code class="language-bash">finder -f ".py" -s "TODO"
+</code></pre>
+<ul>
+<li>ack has better file-type detection</li>
+<li>FindeRS is simpler and more predictable</li>
+<li>ack has more filtering options</li>
+<li>FindeRS is easier to learn</li>
+</ul>
+<h2 id="performance-comparison"><a class="header" href="#performance-comparison">Performance Comparison</a></h2>
+<p><strong>Benchmark setup:</strong> 1,000 files, searching for a common pattern</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tool</th><th>Small (10 files)</th><th>Medium (1k files)</th><th>Large (10k files)</th></tr>
+</thead>
+<tbody>
+<tr><td>finder</td><td>2ms</td><td>9ms</td><td>43ms</td></tr>
+<tr><td>find + grep</td><td>90ms</td><td>902ms</td><td>4624ms</td></tr>
+<tr><td>ripgrep</td><td>5ms</td><td>8ms</td><td>22ms</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Benchmarks run on 2021 MacBook Pro M1</li>
+<li>Results will vary based on file size and pattern complexity</li>
+<li>FindeRS is fast enough for daily development tasks</li>
+<li>For very large codebases (100k+ files), ripgrep is significantly faster</li>
+</ul>
+<h2 id="feature-comparison"><a class="header" href="#feature-comparison">Feature Comparison</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>FindeRS</th><th>find + grep</th><th>ripgrep</th><th>ag</th><th>ack</th></tr>
+</thead>
+<tbody>
+<tr><td>Simple syntax</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>Colored output</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>Regex support</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>JSON output</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td></tr>
+<tr><td>.gitignore integration</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>File type detection</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>Multiline search</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+<tr><td>Context lines</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>Single binary</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td></tr>
+<tr><td>Cross-platform</td><td>✅</td><td>Partial</td><td>✅</td><td>✅</td><td>✅</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="choosing-the-right-tool"><a class="header" href="#choosing-the-right-tool">Choosing the Right Tool</a></h2>
+<p><strong>Use FindeRS when:</strong></p>
+<ul>
+<li>You’re tired of typing complex find+grep commands</li>
+<li>You want a simple, predictable tool</li>
+<li>Performance is “good enough” for your use case</li>
+<li>You prefer explicit file filtering over automatic detection</li>
+</ul>
+<p><strong>Use ripgrep when:</strong></p>
+<ul>
+<li>Performance is critical (large codebases)</li>
+<li>You want .gitignore integration</li>
+<li>You need advanced regex features</li>
+<li>You’re replacing grep in existing workflows</li>
+</ul>
+<p><strong>Use find + grep when:</strong></p>
+<ul>
+<li>You need maximum flexibility</li>
+<li>You’re writing portable shell scripts</li>
+<li>You can’t install new tools</li>
+<li>You need advanced find features (permissions, timestamps)</li>
+</ul>
+<p><strong>Use ag or ack when:</strong></p>
+<ul>
+<li>You want automatic file-type detection</li>
+<li>You need .gitignore integration</li>
+<li>Performance matters but not as much as with ripgrep</li>
+</ul>
+<h2 id="philosophy-differences"><a class="header" href="#philosophy-differences">Philosophy Differences</a></h2>
+<p><strong>FindeRS philosophy:</strong></p>
+<ul>
+<li>Simple is better than complex</li>
+<li>Explicit is better than implicit</li>
+<li>Good enough performance for most use cases</li>
+<li>Optimize for daily development tasks</li>
+</ul>
+<p><strong>ripgrep philosophy:</strong></p>
+<ul>
+<li>Fast is better than slow</li>
+<li>Smart defaults (respect .gitignore)</li>
+<li>Feature-complete grep replacement</li>
+</ul>
+<p><strong>find + grep philosophy:</strong></p>
+<ul>
+<li>Maximum flexibility</li>
+<li>Composability with Unix tools</li>
+<li>POSIX compliance</li>
+</ul>
+<h2 id="migration-guide"><a class="header" href="#migration-guide">Migration Guide</a></h2>
+<h3 id="from-find--grep"><a class="header" href="#from-find--grep">From find + grep</a></h3>
+<pre><code class="language-bash"># Before
+find . -name "*.rs" -exec grep -H "TODO" {} \;
+
+# After
+finder -f ".rs" -s "TODO"
+</code></pre>
+<h3 id="from-ripgrep"><a class="header" href="#from-ripgrep">From ripgrep</a></h3>
+<pre><code class="language-bash"># Before
+rg "TODO" --type rust
+
+# After
+finder -f ".rs" -s "TODO"
+</code></pre>
+<p>Note: FindeRS doesn’t automatically detect file types, you need to specify the extension.</p>
+<h2 id="next-steps-7"><a class="header" href="#next-steps-7">Next Steps</a></h2>
+<ul>
+<li>Check <a href="#performance">Performance</a> for optimization tips</li>
+<li>Review <a href="#common-use-cases">Common Use Cases</a> for practical examples</li>
+<li>See <a href="#cli-reference">CLI Reference</a> for all available options</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="performance"><a class="header" href="#performance">Performance</a></h1>
+<p>Understanding FindeRS performance characteristics and optimization strategies.</p>
+<h2 id="performance-goals"><a class="header" href="#performance-goals">Performance Goals</a></h2>
+<p>FindeRS is designed to be <strong>fast enough</strong> for daily development tasks, not the absolute fastest tool. The goal is:</p>
+<blockquote>
+<p>“Fast enough that you never notice, simple enough that you always remember”</p>
+</blockquote>
+<h2 id="benchmark-results"><a class="header" href="#benchmark-results">Benchmark Results</a></h2>
+<h3 id="comparison-with-other-tools-1"><a class="header" href="#comparison-with-other-tools-1">Comparison with Other Tools</a></h3>
+<p><strong>Latest benchmark results:</strong> <a href="https://ydkadri.github.io/finders/benchmarks/">View detailed benchmarks →</a></p>
+<p>The benchmark suite compares FindeRS against <code>find+grep</code> and <code>ripgrep</code> across different repository sizes (small, medium, large) and search patterns (common, rare). Results are updated automatically on every release.</p>
+<p><strong>Key observations:</strong></p>
+<ul>
+<li>FindeRS is significantly faster than find+grep</li>
+<li>FindeRS is comparable to ripgrep for small to medium projects</li>
+<li>For very large codebases (100k+ files), ripgrep pulls ahead</li>
+<li>For typical development work (&lt; 10k files), the difference is negligible</li>
+</ul>
+<h3 id="real-world-performance"><a class="header" href="#real-world-performance">Real-world Performance</a></h3>
+<p><strong>Typical project sizes:</strong></p>
+<ul>
+<li>Small project (React app): ~500 files → <strong>5ms</strong></li>
+<li>Medium project (Rust service): ~2,000 files → <strong>12ms</strong></li>
+<li>Large project (monorepo): ~20,000 files → <strong>95ms</strong></li>
+</ul>
+<p>All well within “feels instant” territory.</p>
+<h2 id="performance-characteristics"><a class="header" href="#performance-characteristics">Performance Characteristics</a></h2>
+<h3 id="what-makes-finders-fast"><a class="header" href="#what-makes-finders-fast">What Makes FindeRS Fast</a></h3>
+<ol>
+<li>
+<p><strong>Streaming Architecture</strong></p>
+<ul>
+<li>Files processed as found, not loaded into memory</li>
+<li>Memory usage stays constant regardless of result count</li>
+<li>Starts outputting matches immediately</li>
+</ul>
+</li>
+<li>
+<p><strong>Efficient File Walking</strong></p>
+<ul>
+<li>Uses platform-optimized directory traversal</li>
+<li>Minimal allocations during directory scanning</li>
+<li>Skips unreadable files quickly</li>
+</ul>
+</li>
+<li>
+<p><strong>Smart Pattern Matching</strong></p>
+<ul>
+<li>Literal string search uses optimized Boyer-Moore variant</li>
+<li>Regex compilation happens once, not per file</li>
+<li>UTF-8 validation only when needed</li>
+</ul>
+</li>
+</ol>
+<h3 id="what-limits-performance"><a class="header" href="#what-limits-performance">What Limits Performance</a></h3>
+<ol>
+<li>
+<p><strong>Single-threaded by design</strong></p>
+<ul>
+<li>Simpler implementation, easier to reason about</li>
+<li>Sufficient for typical use cases</li>
+<li>Parallelization planned for future versions</li>
+</ul>
+</li>
+<li>
+<p><strong>No .gitignore handling</strong></p>
+<ul>
+<li>Searches all files, including build artifacts</li>
+<li>Can be slower on projects with large <code>node_modules/</code> or <code>target/</code></li>
+<li>Solution: Use shell patterns to limit search scope</li>
+</ul>
+</li>
+<li>
+<p><strong>No directory caching</strong></p>
+<ul>
+<li>Each search walks the directory tree fresh</li>
+<li>Good: Always up-to-date results</li>
+<li>Bad: Repeated searches don’t get faster</li>
+</ul>
+</li>
+</ol>
+<h2 id="optimization-strategies"><a class="header" href="#optimization-strategies">Optimization Strategies</a></h2>
+<h3 id="limit-search-scope"><a class="header" href="#limit-search-scope">Limit Search Scope</a></h3>
+<p>Instead of searching the entire project:</p>
+<pre><code class="language-bash"># ❌ Slow: searches everything including node_modules
+finder -s "pattern"
+
+# ✅ Fast: search only source directory
+finder src/ -s "pattern"
+
+# ✅ Fast: target specific file types in directory
+finder src/ -f ".rs" -s "pattern"
+</code></pre>
+<h3 id="use-specific-file-patterns"><a class="header" href="#use-specific-file-patterns">Use Specific File Patterns</a></h3>
+<pre><code class="language-bash"># ❌ Slower: search all files then filter
+finder -s "TODO" | grep ".rs:"
+
+# ✅ Faster: filter files during search
+finder -f ".rs" -s "TODO"
+</code></pre>
+<h3 id="choose-the-right-output-mode"><a class="header" href="#choose-the-right-output-mode">Choose the Right Output Mode</a></h3>
+<pre><code class="language-bash"># If you only need file paths:
+finder -s "pattern" -l  # Faster, stops after first match per file
+
+# If you need match counts:
+finder -s "pattern" -c  # Faster, no need to format output
+
+# If you need full context:
+finder -s "pattern"     # Slower, formats each match
+</code></pre>
+<h3 id="optimize-regex-patterns"><a class="header" href="#optimize-regex-patterns">Optimize Regex Patterns</a></h3>
+<pre><code class="language-bash"># ❌ Slow: complex regex
+finder -r ".*TODO.*|.*FIXME.*"
+
+# ✅ Fast: simpler alternative
+finder -r "TODO|FIXME"
+
+# ✅ Faster: literal search if no regex needed
+finder -s "TODO"
+</code></pre>
+<h3 id="exclude-large-directories"><a class="header" href="#exclude-large-directories">Exclude Large Directories</a></h3>
+<pre><code class="language-bash"># Manually exclude directories
+finder src/ tests/ -s "pattern"
+
+# Or use find to pre-filter
+find . -type f -not -path "*/node_modules/*" -not -path "*/target/*" | \
+  xargs finder -s "pattern"
+</code></pre>
+<h2 id="memory-usage"><a class="header" href="#memory-usage">Memory Usage</a></h2>
+<p>FindeRS has minimal memory footprint:</p>
+<ul>
+<li><strong>Base memory:</strong> ~2-3 MB (Rust binary overhead)</li>
+<li><strong>Per-file overhead:</strong> negligible (streaming processing)</li>
+<li><strong>Large results:</strong> constant memory (prints as it finds)</li>
+</ul>
+<p><strong>Example:</strong> Searching 100k files with 10k matches uses ~3MB RAM.</p>
+<h2 id="disk-io-patterns"><a class="header" href="#disk-io-patterns">Disk I/O Patterns</a></h2>
+<p>FindeRS is I/O bound, not CPU bound:</p>
+<ul>
+<li>Directory traversal is sequential (OS-optimized)</li>
+<li>File reads are buffered (8KB chunks)</li>
+<li>No unnecessary seeks or multiple passes</li>
+</ul>
+<p><strong>Tip:</strong> Performance on SSD vs HDD:</p>
+<ul>
+<li>SSD: ~10x faster due to random access patterns</li>
+<li>HDD: limited by seek time when walking large directory trees</li>
+</ul>
+<h2 id="scaling-considerations"><a class="header" href="#scaling-considerations">Scaling Considerations</a></h2>
+<h3 id="when-finders-is-fast-enough"><a class="header" href="#when-finders-is-fast-enough">When FindeRS is Fast Enough</a></h3>
+<ul>
+<li>Projects under 50k files</li>
+<li>Local development (SSD)</li>
+<li>Ad-hoc searches (not in tight loops)</li>
+<li>Interactive use</li>
+</ul>
+<h3 id="when-to-consider-alternatives"><a class="header" href="#when-to-consider-alternatives">When to Consider Alternatives</a></h3>
+<ul>
+<li>Monorepos with 100k+ files → use ripgrep</li>
+<li>Repeated searches (CI/CD) → cache file lists</li>
+<li>Network filesystems → use local checkouts</li>
+<li>Need .gitignore filtering → use ripgrep</li>
+</ul>
+<h2 id="future-performance-improvements"><a class="header" href="#future-performance-improvements">Future Performance Improvements</a></h2>
+<p>Planned optimizations:</p>
+<ol>
+<li>
+<p><strong>Parallel file processing</strong></p>
+<ul>
+<li>Process multiple files concurrently</li>
+<li>Target: 3-5x speedup on multi-core systems</li>
+<li>Status: Planned for v4.0.0</li>
+</ul>
+</li>
+<li>
+<p><strong>Directory ignore patterns</strong></p>
+<ul>
+<li>Skip common build directories automatically</li>
+<li>Target: 2x speedup on typical projects</li>
+<li>Status: Under consideration</li>
+</ul>
+</li>
+<li>
+<p><strong>Incremental search results</strong></p>
+<ul>
+<li>Streaming JSON output</li>
+<li>Target: Better experience with large result sets</li>
+<li>Status: Planned for v4.1.0</li>
+</ul>
+</li>
+</ol>
+<h2 id="benchmarking-your-use-case"><a class="header" href="#benchmarking-your-use-case">Benchmarking Your Use Case</a></h2>
+<p>To benchmark on your own projects:</p>
+<pre><code class="language-bash"># Simple timing
+time finder -s "pattern" &gt; /dev/null
+
+# Compare with ripgrep
+time rg "pattern" &gt; /dev/null
+
+# Test different approaches
+time finder src/ -s "pattern" &gt; /dev/null  # Limited scope
+time finder -f ".rs" -s "pattern" &gt; /dev/null  # File filtering
+</code></pre>
+<h2 id="performance-profiling"><a class="header" href="#performance-profiling">Performance Profiling</a></h2>
+<p>For detailed performance analysis:</p>
+<pre><code class="language-bash"># Build with profiling
+cargo build --release --features profiling
+
+# Run with profiling (requires Instruments on macOS or perf on Linux)
+cargo instruments -t time --release -- -s "pattern"
+</code></pre>
+<h2 id="next-steps-8"><a class="header" href="#next-steps-8">Next Steps</a></h2>
+<ul>
+<li>Review <a href="#comparison-with-other-tools">Comparison</a> with other tools</li>
+<li>Check <a href="#common-use-cases">Common Use Cases</a> for efficient patterns</li>
+<li>See <a href="#advanced-patterns">Advanced Patterns</a> for optimization techniques</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="troubleshooting-1"><a class="header" href="#troubleshooting-1">Troubleshooting</a></h1>
+<p>Common issues and their solutions.</p>
+<h2 id="installation-issues"><a class="header" href="#installation-issues">Installation Issues</a></h2>
+<h3 id="command-not-found-finder"><a class="header" href="#command-not-found-finder">“command not found: finder”</a></h3>
+<p><strong>Problem:</strong> Shell can’t find the finder binary.</p>
+<p><strong>Solution:</strong> Add the binary location to your PATH:</p>
+<pre><code class="language-bash"># Check where finder is installed
+which finder
+
+# If not found, add to PATH (in ~/.bashrc or ~/.zshrc)
+export PATH="$PATH:/usr/local/bin"
+
+# Or for cargo install
+export PATH="$PATH:$HOME/.cargo/bin"
+
+# Reload shell configuration
+source ~/.bashrc  # or source ~/.zshrc
+</code></pre>
+<h3 id="permission-denied"><a class="header" href="#permission-denied">Permission Denied</a></h3>
+<p><strong>Problem:</strong> Binary is not executable.</p>
+<p><strong>Solution:</strong> Make it executable:</p>
+<pre><code class="language-bash">chmod +x /usr/local/bin/finder
+</code></pre>
+<h3 id="macos-cannot-be-opened-because-the-developer-cannot-be-verified"><a class="header" href="#macos-cannot-be-opened-because-the-developer-cannot-be-verified">macOS “cannot be opened because the developer cannot be verified”</a></h3>
+<p><strong>Problem:</strong> macOS Gatekeeper blocks unsigned binaries.</p>
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Remove quarantine attribute
+xattr -d com.apple.quarantine /usr/local/bin/finder
+
+# Or allow in System Preferences:
+# System Preferences → Security &amp; Privacy → General → Allow anyway
+</code></pre>
+<h2 id="search-issues"><a class="header" href="#search-issues">Search Issues</a></h2>
+<h3 id="no-results-when-expected"><a class="header" href="#no-results-when-expected">No Results When Expected</a></h3>
+<p><strong>Check 1: Verify the pattern</strong></p>
+<pre><code class="language-bash"># Test with simple, known pattern first
+finder -s "README"
+
+# Check case sensitivity
+finder -s "pattern" -i
+</code></pre>
+<p><strong>Check 2: Verify file filtering</strong></p>
+<pre><code class="language-bash"># Remove file filter to search all files
+finder -s "pattern"  # Without -f flag
+
+# Check if files exist
+finder -f ".rs" -l
+</code></pre>
+<p><strong>Check 3: Verify search location</strong></p>
+<pre><code class="language-bash"># Explicitly specify directory
+finder /path/to/project -s "pattern"
+
+# Check current directory
+pwd
+</code></pre>
+<h3 id="too-many-results"><a class="header" href="#too-many-results">Too Many Results</a></h3>
+<p><strong>Limit scope:</strong></p>
+<pre><code class="language-bash"># Search specific directory
+finder src/ -s "pattern"
+
+# Add file filter
+finder -f ".rs" -s "pattern"
+
+# Use more specific pattern
+finder -r "^TODO:" -s "pattern"  # Line must start with TODO:
+</code></pre>
+<h3 id="regex-not-working"><a class="header" href="#regex-not-working">Regex Not Working</a></h3>
+<p><strong>Problem:</strong> Pattern not matching as expected.</p>
+<p><strong>Common issues:</strong></p>
+<pre><code class="language-bash"># ❌ Wrong: shell interprets special characters
+finder -r *.rs
+
+# ✅ Correct: quote the pattern
+finder -r ".*\.rs$"
+
+# ❌ Wrong: mixing regex and literal search
+finder -s -r "pattern"  # Can't use both
+
+# ✅ Correct: choose one
+finder -r "pattern"  # Regex
+finder -s "pattern"  # Literal
+</code></pre>
+<p><strong>Test your regex:</strong></p>
+<pre><code class="language-bash"># Use a simple pattern first
+finder -r "test"
+
+# Add complexity gradually
+finder -r "test.*function"
+finder -r "test.*function.*\("
+</code></pre>
+<h3 id="files-not-being-searched"><a class="header" href="#files-not-being-searched">Files Not Being Searched</a></h3>
+<p><strong>Check permissions:</strong></p>
+<pre><code class="language-bash"># Run with verbose flag
+finder -s "pattern" -v
+
+# This will show files that couldn't be read
+</code></pre>
+<p><strong>Common causes:</strong></p>
+<ul>
+<li>File is binary (only searches text files)</li>
+<li>Permission denied</li>
+<li>Symbolic link to non-existent file</li>
+</ul>
+<h2 id="output-issues"><a class="header" href="#output-issues">Output Issues</a></h2>
+<h3 id="no-colored-output"><a class="header" href="#no-colored-output">No Colored Output</a></h3>
+<p><strong>Check 1: Verify terminal support</strong></p>
+<pre><code class="language-bash"># Force colors on
+finder -s "pattern" --colour
+</code></pre>
+<p><strong>Check 2: Check environment variables</strong></p>
+<pre><code class="language-bash"># Check if colors are disabled
+echo $NO_COLOR  # Should be empty
+
+# Check CLICOLOR settings
+echo $CLICOLOR
+echo $CLICOLOR_FORCE
+</code></pre>
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Enable colors
+unset NO_COLOR
+
+# Or force colors
+finder -s "pattern" --colour
+</code></pre>
+<h3 id="colored-output-in-pipesfiles"><a class="header" href="#colored-output-in-pipesfiles">Colored Output in Pipes/Files</a></h3>
+<p><strong>Problem:</strong> Colors appear as escape codes when piping or redirecting.</p>
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Remove colors for pipes
+finder -s "pattern" --no-colour &gt; output.txt
+
+# Or keep colors for less
+finder -s "pattern" --colour | less -R
+</code></pre>
+<h3 id="json-output-invalid"><a class="header" href="#json-output-invalid">JSON Output Invalid</a></h3>
+<p><strong>Problem:</strong> JSON output is malformed.</p>
+<p><strong>Check:</strong></p>
+<pre><code class="language-bash"># Validate JSON
+finder -s "pattern" --json | jq .
+
+# If jq fails, check for:
+# - Binary files in output (shouldn't happen, but check with -v)
+# - Special characters in filenames
+</code></pre>
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Use verbose mode to identify problematic files
+finder -s "pattern" --json -v
+</code></pre>
+<h2 id="performance-issues"><a class="header" href="#performance-issues">Performance Issues</a></h2>
+<h3 id="very-slow-search"><a class="header" href="#very-slow-search">Very Slow Search</a></h3>
+<p><strong>Check 1: Are you searching too many files?</strong></p>
+<pre><code class="language-bash"># Count files being searched
+find . -type f | wc -l
+
+# Limit scope
+finder src/ -s "pattern"  # Instead of finder -s "pattern"
+</code></pre>
+<p><strong>Check 2: Is it a network drive?</strong></p>
+<pre><code class="language-bash"># Check mount points
+df -h .
+
+# Copy to local disk if on network drive
+</code></pre>
+<p><strong>Check 3: Large binary files?</strong></p>
+<pre><code class="language-bash"># Find large files
+find . -type f -size +10M
+
+# Exclude them from search
+finder src/ -s "pattern"  # Instead of root directory
+</code></pre>
+<h3 id="high-memory-usage"><a class="header" href="#high-memory-usage">High Memory Usage</a></h3>
+<p><strong>This shouldn’t happen</strong> - FindeRS uses streaming processing.</p>
+<p>If you’re seeing high memory usage:</p>
+<ol>
+<li>
+<p>Check if you’re collecting all output in memory:</p>
+<pre><code class="language-bash"># ❌ Bad: stores all results
+results=$(finder -s "pattern")
+
+# ✅ Good: process as stream
+finder -s "pattern" | while read line; do
+  process "$line"
+done
+</code></pre>
+</li>
+<li>
+<p>Report as a bug with reproduction steps</p>
+</li>
+</ol>
+<h2 id="error-messages"><a class="header" href="#error-messages">Error Messages</a></h2>
+<h3 id="permission-denied-1"><a class="header" href="#permission-denied-1">“Permission denied”</a></h3>
+<p><strong>Cause:</strong> Can’t read file or directory.</p>
+<p><strong>Solution:</strong> Usually safe to ignore - these files are skipped. Use <code>-v</code> to see which files:</p>
+<pre><code class="language-bash">finder -s "pattern" -v
+</code></pre>
+<h3 id="invalid-regex-pattern"><a class="header" href="#invalid-regex-pattern">“Invalid regex pattern”</a></h3>
+<p><strong>Cause:</strong> Malformed regular expression.</p>
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Check regex syntax
+finder -r "valid.*pattern"
+
+# Escape special characters
+finder -r "test\.rs"  # Literal dot
+finder -r "\\$"       # Literal dollar sign
+
+# Test pattern separately
+echo "test string" | grep -E "your.*pattern"
+</code></pre>
+<h3 id="no-such-file-or-directory"><a class="header" href="#no-such-file-or-directory">“No such file or directory”</a></h3>
+<p><strong>Cause:</strong> Specified path doesn’t exist.</p>
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Check path exists
+ls /path/to/search
+
+# Use relative or absolute path
+finder ./src -s "pattern"
+finder /absolute/path -s "pattern"
+</code></pre>
+<h2 id="integration-issues"><a class="header" href="#integration-issues">Integration Issues</a></h2>
+<h3 id="not-working-in-shell-scripts"><a class="header" href="#not-working-in-shell-scripts">Not Working in Shell Scripts</a></h3>
+<p><strong>Problem:</strong> Works in terminal but not in scripts.</p>
+<p><strong>Common causes:</strong></p>
+<pre><code class="language-bash"># ❌ PATH not set in script
+#!/bin/bash
+finder -s "pattern"  # May not find finder
+
+# ✅ Use full path or set PATH
+#!/bin/bash
+export PATH="$PATH:/usr/local/bin"
+finder -s "pattern"
+
+# Or use full path
+/usr/local/bin/finder -s "pattern"
+</code></pre>
+<h3 id="not-working-in-cron"><a class="header" href="#not-working-in-cron">Not Working in Cron</a></h3>
+<p><strong>Problem:</strong> Works manually but not in cron.</p>
+<p><strong>Solution:</strong> Cron has minimal environment:</p>
+<pre><code class="language-bash"># In crontab, set PATH
+PATH=/usr/local/bin:/usr/bin:/bin
+
+# Or use full path in command
+0 9 * * * /usr/local/bin/finder /path/to/project -s "pattern"
+</code></pre>
+<h3 id="not-working-in-git-hooks"><a class="header" href="#not-working-in-git-hooks">Not Working in Git Hooks</a></h3>
+<p><strong>Problem:</strong> Hooks can’t find finder.</p>
+<p><strong>Solution:</strong> Same as scripts - set PATH or use full path:</p>
+<pre><code class="language-bash">#!/bin/bash
+# .git/hooks/pre-commit
+
+PATH="/usr/local/bin:$PATH"
+finder -s "NOCOMMIT" || exit 1
+</code></pre>
+<h2 id="platform-specific-issues"><a class="header" href="#platform-specific-issues">Platform-Specific Issues</a></h2>
+<h3 id="windows-line-endings"><a class="header" href="#windows-line-endings">Windows: Line Endings</a></h3>
+<p><strong>Problem:</strong> Not finding patterns at line ends on Windows files.</p>
+<p><strong>Cause:</strong> Windows uses CRLF (<code>\r\n</code>), searches may not account for <code>\r</code>.</p>
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Convert line endings
+find . -type f -name "*.txt" -exec dos2unix {} \;
+
+# Or search for pattern with optional \r
+finder -r "pattern\r?$"
+</code></pre>
+<h3 id="macos-spotlight-interference"><a class="header" href="#macos-spotlight-interference">macOS: Spotlight Interference</a></h3>
+<p><strong>Problem:</strong> Slow searches immediately after updating files.</p>
+<p><strong>Cause:</strong> Spotlight indexing in background.</p>
+<p><strong>Solution:</strong> Wait a moment, or:</p>
+<pre><code class="language-bash"># Exclude from Spotlight temporarily
+sudo mdutil -i off /path/to/project
+finder -s "pattern"
+sudo mdutil -i on /path/to/project
+</code></pre>
+<h2 id="getting-help-1"><a class="header" href="#getting-help-1">Getting Help</a></h2>
+<h3 id="gathering-debug-information"><a class="header" href="#gathering-debug-information">Gathering Debug Information</a></h3>
+<p>When reporting issues, include:</p>
+<pre><code class="language-bash"># Version
+finder --version
+
+# System info
+uname -a
+
+# Command that failed (with -v flag)
+finder -s "pattern" -v
+
+# Environment
+env | grep -E "(COLOR|PATH)"
+</code></pre>
+<h3 id="where-to-get-help"><a class="header" href="#where-to-get-help">Where to Get Help</a></h3>
+<ul>
+<li><strong>GitHub Issues:</strong> https://github.com/ydkadri/finders/issues</li>
+<li><strong>Documentation:</strong> https://ydkadri.github.io/finders</li>
+<li><strong>Email:</strong> youcef.kadri@example.com</li>
+</ul>
+<h3 id="before-reporting-a-bug"><a class="header" href="#before-reporting-a-bug">Before Reporting a Bug</a></h3>
+<ol>
+<li>Check this troubleshooting guide</li>
+<li>Try with latest version (<code>finder --version</code>)</li>
+<li>Test with minimal example</li>
+<li>Include reproduction steps</li>
+</ol>
+<h2 id="next-steps-9"><a class="header" href="#next-steps-9">Next Steps</a></h2>
+<ul>
+<li>Review <a href="#common-use-cases">Common Use Cases</a> for usage patterns</li>
+<li>Check <a href="#cli-reference">CLI Reference</a> for all options</li>
+<li>See <a href="#performance">Performance</a> for optimization tips</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
+<p>Thanks for your interest in contributing to FindeRS! This is a personal project that grew into my daily command-line companion, and I’m happy to have others involved.</p>
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
+<p>FindeRS is written in Rust. You’ll need:</p>
+<ul>
+<li>Rust 1.70 or later (<code>rustup update</code>)</li>
+<li>Git</li>
+<li>A GitHub account (for pull requests)</li>
+</ul>
+<p>Clone and build:</p>
+<pre><code class="language-bash">git clone https://github.com/ydkadri/finders.git
+cd finders
+cargo build
+cargo test
+</code></pre>
+<h2 id="areas-for-contribution"><a class="header" href="#areas-for-contribution">Areas for Contribution</a></h2>
+<p>I’m particularly interested in:</p>
+<ul>
+<li><strong>Bug fixes</strong> - If something doesn’t work as documented, please fix it!</li>
+<li><strong>Documentation</strong> - Improvements to examples, clarifications, typo fixes</li>
+<li><strong>Performance</strong> - Benchmarks, profiling, optimization ideas</li>
+<li><strong>Testing</strong> - More test cases, especially edge cases</li>
+<li><strong>Examples</strong> - Real-world usage patterns and integration examples</li>
+</ul>
+<h2 id="before-you-start"><a class="header" href="#before-you-start">Before You Start</a></h2>
+<p>For anything beyond typos and documentation:</p>
+<ol>
+<li><strong>Open an issue first</strong> to discuss the change</li>
+<li>Wait for feedback before investing significant time</li>
+<li>Keep changes focused and atomic</li>
+</ol>
+<p>This helps ensure your effort aligns with the project direction.</p>
+<h2 id="development-workflow"><a class="header" href="#development-workflow">Development Workflow</a></h2>
+<h3 id="making-changes"><a class="header" href="#making-changes">Making Changes</a></h3>
+<ol>
+<li>Fork the repository</li>
+<li>Create a feature branch (<code>git checkout -b fix/your-fix</code>)</li>
+<li>Make your changes</li>
+<li>Write or update tests</li>
+<li>Run the checks (see below)</li>
+<li>Commit with clear messages</li>
+<li>Push and open a pull request</li>
+</ol>
+<h3 id="quality-checks"><a class="header" href="#quality-checks">Quality Checks</a></h3>
+<p>Before submitting:</p>
+<pre><code class="language-bash"># Format code
+cargo fmt
+
+# Lint
+cargo clippy -- -D warnings
+
+# Test
+cargo test
+
+# Benchmarks (if you changed performance-sensitive code)
+cargo bench
+</code></pre>
+<p>All checks must pass before your PR can be merged.</p>
+<h3 id="writing-tests"><a class="header" href="#writing-tests">Writing Tests</a></h3>
+<ul>
+<li>Add unit tests in the same file as the code</li>
+<li>Add integration tests in <code>tests/</code> for end-to-end scenarios</li>
+<li>Test both happy paths and error cases</li>
+</ul>
+<p>Example:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_your_feature() {
+        // Arrange
+        let input = setup_test_data();
+        
+        // Act
+        let result = your_function(input);
+        
+        // Assert
+        assert_eq!(result, expected);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="commit-messages"><a class="header" href="#commit-messages">Commit Messages</a></h3>
+<p>Keep them clear and descriptive:</p>
+<pre><code>Fix regex escaping in file patterns
+
+Filenames with dots were incorrectly treated as regex
+metacharacters. Now properly escape special characters
+before compiling regex patterns.
+
+Fixes #42
+</code></pre>
+<h2 id="pull-request-process"><a class="header" href="#pull-request-process">Pull Request Process</a></h2>
+<ol>
+<li><strong>Create PR early</strong> - Mark as draft if not ready for review</li>
+<li><strong>Describe the change</strong> - What problem does it solve? Why this approach?</li>
+<li><strong>Link to issue</strong> - Reference any related issues</li>
+<li><strong>Be responsive</strong> - Reply to feedback and questions</li>
+<li><strong>Squash commits</strong> - Before marking ready, rebase into logical commits</li>
+</ol>
+<h3 id="pr-checklist"><a class="header" href="#pr-checklist">PR Checklist</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> Tests added/updated and passing</li>
+<li><input disabled="" type="checkbox"> Documentation updated (if needed)</li>
+<li><input disabled="" type="checkbox"> <code>cargo fmt</code> and <code>cargo clippy</code> pass</li>
+<li><input disabled="" type="checkbox"> Commit messages are clear</li>
+<li><input disabled="" type="checkbox"> CHANGELOG.md updated (for user-facing changes)</li>
+</ul>
+<h2 id="code-style"><a class="header" href="#code-style">Code Style</a></h2>
+<p>Follow Rust conventions:</p>
+<ul>
+<li>Use <code>rustfmt</code> (run <code>cargo fmt</code>)</li>
+<li>Follow <code>clippy</code> suggestions (run <code>cargo clippy</code>)</li>
+<li>Prefer <code>Result</code> and <code>Option</code> over panics</li>
+<li>Document public APIs with <code>///</code> comments</li>
+<li>Keep functions focused and small</li>
+</ul>
+<h2 id="documentation-1"><a class="header" href="#documentation-1">Documentation</a></h2>
+<p>User-facing documentation is in <code>docs/src/</code>:</p>
+<ul>
+<li><code>quick-start.md</code> - Getting started guide</li>
+<li><code>cli-reference.md</code> - Complete CLI documentation</li>
+<li><code>examples/</code> - Usage examples</li>
+<li><code>reference/</code> - Technical details</li>
+</ul>
+<p>When adding features:</p>
+<ol>
+<li>Update relevant documentation</li>
+<li>Add examples showing how to use it</li>
+<li>Update CHANGELOG.md</li>
+</ol>
+<h2 id="testing-philosophy"><a class="header" href="#testing-philosophy">Testing Philosophy</a></h2>
+<ul>
+<li><strong>Unit tests</strong> for individual functions and modules</li>
+<li><strong>Integration tests</strong> for command-line interface</li>
+<li><strong>Benchmarks</strong> for performance-critical code</li>
+</ul>
+<p>Test real scenarios that users will encounter.</p>
+<h2 id="performance-considerations"><a class="header" href="#performance-considerations">Performance Considerations</a></h2>
+<p>FindeRS aims to be “fast enough” - quick for daily use but prioritizing simplicity:</p>
+<ul>
+<li>Benchmark significant changes with <code>cargo bench</code></li>
+<li>Profile with Instruments (macOS) or perf (Linux) if needed</li>
+<li>Don’t sacrifice readability for premature optimization</li>
+<li>Document performance trade-offs</li>
+</ul>
+<h2 id="release-process"><a class="header" href="#release-process">Release Process</a></h2>
+<p>Releases are handled by maintainers:</p>
+<ol>
+<li>Version bump in <code>Cargo.toml</code></li>
+<li>Update CHANGELOG.md</li>
+<li>Tag release (GitHub Actions handles the rest)</li>
+<li>Publish to crates.io</li>
+<li>GitHub release with binaries</li>
+</ol>
+<p>Contributors don’t need to worry about this - focus on the fix or feature!</p>
+<h2 id="communication"><a class="header" href="#communication">Communication</a></h2>
+<ul>
+<li><strong>GitHub Issues</strong> - For bugs, features, and questions</li>
+<li><strong>Pull Requests</strong> - For code review and discussion</li>
+<li><strong>Email</strong> - youcef.kadri@example.com for private concerns</li>
+</ul>
+<h2 id="questions"><a class="header" href="#questions">Questions?</a></h2>
+<p>Don’t hesitate to ask! Open an issue with your question, even if it’s just “how do I…?” - I’m happy to help.</p>
+<h2 id="license"><a class="header" href="#license">License</a></h2>
+<p>By contributing, you agree that your contributions will be licensed under the same license as the project (see LICENSE file).</p>
+<h2 id="code-of-conduct"><a class="header" href="#code-of-conduct">Code of Conduct</a></h2>
+<p>Be respectful and constructive. This is a small project - let’s keep it friendly and collaborative.</p>
+<hr>
+<p>Thank you for contributing to FindeRS! 🦀</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
