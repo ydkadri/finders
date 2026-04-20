@@ -46,15 +46,13 @@ impl Searcher<'_> {
 
     fn sensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
         let mut results = Vec::new();
-        let mut rownum = 1;
 
-        for line in contents.lines() {
+        for (rownum, line) in (1..).zip(contents.lines()) {
             if line.contains(self.query) {
                 let match_positions = self.find_match_positions(line, false);
                 let result = SearchResult::new(rownum, line.to_string(), match_positions);
                 results.push(result)
             }
-            rownum += 1;
         }
 
         results
@@ -87,15 +85,13 @@ impl Searcher<'_> {
     fn insensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
         let mut results = Vec::new();
         let query = self.query.to_lowercase();
-        let mut rownum = 1;
 
-        for line in contents.lines() {
+        for (rownum, line) in (1..).zip(contents.lines()) {
             if line.to_lowercase().contains(&query) {
                 let match_positions = self.find_match_positions(line, true);
                 let result = SearchResult::new(rownum, line.to_string(), match_positions);
                 results.push(result)
             }
-            rownum += 1;
         }
 
         results
@@ -145,15 +141,13 @@ impl Searches for Searcher<'_> {
 impl Searches for ReSearcher {
     fn search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
         let mut results = Vec::new();
-        let mut rownum = 1;
 
-        for line in contents.lines() {
+        for (rownum, line) in (1..).zip(contents.lines()) {
             if self.pattern.is_match(line) {
                 let match_positions = self.find_regex_match_positions(line);
                 let result = SearchResult::new(rownum, line.to_string(), match_positions);
                 results.push(result)
             }
-            rownum += 1;
         }
 
         results
