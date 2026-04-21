@@ -14,6 +14,13 @@ impl Finder<'_> {
         Ok(Finder { path })
     }
 
+    pub fn find(&self, query: Option<&str>) -> Vec<PathBuf> {
+        match query {
+            Some(q) => self.filtered_find(q),
+            None => self.unfiltered_find(),
+        }
+    }
+
     fn find_internal(&self) -> IntoIter {
         WalkDir::new(self.path).follow_links(true).into_iter()
     }
@@ -83,13 +90,6 @@ impl Finder<'_> {
         }
 
         results
-    }
-
-    pub fn find(&self, query: Option<&str>) -> Vec<PathBuf> {
-        match query {
-            Some(q) => self.filtered_find(q),
-            None => self.unfiltered_find(),
-        }
     }
 }
 
