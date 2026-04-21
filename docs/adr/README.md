@@ -44,6 +44,9 @@ ADRs are **encouraged but not required**. Consider writing an ADR for:
 
 - [Template](template.md) - ADR template for new decisions
 - [0001: Comparison Benchmark Architecture](0001-comparison-benchmark-architecture.md) - Release-based benchmarks with GitHub Pages deployment
+- [0002: Output Abstraction and v3 Breaking Changes](0002-output-abstraction-and-v3-breaking-changes.md) - Output trait for flexible result formatting
+- [0003: GitHub Pages Deployment Strategy](0003-github-pages-deployment-strategy.md) - Branch-based deployment for docs and benchmarks
+- [0004: Benchmark Report Generation with Historical Trends](0004-benchmark-report-generation-with-historical-trends.md) - Custom HTML reports with Jinja2 templating
 
 ## Status Workflow
 
