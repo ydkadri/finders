@@ -4,5 +4,60 @@
     "date": "2026-04-20",
     "timestamp": "2026-04-20T22:45:04Z",
     "url": "./latest/report/index.html"
+  },
+  {
+    "version": "dev-20260421-021401",
+    "date": "2026-04-21",
+    "timestamp": "2026-04-21T02:14:01Z",
+    "results": [
+      {
+        "scenario": "small_common",
+        "size": "Small (~100 files)",
+        "pattern": "common",
+        "finder": 2,
+        "find_grep": 121,
+        "ripgrep": 5
+      },
+      {
+        "scenario": "small_rare",
+        "size": "Small (~100 files)",
+        "pattern": "rare",
+        "finder": 2,
+        "find_grep": 123,
+        "ripgrep": 4
+      },
+      {
+        "scenario": "medium_common",
+        "size": "Medium (~1K files)",
+        "pattern": "common",
+        "finder": 13,
+        "find_grep": 1216,
+        "ripgrep": 8
+      },
+      {
+        "scenario": "medium_rare",
+        "size": "Medium (~1K files)",
+        "pattern": "rare",
+        "finder": 9,
+        "find_grep": 1226,
+        "ripgrep": 7
+      },
+      {
+        "scenario": "large_common",
+        "size": "Large (~5K files)",
+        "pattern": "common",
+        "finder": 61,
+        "find_grep": 6216,
+        "ripgrep": 25
+      },
+      {
+        "scenario": "large_rare",
+        "size": "Large (~5K files)",
+        "pattern": "rare",
+        "finder": 43,
+        "find_grep": 6232,
+        "ripgrep": 17
+      }
+    ]
   }
 ]

@@ -3,146 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FindeRS Comparison Benchmarks</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.6;
-            color: #333;
-        }
-        h1 {
-            border-bottom: 3px solid #0066cc;
-            padding-bottom: 0.5rem;
-        }
-        h2 {
-            margin-top: 2rem;
-            color: #0066cc;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f5f5f5;
-            font-weight: 600;
-        }
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-        a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .latest {
-            background-color: #e6f2ff;
-            padding: 1rem;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-        code {
-            background-color: #f5f5f5;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-family: "Courier New", monospace;
-        }
-        .footer {
-            margin-top: 3rem;
-            padding-top: 1rem;
-            border-top: 1px solid #ddd;
-            color: #666;
-            font-size: 0.9rem;
-        }
-    </style>
+    <title>FindeRS Benchmark Results</title>
+    <link rel="stylesheet" href="./benchmark_report.css">
 </head>
 <body>
-    <h1>🔍 FindeRS Comparison Benchmarks</h1>
+    <div class="container">
+        <header>
+            <h1>🔍 FindeRS Benchmark Results</h1>
+            <p class="subtitle">Version dev-20260421-021401 • 2026-04-21</p>
+        </header>
 
-    <p>
-        Performance comparisons of <code>finder</code> against <code>find+grep</code>
-        and <code>ripgrep</code> across different repository sizes and search patterns.
-    </p>
+        <section>
+            <h2>📊 Latest Results</h2>
 
-    <div class="latest">
-        <h2>Latest Results</h2>
-        <p><a href="./latest/report/index.html">View detailed Criterion benchmark reports →</a></p>
+            
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Repository Size</th>
+                        <th>finder</th>
+                        <th>find+grep</th>
+                        <th>ripgrep</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>Common pattern</td>
+                        <td>Small (~100 files)</td>
+                        <td class="result-cell">2ms</td>
+                        <td class="result-cell">121ms</td>
+                        <td class="result-cell">5ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rare pattern</td>
+                        <td>Small (~100 files)</td>
+                        <td class="result-cell">2ms</td>
+                        <td class="result-cell">123ms</td>
+                        <td class="result-cell">4ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Common pattern</td>
+                        <td>Medium (~1K files)</td>
+                        <td class="result-cell">13ms</td>
+                        <td class="result-cell">1216ms</td>
+                        <td class="result-cell">8ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rare pattern</td>
+                        <td>Medium (~1K files)</td>
+                        <td class="result-cell">9ms</td>
+                        <td class="result-cell">1226ms</td>
+                        <td class="result-cell">7ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Common pattern</td>
+                        <td>Large (~5K files)</td>
+                        <td class="result-cell">61ms</td>
+                        <td class="result-cell">6216ms</td>
+                        <td class="result-cell">25ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rare pattern</td>
+                        <td>Large (~5K files)</td>
+                        <td class="result-cell">43ms</td>
+                        <td class="result-cell">6232ms</td>
+                        <td class="result-cell">17ms</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <p>
+                    <strong>Legend:</strong>
+                    <span class="change-better">↓ Better (faster)</span> •
+                    <span class="change-neutral">→ Similar (±5%)</span> •
+                    <span class="change-worse">↑ Worse (slower)</span>
+                </p>
+            </div>
+            
+        </section>
+
+        <section>
+            
+            <h2>📈 Performance Trends (finder)</h2>
+            <p>Showing last 2 benchmark runs</p>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Trend</th>
+                        <th>Change</th>
+                        <th>Latest</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>Common - Small (~100 files)</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="2ms"></span></td>
+                        <td class="trend-neutral">—</td>
+                        <td>2ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rare - Small (~100 files)</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="2ms"></span></td>
+                        <td class="trend-neutral">—</td>
+                        <td>2ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Common - Medium (~1K files)</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="13ms"></span></td>
+                        <td class="trend-neutral">—</td>
+                        <td>13ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rare - Medium (~1K files)</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="9ms"></span></td>
+                        <td class="trend-neutral">—</td>
+                        <td>9ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Common - Large (~5K files)</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="61ms"></span></td>
+                        <td class="trend-neutral">—</td>
+                        <td>61ms</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rare - Large (~5K files)</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="43ms"></span></td>
+                        <td class="trend-neutral">—</td>
+                        <td>43ms</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            
+        </section>
+
+        <div class="links">
+            <p><strong>Detailed Reports:</strong> <a href="./latest/report/index.html">View Criterion benchmark reports →</a></p>
+        </div>
+
+        <section class="about">
+            <h3>About These Benchmarks</h3>
+            <p>
+                Benchmarks compare <code>finder</code> against <code>find+grep</code> and <code>ripgrep</code>
+                across different repository sizes and search patterns. All tools search for patterns in
+                <code>*.rs</code> files.
+            </p>
+            <ul>
+                <li><strong>Common pattern:</strong> Found in ~50% of files</li>
+                <li><strong>Rare pattern:</strong> Found in 1 file</li>
+                <li><strong>Small:</strong> ~100 files</li>
+                <li><strong>Medium:</strong> ~1,000 files</li>
+                <li><strong>Large:</strong> ~5,000 files</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Generated automatically by comparison benchmarks workflow •
+            <a href="https://github.com/ydkadri/finders">View repository →</a></p>
+        </footer>
     </div>
-
-    <h2>Benchmark History</h2>
-    <table id="history-table">
-        <thead>
-            <tr>
-                <th>Version</th>
-                <th>Date</th>
-                <th>Results</th>
-            </tr>
-        </thead>
-        <tbody id="history-body">
-            <tr><td colspan="3">Loading...</td></tr>
-        </tbody>
-    </table>
-
-    <h2>About These Benchmarks</h2>
-    <p>
-        Benchmarks test 6 scenarios: 3 repository sizes (small ~100 files, medium ~1K files,
-        large ~10K files) × 2 search patterns (common pattern found in ~50% of files,
-        rare pattern in 1 file).
-    </p>
-    <p>
-        All tools search for patterns in <code>*.rs</code> files using equivalent commands:
-    </p>
-    <ul>
-        <li><code>find</code> + <code>grep</code>: Traditional Unix pipeline</li>
-        <li><code>ripgrep</code>: Modern fast searcher</li>
-        <li><code>finder</code>: This project's implementation</li>
-    </ul>
-
-    <div class="footer">
-        <p>Generated automatically on benchmark runs. <a href="https://github.com/ydkadri/finders">View repository →</a></p>
-    </div>
-
-    <script>
-        // Load and display history
-        fetch('history.json')
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.getElementById('history-body');
-                tbody.innerHTML = '';
-
-                // Sort by timestamp descending (most recent first)
-                data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3">No benchmark history yet.</td></tr>';
-                    return;
-                }
-
-                data.forEach(entry => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><code>${entry.version}</code></td>
-                        <td>${entry.date}</td>
-                        <td><a href="${entry.url}">View Report</a></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.error('Error loading history:', error);
-                document.getElementById('history-body').innerHTML =
-                    '<tr><td colspan="3">Error loading history.</td></tr>';
-            });
-    </script>
 </body>
 </html>
