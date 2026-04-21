@@ -1,9 +1,10 @@
+use anyhow::{Context, Result};
 use std::io::{Error, ErrorKind};
 use std::path::Path;
 
 pub const DEFAULT_PATH: &str = ".";
 
-pub fn parse(path: Option<&str>) -> Result<&Path, Error> {
+pub fn parse(path: Option<&str>) -> Result<&Path> {
     // Parse a string into a path object and
     // validate that the path exists
     match path {
@@ -15,8 +16,9 @@ pub fn parse(path: Option<&str>) -> Result<&Path, Error> {
             } else {
                 Err(Error::new(
                     ErrorKind::NotFound,
-                    format!("No such path: {}", p),
+                    format!("path does not exist: '{}'", p),
                 ))
+                .context("validating path")?
             }
         }
         _ => Ok(Path::new(DEFAULT_PATH)),
@@ -28,7 +30,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_valid_path() -> Result<(), Error> {
+    fn parse_valid_path() -> Result<()> {
         // Parse a valid directory path
         let cwd: &str = ".";
 
@@ -41,7 +43,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_empty_path() -> Result<(), Error> {
+    fn parse_empty_path() -> Result<()> {
         // Ensure if no path is provided we fall back
         // on the DEFAULT_PATH value (".")
         let observed_path = parse(None)?;
@@ -53,11 +55,17 @@ mod tests {
     }
 
     #[test]
-    fn parse_invalid_path() -> Result<(), Error> {
-        let observed_error = parse(Some("path/to/nowhere")).map_err(|e| e.kind());
-        let expected_error = Err(ErrorKind::NotFound);
+    fn parse_invalid_path() -> Result<()> {
+        let result = parse(Some("path/to/nowhere"));
+        assert!(result.is_err());
 
-        assert_eq!(observed_error, expected_error);
+        // Verify it's a NotFound error by downcasting
+        if let Err(e) = result {
+            let io_err = e
+                .downcast_ref::<Error>()
+                .expect("Error should be io::Error");
+            assert_eq!(io_err.kind(), ErrorKind::NotFound);
+        }
 
         Ok(())
     }
