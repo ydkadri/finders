@@ -15,20 +15,8 @@ impl Finder<'_> {
     }
 
     pub fn find(&self, query: Option<&str>) -> Vec<PathBuf> {
-        match query {
-            Some(q) => self.filtered_find(q),
-            None => self.unfiltered_find(),
-        }
-    }
-
-    fn find_internal(&self) -> IntoIter {
-        WalkDir::new(self.path).follow_links(true).into_iter()
-    }
-
-    fn unfiltered_find(&self) -> Vec<PathBuf> {
-        // Recursively find files from the finder root
-        let mut results = Vec::new();
-        let filepath_iterator = self.find_internal().filter_map(|e| e.ok()).filter_map(|e| {
+        // Common file metadata handling for all cases
+        let file_iterator = self.find_internal().filter_map(|e| e.ok()).filter_map(|e| {
             match e.metadata() {
                 Ok(metadata) if metadata.is_file() => Some(e),
                 Ok(_) => None, // Not a file (directory, symlink, etc.)
@@ -43,53 +31,31 @@ impl Finder<'_> {
             }
         });
 
-        for entry in filepath_iterator {
-            results.push(entry.into_path());
+        // Apply filename filter if provided, otherwise return all files
+        if let Some(pattern) = query {
+            file_iterator
+                .filter_map(|e| {
+                    match e.file_name().to_str() {
+                        Some(name) if name.contains(pattern) => Some(e),
+                        Some(_) => None, // Filename doesn't match pattern
+                        None => {
+                            eprintln!(
+                                "Warning: Skipping file with non-UTF8 name: {}",
+                                e.path().display()
+                            );
+                            None
+                        }
+                    }
+                })
+                .map(|e| e.into_path())
+                .collect()
+        } else {
+            file_iterator.map(|e| e.into_path()).collect()
         }
-
-        results
     }
 
-    fn filtered_find(&self, query: &str) -> Vec<PathBuf> {
-        // Recursively find files from the finder root
-        // filtering to filenames containing some value
-        let mut results = Vec::new();
-        let filepath_iterator = self
-            .find_internal()
-            .filter_map(|e| e.ok())
-            .filter_map(|e| {
-                match e.metadata() {
-                    Ok(metadata) if metadata.is_file() => Some(e),
-                    Ok(_) => None, // Not a file (directory, symlink, etc.)
-                    Err(err) => {
-                        eprintln!(
-                            "Warning: Cannot read metadata: {} ({})",
-                            e.path().display(),
-                            err
-                        );
-                        None
-                    }
-                }
-            })
-            .filter_map(|e| {
-                match e.file_name().to_str() {
-                    Some(name) if name.contains(query) => Some(e),
-                    Some(_) => None, // Filename doesn't match query
-                    None => {
-                        eprintln!(
-                            "Warning: Skipping file with non-UTF8 name: {}",
-                            e.path().display()
-                        );
-                        None
-                    }
-                }
-            });
-
-        for entry in filepath_iterator {
-            results.push(entry.into_path());
-        }
-
-        results
+    fn find_internal(&self) -> IntoIter {
+        WalkDir::new(self.path).follow_links(true).into_iter()
     }
 }
 
