@@ -1,5 +1,6 @@
+use anyhow::{Context, Result};
 use std::fs::File;
-use std::io::{BufRead, BufReader, Error, ErrorKind};
+use std::io::{BufRead, BufReader, ErrorKind};
 use std::path::PathBuf;
 
 pub mod file_finder;
@@ -20,18 +21,23 @@ pub fn search_files(
     paths: Vec<PathBuf>,
     verbose: bool,
     output: &mut dyn output::Outputs,
-) -> Result<(), Error> {
+) -> Result<()> {
     // Process files one at a time in a streaming fashion
     for path in paths {
-        if let Err(e) = search_file(&searcher, &path, verbose, output) {
-            if e.kind() == ErrorKind::InvalidData {
+        if let Err(e) = search_file(&searcher, &path, verbose, output)
+            .context(format!("searching in '{}'", path.display()))
+        {
+            // Check if it's an encoding error (can continue)
+            if let Some(io_err) = e.downcast_ref::<std::io::Error>()
+                && io_err.kind() == ErrorKind::InvalidData
+            {
                 if verbose {
-                    println!("Cannot read file: {:?}", path);
+                    eprintln!("Warning: Cannot read file '{}': {}", path.display(), io_err);
                 }
                 continue;
-            } else {
-                return Err(e);
             }
+            // Other errors are fatal
+            return Err(e);
         }
     }
 
@@ -44,17 +50,9 @@ fn search_file(
     path: &PathBuf,
     verbose: bool,
     output: &mut dyn output::Outputs,
-) -> Result<(), Error> {
+) -> Result<()> {
     // Open file and create buffered reader for efficient streaming
-    let file = match File::open(path) {
-        Ok(f) => f,
-        Err(e) => {
-            if verbose {
-                println!("Cannot open file: {:?} - {}", path, e);
-            }
-            return Err(e);
-        }
-    };
+    let file = File::open(path).context(format!("failed to open '{}'", path.display()))?;
 
     let reader = BufReader::with_capacity(CHUNK_SIZE, file);
     let mut rownum = 1;
@@ -78,13 +76,22 @@ fn search_file(
             Err(e) => {
                 if e.kind() == ErrorKind::InvalidData {
                     if verbose {
-                        println!("Cannot read line {} in file: {:?}", rownum, path);
+                        eprintln!(
+                            "Warning: Cannot read line {} in file '{}': {}",
+                            rownum,
+                            path.display(),
+                            e
+                        );
                     }
                     // Continue to next line on encoding errors
                     rownum += 1;
                     continue;
                 } else {
-                    return Err(e);
+                    return Err(e).context(format!(
+                        "reading line {} in '{}'",
+                        rownum,
+                        path.display()
+                    ));
                 }
             }
         }
@@ -101,7 +108,7 @@ mod tests {
     use std::io::Write;
 
     #[test]
-    fn test_search_files_streaming() -> Result<(), Error> {
+    fn test_search_files_streaming() -> Result<()> {
         // Create a temporary test file
         let temp_dir = std::env::temp_dir();
         let test_file = temp_dir.join("test_streaming.txt");
@@ -127,7 +134,7 @@ mod tests {
     }
 
     #[test]
-    fn test_search_line_functionality() -> Result<(), Error> {
+    fn test_search_line_functionality() -> Result<()> {
         // Test that search_line works correctly
         let searcher = searcher::Searcher::new("test", false);
 
@@ -142,7 +149,7 @@ mod tests {
     }
 
     #[test]
-    fn test_chunked_reading() -> Result<(), Error> {
+    fn test_chunked_reading() -> Result<()> {
         // Create a large test file to test chunking
         let temp_dir = std::env::temp_dir();
         let test_file = temp_dir.join("test_chunked.txt");
