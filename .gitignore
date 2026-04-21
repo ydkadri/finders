@@ -12,6 +12,9 @@ target/
 *.bench
 output.txt
 
+# Coverage reports
+coverage.json
+
 # Generated benchmark fixtures
 benches/fixtures/data/
 

@@ -133,6 +133,37 @@ finder --version
 
 ---
 
+## Development
+
+This project uses [just](https://github.com/casey/just) as a command runner for common development tasks.
+
+```bash
+# Quick development workflow
+just dev          # Format, lint, and test library (fast feedback)
+
+# Run tests
+just test         # All tests (with serialized execution)
+just watch        # Auto-run tests on file changes
+
+# Code quality
+just lint         # Format check + clippy
+just fmt          # Format code
+
+# Coverage and benchmarks
+just coverage     # Generate HTML coverage report
+just bench        # Run benchmarks
+
+# Pre-commit checks
+just pre-commit   # Run all checks before committing
+
+# Simulate CI locally
+just ci           # Run all CI checks
+```
+
+See [docs/justfile-guide.md](docs/justfile-guide.md) for the complete list of commands and detailed usage.
+
+---
+
 ## Usage
 
 ```shell
