@@ -145,10 +145,7 @@ jobs:
 
       - name: Create and push tag
         if: steps.tag-check.outputs.exists == 'false'
-        env:
-          # Use PAT to trigger release workflow
-          # GitHub's default GITHUB_TOKEN doesn't trigger other workflows
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        id: create-tag
         run: |
           TAG_NAME="v${{ steps.version.outputs.version }}"
           echo "Creating tag $TAG_NAME"
@@ -159,9 +156,34 @@ jobs:
           git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
 
           # Push using PAT to trigger release workflow
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git "$TAG_NAME"
+          # Using PAT_TOKEN instead of GITHUB_TOKEN to trigger downstream workflows
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git "$TAG_NAME"
 
           echo "✅ Created and pushed tag $TAG_NAME"
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+
+      - name: Trigger release workflow
+        if: steps.tag-check.outputs.exists == 'false'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            // Trigger the release workflow manually as a fallback
+            // PATs from the same account don't always trigger workflows on tag push
+            const tag = '${{ steps.create-tag.outputs.tag }}';
+            console.log(`Triggering release workflow for ${tag}`);
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'release.yml',
+              ref: 'main',
+              inputs: {
+                tag: tag
+              }
+            });
+
+            console.log(`✅ Release workflow triggered for ${tag}`);
 
       - name: Log result
         if: always()
@@ -169,6 +191,7 @@ jobs:
           echo "Auto-tag result:"
           echo "  Version: ${{ steps.version.outputs.version }}"
           echo "  Tag exists: ${{ steps.tag-check.outputs.exists }}"
+          echo "  Tag created: ${{ steps.create-tag.outputs.tag || 'N/A' }}"
 
   security-scheduled:
     name: Security Audit (Scheduled)
