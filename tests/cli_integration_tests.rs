@@ -13,11 +13,11 @@ fn test_invalid_regex_pattern_cli() {
     // Should exit with error
     assert!(!output.status.success());
 
-    // Should show error message
+    // Should show error message with context
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        stderr.contains("Invalid regex pattern"),
-        "Expected error message, got: {}",
+        stderr.contains("compiling regex pattern"),
+        "Expected context message, got: {}",
         stderr
     );
     assert!(
@@ -41,8 +41,8 @@ fn test_unclosed_group_regex_cli() {
 
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        stderr.contains("Invalid regex pattern"),
-        "Expected error message, got: {}",
+        stderr.contains("compiling regex pattern"),
+        "Expected context message, got: {}",
         stderr
     );
 }

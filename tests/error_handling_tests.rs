@@ -25,7 +25,11 @@ fn test_finder_handles_nonexistent_directory() {
     assert!(result.is_err(), "Should return error for non-existent path");
 
     if let Err(err) = result {
-        assert_eq!(err.kind(), std::io::ErrorKind::NotFound);
+        // Downcast to check the underlying io::Error kind
+        let io_err = err
+            .downcast_ref::<std::io::Error>()
+            .expect("Error should be io::Error");
+        assert_eq!(io_err.kind(), std::io::ErrorKind::NotFound);
     }
 }
 

@@ -1,5 +1,5 @@
+use anyhow::{Context, Result};
 use clap::Parser;
-use std::io::Error;
 
 use finders::file_finder;
 use finders::output::{
@@ -64,11 +64,12 @@ struct Cli {
     json: bool,
 }
 
-fn main() -> Result<(), Error> {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     // Grab finder values from the command line
-    let finder = file_finder::Finder::new(cli.path.as_deref())?;
+    let finder =
+        file_finder::Finder::new(cli.path.as_deref()).context("initializing file finder")?;
     let file_pattern = cli.file_pattern.as_deref();
 
     // Get iterable paths
@@ -95,17 +96,13 @@ fn main() -> Result<(), Error> {
         let case_insensitive = cli.case_insensitive;
         let searcher = searcher::Searcher::new(query, case_insensitive);
 
-        search_files(searcher, paths, verbose, &mut *output)?;
+        search_files(searcher, paths, verbose, &mut *output)
+            .context("searching files for pattern")?;
     } else if let Some(pattern) = cli.regex_pattern.as_deref() {
-        let re_searcher = match searcher::ReSearcher::new(pattern) {
-            Ok(searcher) => searcher,
-            Err(e) => {
-                eprintln!("Error: Invalid regex pattern: {}", e);
-                std::process::exit(1);
-            }
-        };
+        let re_searcher = searcher::ReSearcher::new(pattern).context("compiling regex pattern")?;
 
-        search_files(re_searcher, paths, verbose, &mut *output)?;
+        search_files(re_searcher, paths, verbose, &mut *output)
+            .context("searching files for pattern")?;
     } else {
         // File-only mode (no search pattern)
         for path in paths {
