@@ -6,6 +6,13 @@ pub mod file_finder;
 pub mod output;
 pub mod searcher;
 
+// Re-export commonly used types for convenience
+pub use file_finder::Finder;
+pub use output::{
+    ColourMode, CountOutput, FilesOnlyOutput, JsonOutput, Outputs, SearchMatch, StandardOutput,
+};
+pub use searcher::{ReSearcher, SearchResult, Searcher, Searches};
+
 const CHUNK_SIZE: usize = 8192; // 8KB chunks for reading files
 
 pub fn search_files(
