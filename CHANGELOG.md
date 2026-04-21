@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-04-21
+
+### Changed
+
+- Migrate to `anyhow` for comprehensive error handling throughout the application
+- Error messages now include full context chains showing what operation failed and why
+- File operations, path validation, and regex compilation all provide detailed error context
+
+### Added
+
+- Integration tests for error message context chains
+- ADR 0005 documenting the decision to use anyhow for error handling
+
+### Developer Experience
+
+- Add justfile with development workflow commands (lint, test, coverage, build)
+- Organised commands into logical groups (workflows, build, test, lint, coverage, bench, optional)
+- Pre-commit checks now run via `just pre-commit` (lint + test + coverage-check)
+- CI workflow updated to use justfile commands for consistency
+- Documentation workflow now validates builds on PRs before deployment
+
 ## [3.0.1] - 2026-04-15
 
 ### Documentation
