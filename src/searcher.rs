@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use regex::Regex;
 
 // Struct for search results
@@ -99,9 +100,10 @@ impl Searcher<'_> {
 }
 
 impl ReSearcher {
-    pub fn new(pattern: &str) -> Result<ReSearcher, regex::Error> {
+    pub fn new(pattern: &str) -> Result<ReSearcher> {
         Ok(ReSearcher {
-            pattern: Regex::new(pattern)?,
+            pattern: Regex::new(pattern)
+                .context(format!("compiling regex pattern '{}'", pattern))?,
         })
     }
 
