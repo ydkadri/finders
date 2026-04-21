@@ -84,7 +84,7 @@ def prepare_summary_data(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
         # Calculate changes if we have previous data
         changes = {}
-        if previous:
+        if previous and "results" in previous:
             prev_result = next((r for r in previous["results"] if r["scenario"] == scenario), None)
             if prev_result:
                 if finder is not None and prev_result.get("finder"):
@@ -124,6 +124,9 @@ def prepare_trend_data(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         # Collect finder times across history for this scenario
         finder_trend = []
         for entry in recent:
+            # Skip entries without results (old format)
+            if "results" not in entry:
+                continue
             scenario_result = next((r for r in entry["results"] if r["scenario"] == scenario), None)
             if scenario_result and scenario_result.get("finder"):
                 finder_trend.append(scenario_result["finder"])
