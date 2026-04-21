@@ -1,4 +1,4 @@
-use std::io::Error;
+use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 use walkdir::{IntoIter, WalkDir};
 mod path_parser;
@@ -8,8 +8,8 @@ pub struct Finder<'a> {
 }
 
 impl Finder<'_> {
-    pub fn new(root: Option<&str>) -> Result<Finder<'_>, Error> {
-        let path = path_parser::parse(root)?;
+    pub fn new(root: Option<&str>) -> Result<Finder<'_>> {
+        let path = path_parser::parse(root).context("validating root path")?;
 
         Ok(Finder { path })
     }
@@ -67,7 +67,7 @@ mod tests {
     // TODO: test find (mock WalkDir return value)
 
     #[test]
-    fn initialise_finder_with_dir() -> Result<(), Error> {
+    fn initialise_finder_with_dir() -> Result<()> {
         let cwd = ".";
         let finder = Finder::new(Some(cwd))?;
 
@@ -79,7 +79,7 @@ mod tests {
     }
 
     #[test]
-    fn initialise_finder_default_dir() -> Result<(), Error> {
+    fn initialise_finder_default_dir() -> Result<()> {
         let finder = Finder::new(None)?;
 
         let expected_finder_path = Path::new(path_parser::DEFAULT_PATH);
@@ -90,9 +90,13 @@ mod tests {
     }
 
     #[test]
-    fn invalid_path_error_propagates() -> Result<(), Error> {
+    fn invalid_path_error_propagates() -> Result<()> {
         if let Err(e) = Finder::new(Some("path/to/nowhere")) {
-            assert!(e.kind() == ErrorKind::NotFound)
+            // Downcast to io::Error to check kind
+            let io_err = e
+                .downcast_ref::<std::io::Error>()
+                .expect("Error should be io::Error");
+            assert!(io_err.kind() == ErrorKind::NotFound)
         } else {
             panic!("Expected error for invalid path")
         }
