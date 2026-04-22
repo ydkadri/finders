@@ -4,7 +4,7 @@ use walkdir::{IntoIter, WalkDir};
 mod path_parser;
 
 pub struct Finder<'a> {
-    pub path: &'a Path,
+    path: &'a Path,
 }
 
 impl Finder<'_> {
