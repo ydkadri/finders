@@ -234,7 +234,7 @@ jobs:
       - name: Create Pull Request
         if: env.skip_pr == 'false'
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
         run: |
           gh pr create \
             --base main \
