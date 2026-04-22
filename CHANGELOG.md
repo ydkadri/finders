@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - CLI passes user's verbose flag to file finder
   - Benchmarks and tests use `verbose=false` for clean output
 
+- **API cleanup:** Remove unused `Searches::search()` method
+  - Trait now only contains `search_line()` (the production code path)
+  - Removed `search()` implementations from `Searcher` and `ReSearcher`
+  - Removed helper methods `sensitive_search()` and `insensitive_search()`
+  - Updated tests to use `search_line()` directly
+  - Updated benchmarks to use line-by-line iteration
+
 ## [3.0.2] - 2026-04-21
 
 ### Changed
