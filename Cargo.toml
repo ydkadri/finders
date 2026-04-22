@@ -1,6 +1,6 @@
 [package]
 name = "finders"
-version = "3.0.2"
+version = "3.1.0"
 edition = "2024"
 authors = ["Youcef Kadri <youcef.d.kadri@gmail.com>"]
 readme = "README.md"
