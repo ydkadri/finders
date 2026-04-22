@@ -78,14 +78,14 @@ fn bench_file_finder(c: &mut Criterion) {
     group.bench_function("find_all_files", |b| {
         b.iter(|| {
             let finder = file_finder::Finder::new(Some(black_box(temp_dir_str))).unwrap();
-            finder.find(None)
+            finder.find(None, false) // verbose=false for benchmarks
         })
     });
 
     group.bench_function("find_with_pattern", |b| {
         b.iter(|| {
             let finder = file_finder::Finder::new(Some(black_box(temp_dir_str))).unwrap();
-            finder.find(Some(black_box("test_file_5")))
+            finder.find(Some(black_box("test_file_5")), false) // verbose=false for benchmarks
         })
     });
 

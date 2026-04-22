@@ -7,7 +7,7 @@ use std::io::Write;
 fn test_finder_handles_valid_directory() {
     // This should not panic even if there are files it can't read
     let finder = Finder::new(Some(".")).expect("Should create finder for current directory");
-    let results = finder.find(Some("Cargo.toml"));
+    let results = finder.find(Some("Cargo.toml"), false);
 
     // Should find at least one Cargo.toml without panicking
     assert!(

@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Only accessed internally within `Finder` methods
   - No external impact (field only accessed in internal tests)
 
+- **API consistency:** Add consistent verbose parameter to `Finder::find()`
+  - Method signature: `find(&self, query: Option<&str>, verbose: bool)`
+  - All warning messages now controlled by verbose flag
+  - CLI passes user's verbose flag to file finder
+  - Benchmarks and tests use `verbose=false` for clean output
+
 ## [3.0.2] - 2026-04-21
 
 ### Changed

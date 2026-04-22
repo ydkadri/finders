@@ -72,11 +72,11 @@ fn main() -> Result<()> {
         file_finder::Finder::new(cli.path.as_deref()).context("initializing file finder")?;
     let file_pattern = cli.file_pattern.as_deref();
 
-    // Get iterable paths
-    let paths = finder.find(file_pattern);
-
     // Determine if verbose or not
     let verbose = cli.verbose;
+
+    // Get iterable paths
+    let paths = finder.find(file_pattern, verbose);
 
     // Determine colour mode from flags and environment
     let colour_mode = ColourMode::from_env(cli.colour, cli.no_colour);
