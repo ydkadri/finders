@@ -18,7 +18,7 @@ const CHUNK_SIZE: usize = 8192; // 8KB chunks for reading files
 
 pub fn search_files(
     searcher: impl searcher::Searches,
-    paths: Vec<PathBuf>,
+    paths: impl IntoIterator<Item = PathBuf>,
     verbose: bool,
     output: &mut dyn output::Outputs,
 ) -> Result<()> {
