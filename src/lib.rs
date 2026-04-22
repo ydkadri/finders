@@ -14,7 +14,12 @@ pub use output::{
 };
 pub use searcher::{ReSearcher, SearchResult, Searcher, Searches};
 
-const CHUNK_SIZE: usize = 8192; // 8KB chunks for reading files
+/// Buffer size for reading files (8KB)
+///
+/// This size is chosen as a balance between memory usage and I/O efficiency.
+/// The BufReader uses this capacity to minimize system calls while keeping
+/// memory footprint reasonable for processing many files.
+const CHUNK_SIZE: usize = 8192;
 
 pub fn search_files(
     searcher: impl searcher::Searches,
