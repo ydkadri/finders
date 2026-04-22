@@ -83,7 +83,7 @@ fn main() -> Result<()> {
 
     // Create output handler based on output mode flags
     let mut output: Box<dyn Outputs> = if cli.json {
-        Box::new(JsonOutput::new(colour_mode))
+        Box::new(JsonOutput::new())
     } else if cli.files_with_matches {
         Box::new(FilesOnlyOutput::new(colour_mode))
     } else if cli.count {

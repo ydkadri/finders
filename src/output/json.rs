@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::Path;
 
-use super::{ColourMode, Outputs, SearchMatch};
+use super::{Outputs, SearchMatch};
 
 /// JSON match representation
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -25,8 +25,7 @@ pub struct JsonOutput {
 }
 
 impl JsonOutput {
-    pub fn new(_colour_mode: ColourMode) -> Self {
-        // JSON output never uses colours
+    pub fn new() -> Self {
         JsonOutput {
             files: HashMap::new(),
         }
@@ -35,7 +34,7 @@ impl JsonOutput {
 
 impl Default for JsonOutput {
     fn default() -> Self {
-        Self::new(ColourMode::Never)
+        Self::new()
     }
 }
 
@@ -120,7 +119,7 @@ mod tests {
 
     #[test]
     fn test_json_output_accumulates_matches() {
-        let mut output = JsonOutput::new(ColourMode::Never);
+        let mut output = JsonOutput::new();
         let path = PathBuf::from("test.txt");
 
         // Add multiple matches from same file
@@ -145,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_json_output_write_file() {
-        let mut output = JsonOutput::new(ColourMode::Never);
+        let mut output = JsonOutput::new();
         let path = PathBuf::from("empty.txt");
 
         // Add file with no matches
