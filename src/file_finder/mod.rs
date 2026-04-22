@@ -14,18 +14,20 @@ impl Finder<'_> {
         Ok(Finder { path })
     }
 
-    pub fn find(&self, query: Option<&str>) -> Vec<PathBuf> {
+    pub fn find(&self, query: Option<&str>, verbose: bool) -> Vec<PathBuf> {
         // Common file metadata handling for all cases
         let file_iterator = self.find_internal().filter_map(|e| e.ok()).filter_map(|e| {
             match e.metadata() {
                 Ok(metadata) if metadata.is_file() => Some(e),
                 Ok(_) => None, // Not a file (directory, symlink, etc.)
                 Err(err) => {
-                    eprintln!(
-                        "Warning: Cannot read metadata: {} ({})",
-                        e.path().display(),
-                        err
-                    );
+                    if verbose {
+                        eprintln!(
+                            "Warning: Cannot read metadata: {} ({})",
+                            e.path().display(),
+                            err
+                        );
+                    }
                     None
                 }
             }
@@ -39,10 +41,12 @@ impl Finder<'_> {
                         Some(name) if name.contains(pattern) => Some(e),
                         Some(_) => None, // Filename doesn't match pattern
                         None => {
-                            eprintln!(
-                                "Warning: Skipping file with non-UTF8 name: {}",
-                                e.path().display()
-                            );
+                            if verbose {
+                                eprintln!(
+                                    "Warning: Skipping file with non-UTF8 name: {}",
+                                    e.path().display()
+                                );
+                            }
                             None
                         }
                     }
