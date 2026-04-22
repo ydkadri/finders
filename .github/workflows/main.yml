@@ -155,9 +155,9 @@ jobs:
 
           git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
 
-          # Push using PAT to trigger release workflow
-          # Using PAT_TOKEN instead of GITHUB_TOKEN to trigger downstream workflows
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git "$TAG_NAME"
+          # Push using Actions token to trigger release workflow
+          # Using ACTIONS_TOKEN instead of GITHUB_TOKEN to trigger downstream workflows
+          git push https://x-access-token:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.repository }}.git "$TAG_NAME"
 
           echo "✅ Created and pushed tag $TAG_NAME"
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
@@ -166,7 +166,7 @@ jobs:
         if: steps.tag-check.outputs.exists == 'false'
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.PAT_TOKEN }}
+          github-token: ${{ secrets.ACTIONS_TOKEN }}
           script: |
             // Trigger the release workflow manually as a fallback
             // PATs from the same account don't always trigger workflows on tag push
