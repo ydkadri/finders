@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-04-22
+
+### ⚠️ BREAKING CHANGES
+
+#### API Changes
+
+**JsonOutput constructor:**
+- `JsonOutput::new()` no longer takes `ColourMode` parameter
+- Migration: Change `JsonOutput::new(colour_mode)` to `JsonOutput::new()`
+- Rationale: JSON output doesn't use colours, parameter was unused
+
+**Finder::find() signature:**
+- Now requires `verbose: bool` parameter: `find(&self, query: Option<&str>, verbose: bool)`
+- Migration: Add `false` for silent mode or `true` for warnings
+- Rationale: Consistent warning control across the API
+
+**Searches trait:**
+- Removed `search()` method, only `search_line()` remains
+- Migration: Use `search_line()` directly (was already the production path)
+- Rationale: Remove unused code, simplify API surface
+
 ### Changed
 
 - **API encapsulation:** Make `Finder::path` field private
@@ -14,18 +35,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Only accessed internally within `Finder` methods
   - No external impact (field only accessed in internal tests)
 
-- **API consistency:** Add consistent verbose parameter to `Finder::find()`
-  - Method signature: `find(&self, query: Option<&str>, verbose: bool)`
-  - All warning messages now controlled by verbose flag
-  - CLI passes user's verbose flag to file finder
-  - Benchmarks and tests use `verbose=false` for clean output
+- **API flexibility:** `search_files()` now accepts `impl IntoIterator<Item = PathBuf>`
+  - Previously required `Vec<PathBuf>`
+  - Non-breaking: Vec implements IntoIterator
+  - More flexible and idiomatic Rust
 
-- **API cleanup:** Remove unused `Searches::search()` method
-  - Trait now only contains `search_line()` (the production code path)
-  - Removed `search()` implementations from `Searcher` and `ReSearcher`
-  - Removed helper methods `sensitive_search()` and `insensitive_search()`
-  - Updated tests to use `search_line()` directly
-  - Updated benchmarks to use line-by-line iteration
+### Added
+
+- **Documentation:** Added comprehensive doc comment for `CHUNK_SIZE` constant
+  - Explains rationale for 8KB buffer size choice
+  - Documents trade-off between memory usage and I/O efficiency
+
+### Impact Assessment
+
+**Zero external dependents:** Checked crates.io - no packages depend on finders, so breaking changes have no ecosystem impact.
+
+**Internal impact:** All call sites updated in same release.
 
 ## [3.0.2] - 2026-04-21
 
