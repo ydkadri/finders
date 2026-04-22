@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **API encapsulation:** Make `Finder::path` field private
+  - Field is now fully private (no public getter needed)
+  - Only accessed internally within `Finder` methods
+  - No external impact (field only accessed in internal tests)
+
 ## [3.0.2] - 2026-04-21
 
 ### Changed
