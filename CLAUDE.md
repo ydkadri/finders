@@ -222,6 +222,7 @@ Work happens in phases with explicit checkpoints for early alignment.
    - Propose version type (patch/minor/major) and get confirmation
    - Manually update version in `Cargo.toml`
    - Update "Current Version" in this file
+   - **Note:** Do NOT create git tags yet - tags are created manually after merge (see Versioning section)
 
 9. **Rebase to clean commit history**:
    - Squash fixup commits into their parent commits
@@ -357,18 +358,32 @@ Fixes #42
 - Manually update `version` in `Cargo.toml`
 - Update CHANGELOG.md ([Unreleased] → versioned section with date)
 - Update "Current Version" field at bottom of this file
-- Create git commit: "Bump version: X.Y.Z → X.Y.Z+1"
+- Create git commit: "Release vX.Y.Z - [description]"
 
-**Note:** Tags are created by GitHub Actions on merge to main, not locally. This prevents tag conflicts during PR rebases.
+**IMPORTANT: Tags are created manually AFTER merge to main**
+- Do NOT create tags locally before merge (prevents conflicts during PR rebases)
+- Do NOT push tags in version bump commits
+- Tags trigger the release workflow automatically
 
 ### Release Process
 
-Automated release workflow (GitHub Actions):
-1. On merge to main, detect if version in `Cargo.toml` changed
-2. Create git tag `vX.Y.Z`
-3. Build release binaries (Linux, macOS, Windows)
-4. Publish to crates.io
-5. Create GitHub release with binaries and notes
+**Step 1: Merge version bump PR to main**
+- CI runs tests and coverage on main branch
+- No auto-tagging (we create tags manually)
+
+**Step 2: Create and push tag manually**
+```bash
+git checkout main && git pull
+git tag -a vX.Y.Z -m "Release vX.Y.Z"
+git push origin vX.Y.Z
+```
+
+**Step 3: Automated release workflow (triggered by tag push)**
+1. Tag push triggers `release.yml` workflow
+2. Build release binaries (Linux, macOS, Windows)
+3. Publish to crates.io
+4. Create GitHub release with binaries and notes
+5. Benchmark workflow runs and creates PR with updated results
 
 ---
 
