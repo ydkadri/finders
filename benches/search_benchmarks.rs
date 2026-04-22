@@ -54,14 +54,24 @@ fn bench_regex_searcher_search_line(c: &mut Criterion) {
 
 fn bench_searcher_search_content(c: &mut Criterion) {
     let searcher = searcher::Searcher::new("searchable", false);
-    let content = "This is line 1 with some searchable content\n\
-                   This is line 2 with more content\n\
-                   This is line 3 with searchable data\n";
+    let lines = [
+        "This is line 1 with some searchable content",
+        "This is line 2 with more content",
+        "This is line 3 with searchable data",
+    ];
 
     let mut group = c.benchmark_group("searcher_search_content");
 
     group.bench_function("search_multiline", |b| {
-        b.iter(|| searcher.search(black_box(content)))
+        b.iter(|| {
+            let mut results = Vec::new();
+            for (idx, line) in lines.iter().enumerate() {
+                if let Some(result) = searcher.search_line(black_box(line), black_box(idx + 1)) {
+                    results.push(result);
+                }
+            }
+            results
+        })
     });
 
     group.finish();

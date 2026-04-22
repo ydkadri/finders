@@ -21,9 +21,7 @@ pub struct ReSearcher {
 
 // Searches trait for things which can perform search functions
 pub trait Searches {
-    fn search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult>;
-
-    // New method for streaming line-by-line search
+    // Line-by-line search method (used by production code)
     fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult>;
 }
 
@@ -43,20 +41,6 @@ impl Searcher<'_> {
             query,
             case_insensitive,
         }
-    }
-
-    fn sensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
-        let mut results = Vec::new();
-
-        for (rownum, line) in (1..).zip(contents.lines()) {
-            if line.contains(self.query) {
-                let match_positions = self.find_match_positions(line, false);
-                let result = SearchResult::new(rownum, line.to_string(), match_positions);
-                results.push(result)
-            }
-        }
-
-        results
     }
 
     fn find_match_positions(&self, line: &str, case_insensitive: bool) -> Vec<(usize, usize)> {
@@ -82,21 +66,6 @@ impl Searcher<'_> {
 
         positions
     }
-
-    fn insensitive_search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
-        let mut results = Vec::new();
-        let query = self.query.to_lowercase();
-
-        for (rownum, line) in (1..).zip(contents.lines()) {
-            if line.to_lowercase().contains(&query) {
-                let match_positions = self.find_match_positions(line, true);
-                let result = SearchResult::new(rownum, line.to_string(), match_positions);
-                results.push(result)
-            }
-        }
-
-        results
-    }
 }
 
 impl ReSearcher {
@@ -116,14 +85,6 @@ impl ReSearcher {
 }
 
 impl Searches for Searcher<'_> {
-    fn search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
-        if self.case_insensitive {
-            self.insensitive_search(contents)
-        } else {
-            self.sensitive_search(contents)
-        }
-    }
-
     fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult> {
         let matches = if self.case_insensitive {
             line.to_lowercase().contains(&self.query.to_lowercase())
@@ -141,20 +102,6 @@ impl Searches for Searcher<'_> {
 }
 
 impl Searches for ReSearcher {
-    fn search<'a>(&'a self, contents: &'a str) -> Vec<SearchResult> {
-        let mut results = Vec::new();
-
-        for (rownum, line) in (1..).zip(contents.lines()) {
-            if self.pattern.is_match(line) {
-                let match_positions = self.find_regex_match_positions(line);
-                let result = SearchResult::new(rownum, line.to_string(), match_positions);
-                results.push(result)
-            }
-        }
-
-        results
-    }
-
     fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult> {
         if self.pattern.is_match(line) {
             let match_positions = self.find_regex_match_positions(line);
@@ -169,16 +116,22 @@ impl Searches for ReSearcher {
 mod tests {
     use super::*;
     use std::io::Error;
-    static CONTENTS: &str = "line one\nLINE TWO";
 
     #[test]
     fn test_case_sensitive() -> Result<(), Error> {
         let searcher = Searcher::new("line", false);
 
-        let observed_result = searcher.search(CONTENTS);
-        let expected_result = vec![SearchResult::new(1, "line one".to_string(), vec![(0, 4)])];
+        // Test line-by-line matching (production path)
+        let result1 = searcher.search_line("line one", 1);
+        assert!(result1.is_some());
+        let unwrapped = result1.unwrap();
+        assert_eq!(unwrapped.rownum, 1);
+        assert_eq!(unwrapped.line, "line one");
+        assert_eq!(unwrapped.match_positions, vec![(0, 4)]);
 
-        assert_eq!(observed_result, expected_result);
+        // Should not match uppercase
+        let result2 = searcher.search_line("LINE TWO", 2);
+        assert!(result2.is_none());
 
         Ok(())
     }
@@ -187,13 +140,21 @@ mod tests {
     fn test_case_insensitive() -> Result<(), Error> {
         let searcher = Searcher::new("line", true);
 
-        let observed_result = searcher.search(CONTENTS);
-        let expected_result = vec![
-            SearchResult::new(1, "line one".to_string(), vec![(0, 4)]),
-            SearchResult::new(2, "LINE TWO".to_string(), vec![(0, 4)]),
-        ];
+        // Should match lowercase
+        let result1 = searcher.search_line("line one", 1);
+        assert!(result1.is_some());
+        let unwrapped1 = result1.unwrap();
+        assert_eq!(unwrapped1.rownum, 1);
+        assert_eq!(unwrapped1.line, "line one");
+        assert_eq!(unwrapped1.match_positions, vec![(0, 4)]);
 
-        assert_eq!(observed_result, expected_result);
+        // Should also match uppercase
+        let result2 = searcher.search_line("LINE TWO", 2);
+        assert!(result2.is_some());
+        let unwrapped2 = result2.unwrap();
+        assert_eq!(unwrapped2.rownum, 2);
+        assert_eq!(unwrapped2.line, "LINE TWO");
+        assert_eq!(unwrapped2.match_positions, vec![(0, 4)]);
 
         Ok(())
     }
@@ -202,14 +163,17 @@ mod tests {
     fn test_regex_match() -> Result<(), Error> {
         let re_searcher = ReSearcher::new("[a-z]+").expect("Valid regex pattern");
 
-        let observed_result = re_searcher.search(CONTENTS);
-        let expected_result = vec![SearchResult::new(
-            1,
-            "line one".to_string(),
-            vec![(0, 4), (5, 8)],
-        )];
+        // Test line-by-line matching (production path)
+        let result = re_searcher.search_line("line one", 1);
+        assert!(result.is_some());
+        let unwrapped = result.unwrap();
+        assert_eq!(unwrapped.rownum, 1);
+        assert_eq!(unwrapped.line, "line one");
+        assert_eq!(unwrapped.match_positions, vec![(0, 4), (5, 8)]);
 
-        assert_eq!(observed_result, expected_result);
+        // Should not match uppercase
+        let no_match = re_searcher.search_line("LINE TWO", 2);
+        assert!(no_match.is_none());
 
         Ok(())
     }
