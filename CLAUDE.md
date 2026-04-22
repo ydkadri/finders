@@ -385,6 +385,46 @@ git push origin vX.Y.Z
 4. Create GitHub release with binaries and notes
 5. Benchmark workflow runs and creates PR with updated results
 
+### Hotfixes for Old Releases
+
+If you need to patch a previously released version (e.g., critical bug in production while main has moved ahead):
+
+**Step 1: Create hotfix branch from old tag**
+```bash
+git fetch --tags
+git checkout v3.0.0              # Checkout the old release tag
+git checkout -b release/v3.0.1   # Create hotfix branch
+```
+
+**Step 2: Make fixes and commit**
+```bash
+# Make your fixes
+git add .
+git commit -m "Fix critical security issue in v3.0.x"
+
+# Update version in Cargo.toml and CHANGELOG
+# Commit: "Release v3.0.1 - Security hotfix"
+```
+
+**Step 3: Push branch and tag**
+```bash
+git push -u origin release/v3.0.1
+git tag -a v3.0.1 -m "Release v3.0.1"
+git push origin v3.0.1            # Triggers release workflow
+```
+
+**Step 4: Consider backporting to main**
+```bash
+git checkout main
+git cherry-pick <commit-hash>     # Cherry-pick the fix if applicable
+```
+
+**Notes:**
+- Tags point to commits, not branches - release workflow works regardless of branch
+- Hotfix branches are kept for historical reference
+- Always tag the release branch commit, not main
+- Consider if the fix should also be applied to main
+
 ---
 
 ## Quick Reference
