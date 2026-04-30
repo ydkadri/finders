@@ -305,36 +305,6 @@ Benchmarks run automatically on new releases and can be triggered manually via G
 
 ---
 
-## Development
-
-### Running Tests and Benchmarks
-
-To run internal benchmarks locally:
-```shell
-cargo bench
-```
-
-To run comparison benchmarks (requires `ripgrep` installed):
-```shell
-cargo build --release  # Build finder first
-cargo bench --bench comparison_benchmarks
-```
-
-To run tests:
-```shell
-cargo test
-```
-
-### Code Quality
-
-To check code quality:
-```shell
-cargo fmt --all -- --check
-cargo clippy -- -D warnings
-```
-
----
-
 ## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
@@ -348,14 +318,17 @@ Key points:
 
 ## Release Process
 
-Releases are automated through GitHub Actions:
-1. Update version in `Cargo.toml`
-2. Update `CHANGELOG.md`
-3. Merge to main - the auto-tag workflow creates a git tag
+Releases are semi-automated through GitHub Actions:
+1. Update version in `Cargo.toml` and `CHANGELOG.md`
+2. Merge version bump PR to main
+3. Manually create and push git tag: `git tag -a vX.Y.Z -m "Release vX.Y.Z" && git push origin vX.Y.Z`
 4. The release workflow automatically:
    - Builds binaries for all platforms
-   - Creates a GitHub release
+   - Creates a GitHub release with binaries
    - Publishes to crates.io
+   - Triggers benchmark workflow with updated results
+
+See [CLAUDE.md](CLAUDE.md) for detailed release process including hotfix procedures.
 
 ---
 
