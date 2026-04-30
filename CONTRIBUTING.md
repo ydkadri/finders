@@ -14,6 +14,7 @@ I'm still learning the Rust language, so if you're proposing changes, please exp
 
 - Rust (stable) - [Install from rustup.rs](https://rustup.rs/)
 - Git
+- [just](https://github.com/casey/just) - Command runner (optional but recommended)
 
 ### Setup
 
@@ -22,15 +23,19 @@ I'm still learning the Rust language, so if you're proposing changes, please exp
 git clone https://github.com/ydkadri/finders.git
 cd finders
 
-# Build and run
+# Build and run (using just - matches CI)
+just build
+just run . -s "TODO"
+
+# Or use cargo directly
 cargo build
 cargo run -- . -s "TODO"
 
-# Run tests
-cargo test
+# Run tests (using just ensures same config as CI)
+just test
 
 # Run benchmarks
-cargo bench
+just bench
 ```
 
 ## How to Contribute
@@ -58,7 +63,7 @@ When suggesting features:
 
 **PR Guidelines:**
 1. Write tests for new functionality
-2. Ensure all CI checks pass (`cargo fmt`, `cargo clippy`, `cargo test`)
+2. Ensure all CI checks pass (use `just pre-commit` to run same checks as CI)
 3. Keep commits focused and logical
 4. Write clear commit messages explaining **why**, not just what
 
@@ -66,9 +71,10 @@ When suggesting features:
 
 ### Style
 
-- Run `cargo fmt` before committing
-- Run `cargo clippy -- -D warnings` and fix all warnings
+- Run `just fmt` before committing (or `cargo fmt` directly)
+- Run `just lint` and fix all warnings (or `cargo clippy -- -D warnings` directly)
 - Follow Rust naming conventions (see [CLAUDE.md](CLAUDE.md) for details)
+- Use `just` commands when possible to ensure consistency with CI
 
 ### Testing
 
