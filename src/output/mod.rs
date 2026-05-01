@@ -21,7 +21,8 @@ pub struct SearchMatch<'a> {
 }
 
 /// Trait for different output formats
-pub trait Outputs {
+/// Send bound allows implementations to be safely used across threads
+pub trait Outputs: Send {
     /// Output a single search match
     fn write_match(&mut self, match_result: &SearchMatch);
 

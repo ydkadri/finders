@@ -1,7 +1,9 @@
 use anyhow::{Context, Result};
+use rayon::prelude::*;
 use std::fs::File;
 use std::io::{BufRead, BufReader, ErrorKind};
 use std::path::PathBuf;
+use std::sync::Mutex;
 
 pub mod file_finder;
 pub mod output;
@@ -22,39 +24,52 @@ pub use searcher::{ReSearcher, SearchResult, Searcher, Searches};
 const CHUNK_SIZE: usize = 8192;
 
 pub fn search_files(
-    searcher: impl searcher::Searches,
+    searcher: impl searcher::Searches + Sync,
     paths: impl IntoIterator<Item = PathBuf>,
     verbose: bool,
     output: &mut dyn output::Outputs,
 ) -> Result<()> {
-    // Process files one at a time in a streaming fashion
-    for path in paths {
-        if let Err(e) = search_file(&searcher, &path, verbose, output)
-            .context(format!("searching in '{}'", path.display()))
-        {
-            // Check if it's an encoding error (can continue)
-            if let Some(io_err) = e.downcast_ref::<std::io::Error>()
-                && io_err.kind() == ErrorKind::InvalidData
-            {
-                if verbose {
-                    eprintln!("Warning: Cannot read file '{}': {}", path.display(), io_err);
-                }
-                continue;
-            }
-            // Other errors are fatal
-            return Err(e);
-        }
-    }
+    // Collect paths into a vector for parallel processing
+    let paths: Vec<PathBuf> = paths.into_iter().collect();
 
-    output.finalize();
+    // Wrap output in a Mutex so multiple threads can safely write to it
+    // Mutex ensures only one thread writes at a time
+    let output_mutex = Mutex::new(output);
+
+    // Process files in parallel using rayon
+    // par_iter() splits work across available CPU cores
+    paths.par_iter().try_for_each(|path| {
+        // Each thread processes one file independently
+        search_file_parallel(&searcher, path, verbose, &output_mutex)
+            .context(format!("searching in '{}'", path.display()))
+            .or_else(|e| {
+                // Check if it's an encoding error (can continue)
+                if let Some(io_err) = e.downcast_ref::<std::io::Error>()
+                    && io_err.kind() == ErrorKind::InvalidData
+                {
+                    if verbose {
+                        eprintln!("Warning: Cannot read file '{}': {}", path.display(), io_err);
+                    }
+                    Ok(())
+                } else {
+                    // Other errors are fatal
+                    Err(e)
+                }
+            })
+    })?;
+
+    // All threads done, finalize output
+    output_mutex.into_inner().unwrap().finalize();
     Ok(())
 }
 
-fn search_file(
+/// Search a single file in parallel mode
+/// Takes a Mutex-wrapped output to safely write from multiple threads
+fn search_file_parallel(
     searcher: &impl searcher::Searches,
     path: &PathBuf,
     verbose: bool,
-    output: &mut dyn output::Outputs,
+    output: &Mutex<&mut dyn output::Outputs>,
 ) -> Result<()> {
     // Open file and create buffered reader for efficient streaming
     let file = File::open(path).context(format!("failed to open '{}'", path.display()))?;
@@ -74,7 +89,12 @@ fn search_file(
                         content: &result.line,
                         match_positions: &result.match_positions,
                     };
-                    output.write_match(&search_match);
+
+                    // Lock the mutex to write output
+                    // Only one thread can write at a time
+                    let mut output_guard = output.lock().unwrap();
+                    output_guard.write_match(&search_match);
+                    // Lock is automatically released when output_guard goes out of scope
                 }
                 rownum += 1;
             }

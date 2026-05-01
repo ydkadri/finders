@@ -250,6 +250,7 @@ dependencies = [
  "anyhow",
  "clap",
  "criterion",
+ "rayon",
  "regex",
  "serde",
  "serde_json",
