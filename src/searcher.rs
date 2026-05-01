@@ -13,6 +13,9 @@ pub struct SearchResult {
 pub struct Searcher<'a> {
     query: &'a str,
     case_insensitive: bool,
+    /// Cached lowercased query for case-insensitive searches
+    /// Computed once in new() to avoid repeated allocations
+    lowercased_query: Option<String>,
 }
 
 pub struct ReSearcher {
@@ -37,9 +40,16 @@ impl SearchResult {
 
 impl Searcher<'_> {
     pub fn new(query: &str, case_insensitive: bool) -> Searcher<'_> {
+        let lowercased_query = if case_insensitive {
+            Some(query.to_lowercase())
+        } else {
+            None
+        };
+
         Searcher {
             query,
             case_insensitive,
+            lowercased_query,
         }
     }
 
@@ -50,14 +60,15 @@ impl Searcher<'_> {
         } else {
             line.to_string()
         };
+        // Use cached lowercased query instead of computing it every time
         let search_query = if case_insensitive {
-            self.query.to_lowercase()
+            self.lowercased_query.as_ref().unwrap().as_str()
         } else {
-            self.query.to_string()
+            self.query
         };
 
         let mut start = 0;
-        while let Some(pos) = search_line[start..].find(&search_query) {
+        while let Some(pos) = search_line[start..].find(search_query) {
             let match_start = start + pos;
             let match_end = match_start + self.query.len();
             positions.push((match_start, match_end));
@@ -86,8 +97,11 @@ impl ReSearcher {
 
 impl Searches for Searcher<'_> {
     fn search_line(&self, line: &str, rownum: usize) -> Option<SearchResult> {
+        // Use cached lowercased query instead of computing it every time
         let matches = if self.case_insensitive {
-            line.to_lowercase().contains(&self.query.to_lowercase())
+            let lowercased_line = line.to_lowercase();
+            let lowercased_query = self.lowercased_query.as_ref().unwrap();
+            lowercased_line.contains(lowercased_query)
         } else {
             line.contains(self.query)
         };
