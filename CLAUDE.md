@@ -543,5 +543,5 @@ Before pushing code or marking PR ready:
 
 ---
 
-**Last Updated**: 2026-04-15  
-**Current Version**: 3.0.1
+**Last Updated**: 2026-05-01  
+**Current Version**: 3.2.0

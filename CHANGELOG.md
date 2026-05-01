@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-05-01
+
 ### Changed
 
 - **Performance:** Implement parallel file processing with Rayon for 31-51% speedup on medium/large repositories
