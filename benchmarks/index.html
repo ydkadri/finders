@@ -10,7 +10,7 @@
     <div class="container">
         <header>
             <h1>🔍 FindeRS Benchmark Results</h1>
-            <p class="subtitle">Version dev-20260421-021401 • 2026-04-21</p>
+            <p class="subtitle">Version dev-20260501-031129 • 2026-05-01</p>
         </header>
 
         <section>
@@ -32,49 +32,49 @@
                     <tr>
                         <td>Common pattern</td>
                         <td>Small (~100 files)</td>
-                        <td class="result-cell">2ms</td>
-                        <td class="result-cell">121ms</td>
-                        <td class="result-cell">5ms</td>
+                        <td class="result-cell">2ms <span class="change-neutral" title="0.0%">→</span></td>
+                        <td class="result-cell">102ms <span class="change-better" title="-15.7%">↓</span></td>
+                        <td class="result-cell">4ms <span class="change-better" title="-20.0%">↓</span></td>
                     </tr>
                     
                     <tr>
                         <td>Rare pattern</td>
                         <td>Small (~100 files)</td>
-                        <td class="result-cell">2ms</td>
-                        <td class="result-cell">123ms</td>
-                        <td class="result-cell">4ms</td>
+                        <td class="result-cell">2ms <span class="change-neutral" title="0.0%">→</span></td>
+                        <td class="result-cell">103ms <span class="change-better" title="-16.3%">↓</span></td>
+                        <td class="result-cell">4ms <span class="change-neutral" title="0.0%">→</span></td>
                     </tr>
                     
                     <tr>
                         <td>Common pattern</td>
                         <td>Medium (~1K files)</td>
-                        <td class="result-cell">13ms</td>
-                        <td class="result-cell">1216ms</td>
-                        <td class="result-cell">8ms</td>
+                        <td class="result-cell">9ms <span class="change-better" title="-30.8%">↓</span></td>
+                        <td class="result-cell">1022ms <span class="change-better" title="-16.0%">↓</span></td>
+                        <td class="result-cell">7ms <span class="change-better" title="-12.5%">↓</span></td>
                     </tr>
                     
                     <tr>
                         <td>Rare pattern</td>
                         <td>Medium (~1K files)</td>
-                        <td class="result-cell">9ms</td>
-                        <td class="result-cell">1226ms</td>
-                        <td class="result-cell">7ms</td>
+                        <td class="result-cell">5ms <span class="change-better" title="-44.4%">↓</span></td>
+                        <td class="result-cell">1025ms <span class="change-better" title="-16.4%">↓</span></td>
+                        <td class="result-cell">6ms <span class="change-better" title="-14.3%">↓</span></td>
                     </tr>
                     
                     <tr>
                         <td>Common pattern</td>
                         <td>Large (~5K files)</td>
-                        <td class="result-cell">61ms</td>
-                        <td class="result-cell">6216ms</td>
-                        <td class="result-cell">25ms</td>
+                        <td class="result-cell">37ms <span class="change-better" title="-39.3%">↓</span></td>
+                        <td class="result-cell">5222ms <span class="change-better" title="-16.0%">↓</span></td>
+                        <td class="result-cell">20ms <span class="change-better" title="-20.0%">↓</span></td>
                     </tr>
                     
                     <tr>
                         <td>Rare pattern</td>
                         <td>Large (~5K files)</td>
-                        <td class="result-cell">43ms</td>
-                        <td class="result-cell">6232ms</td>
-                        <td class="result-cell">17ms</td>
+                        <td class="result-cell">21ms <span class="change-better" title="-51.2%">↓</span></td>
+                        <td class="result-cell">5248ms <span class="change-better" title="-15.8%">↓</span></td>
+                        <td class="result-cell">15ms <span class="change-better" title="-11.8%">↓</span></td>
                     </tr>
                     
                 </tbody>
@@ -94,7 +94,7 @@
         <section>
             
             <h2>📈 Performance Trends (finder)</h2>
-            <p>Showing last 2 benchmark runs</p>
+            <p>Showing last 3 benchmark runs</p>
             <table class="history-table">
                 <thead>
                     <tr>
@@ -108,44 +108,44 @@
                     
                     <tr>
                         <td>Common - Small (~100 files)</td>
-                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="2ms"></span></td>
-                        <td class="trend-neutral">—</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="2ms"></span><span class="bar" style="height: 100.0%" title="2ms"></span></td>
+                        <td class="trend-neutral">→ 0.0%</td>
                         <td>2ms</td>
                     </tr>
                     
                     <tr>
                         <td>Rare - Small (~100 files)</td>
-                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="2ms"></span></td>
-                        <td class="trend-neutral">—</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="2ms"></span><span class="bar" style="height: 100.0%" title="2ms"></span></td>
+                        <td class="trend-neutral">→ 0.0%</td>
                         <td>2ms</td>
                     </tr>
                     
                     <tr>
                         <td>Common - Medium (~1K files)</td>
-                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="13ms"></span></td>
-                        <td class="trend-neutral">—</td>
-                        <td>13ms</td>
-                    </tr>
-                    
-                    <tr>
-                        <td>Rare - Medium (~1K files)</td>
-                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="9ms"></span></td>
-                        <td class="trend-neutral">—</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="13ms"></span><span class="bar" style="height: 69.23076923076923%" title="9ms"></span></td>
+                        <td class="trend-better">↓ 30.8%</td>
                         <td>9ms</td>
                     </tr>
                     
                     <tr>
+                        <td>Rare - Medium (~1K files)</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="9ms"></span><span class="bar" style="height: 55.55555555555556%" title="5ms"></span></td>
+                        <td class="trend-better">↓ 44.4%</td>
+                        <td>5ms</td>
+                    </tr>
+                    
+                    <tr>
                         <td>Common - Large (~5K files)</td>
-                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="61ms"></span></td>
-                        <td class="trend-neutral">—</td>
-                        <td>61ms</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="61ms"></span><span class="bar" style="height: 60.65573770491803%" title="37ms"></span></td>
+                        <td class="trend-better">↓ 39.3%</td>
+                        <td>37ms</td>
                     </tr>
                     
                     <tr>
                         <td>Rare - Large (~5K files)</td>
-                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="43ms"></span></td>
-                        <td class="trend-neutral">—</td>
-                        <td>43ms</td>
+                        <td class="sparkline"><span class="bar" style="height: 100.0%" title="43ms"></span><span class="bar" style="height: 48.837209302325576%" title="21ms"></span></td>
+                        <td class="trend-better">↓ 51.2%</td>
+                        <td>21ms</td>
                     </tr>
                     
                 </tbody>

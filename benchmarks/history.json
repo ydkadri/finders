@@ -59,5 +59,60 @@
         "ripgrep": 17
       }
     ]
+  },
+  {
+    "version": "dev-20260501-031129",
+    "date": "2026-05-01",
+    "timestamp": "2026-05-01T03:11:29Z",
+    "results": [
+      {
+        "scenario": "small_common",
+        "size": "Small (~100 files)",
+        "pattern": "common",
+        "finder": 2,
+        "find_grep": 102,
+        "ripgrep": 4
+      },
+      {
+        "scenario": "small_rare",
+        "size": "Small (~100 files)",
+        "pattern": "rare",
+        "finder": 2,
+        "find_grep": 103,
+        "ripgrep": 4
+      },
+      {
+        "scenario": "medium_common",
+        "size": "Medium (~1K files)",
+        "pattern": "common",
+        "finder": 9,
+        "find_grep": 1022,
+        "ripgrep": 7
+      },
+      {
+        "scenario": "medium_rare",
+        "size": "Medium (~1K files)",
+        "pattern": "rare",
+        "finder": 5,
+        "find_grep": 1025,
+        "ripgrep": 6
+      },
+      {
+        "scenario": "large_common",
+        "size": "Large (~5K files)",
+        "pattern": "common",
+        "finder": 37,
+        "find_grep": 5222,
+        "ripgrep": 20
+      },
+      {
+        "scenario": "large_rare",
+        "size": "Large (~5K files)",
+        "pattern": "rare",
+        "finder": 21,
+        "find_grep": 5248,
+        "ripgrep": 15
+      }
+    ]
   }
 ]
