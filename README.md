@@ -293,16 +293,12 @@ Key benchmark categories:
 
 | Scenario | Repository Size | finder | find+grep | ripgrep |
 |----------|----------------|--------|-----------|---------|
-| Common pattern | Small (~100 files) | 2ms | 102ms | 4ms |
-| Common pattern | Medium (~1K files) | 9ms | 1022ms | 7ms |
-| Common pattern | Large (~5K files) | 37ms | 5222ms | 20ms |
-| Rare pattern | Small (~100 files) | 2ms | 103ms | 4ms |
-| Rare pattern | Medium (~1K files) | 5ms | 1025ms | 6ms |
-| Rare pattern | Large (~5K files) | 21ms | 5248ms | 15ms |
-
-**Parallel processing improvements (v3.2.0+):**
-- Medium repos: 31-44% faster (13ms → 9ms common, 9ms → 5ms rare)
-- Large repos: 39-51% faster (61ms → 37ms common, 43ms → 21ms rare)
+| Common pattern | Small (~100 files) | 2ms | 122ms | 5ms |
+| Common pattern | Medium (~1K files) | 11ms | 1219ms | 8ms |
+| Common pattern | Large (~5K files) | 49ms | 6192ms | 25ms |
+| Rare pattern | Small (~100 files) | 2ms | 122ms | 4ms |
+| Rare pattern | Medium (~1K files) | 7ms | 1218ms | 7ms |
+| Rare pattern | Large (~5K files) | 26ms | 6217ms | 17ms |
 
 Comparison benchmarks test 6 scenarios:
 - 3 repository sizes: small (~100 files), medium (~1K files), large (~5K files)
