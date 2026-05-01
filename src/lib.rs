@@ -23,6 +23,14 @@ pub use searcher::{ReSearcher, SearchResult, Searcher, Searches};
 /// memory footprint reasonable for processing many files.
 const CHUNK_SIZE: usize = 8192;
 
+/// Buffered match data for batched output
+/// Stores match information temporarily before writing to output
+struct BufferedMatch {
+    line_number: usize,
+    content: String,
+    match_positions: Vec<(usize, usize)>,
+}
+
 pub fn search_files(
     searcher: impl searcher::Searches + Sync,
     paths: impl IntoIterator<Item = PathBuf>,
@@ -65,6 +73,10 @@ pub fn search_files(
 
 /// Search a single file in parallel mode
 /// Takes a Mutex-wrapped output to safely write from multiple threads
+///
+/// Uses batched output: collects all matches for a file in a thread-local buffer,
+/// then locks the mutex once to write all matches. This reduces mutex contention
+/// from O(matches) to O(1) per file.
 fn search_file_parallel(
     searcher: &impl searcher::Searches,
     path: &PathBuf,
@@ -77,24 +89,22 @@ fn search_file_parallel(
     let reader = BufReader::with_capacity(CHUNK_SIZE, file);
     let mut rownum = 1;
 
+    // Batch matches in a thread-local buffer to minimize mutex locking
+    // Instead of locking once per match, we lock once per file
+    let mut buffered_matches: Vec<BufferedMatch> = Vec::new();
+
     // Stream through file line by line, processing as we go
     for line in reader.lines() {
         match line {
             Ok(content) => {
                 // Search this single line
                 if let Some(result) = searcher.search_line(&content, rownum) {
-                    let search_match = output::SearchMatch {
-                        path: path.as_path(),
+                    // Store match in local buffer (no locking yet!)
+                    buffered_matches.push(BufferedMatch {
                         line_number: result.rownum,
-                        content: &result.line,
-                        match_positions: &result.match_positions,
-                    };
-
-                    // Lock the mutex to write output
-                    // Only one thread can write at a time
-                    let mut output_guard = output.lock().unwrap();
-                    output_guard.write_match(&search_match);
-                    // Lock is automatically released when output_guard goes out of scope
+                        content: result.line.clone(),
+                        match_positions: result.match_positions.clone(),
+                    });
                 }
                 rownum += 1;
             }
@@ -120,6 +130,22 @@ fn search_file_parallel(
                 }
             }
         }
+    }
+
+    // Write all matches for this file in a single critical section
+    // This reduces mutex operations from N (number of matches) to 1
+    if !buffered_matches.is_empty() {
+        let mut output_guard = output.lock().unwrap();
+        for buffered in buffered_matches {
+            let search_match = output::SearchMatch {
+                path: path.as_path(),
+                line_number: buffered.line_number,
+                content: &buffered.content,
+                match_positions: &buffered.match_positions,
+            };
+            output_guard.write_match(&search_match);
+        }
+        // Lock is automatically released when output_guard goes out of scope
     }
 
     Ok(())
