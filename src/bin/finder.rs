@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use clap::Parser;
+use rayon::ThreadPoolBuilder;
 
 use finders::file_finder;
 use finders::output::{
@@ -62,6 +63,10 @@ struct Cli {
     /// Output results as JSON
     #[arg(long, conflicts_with_all = ["files_with_matches", "count"])]
     json: bool,
+
+    /// Number of threads to use (0 = auto-detect)
+    #[arg(short = 'j', long, default_value = "0")]
+    threads: usize,
 }
 
 fn main() -> Result<()> {
@@ -75,7 +80,7 @@ fn main() -> Result<()> {
     // Determine if verbose or not
     let verbose = cli.verbose;
 
-    // Get iterable paths
+    // Get paths - collect into Vec for potential parallel processing
     let paths = finder.find(file_pattern, verbose);
 
     // Determine colour mode from flags and environment
@@ -92,21 +97,58 @@ fn main() -> Result<()> {
         Box::new(StandardOutput::new(colour_mode))
     };
 
-    if let Some(query) = cli.search_pattern.as_deref() {
-        let case_insensitive = cli.case_insensitive;
-        let searcher = searcher::Searcher::new(query, case_insensitive);
+    // Configure thread pool based on --threads flag
+    // 0 = auto-detect (use default global pool)
+    // 1 = sequential (single thread)
+    // N = use N threads
+    if cli.threads != 0 {
+        // Custom thread count: create dedicated pool
+        let pool = ThreadPoolBuilder::new()
+            .num_threads(cli.threads)
+            .build()
+            .context("creating thread pool")?;
 
-        search_files(searcher, paths, verbose, &mut *output)
-            .context("searching files for pattern")?;
-    } else if let Some(pattern) = cli.regex_pattern.as_deref() {
-        let re_searcher = searcher::ReSearcher::new(pattern).context("compiling regex pattern")?;
+        // Run search within custom pool
+        pool.install(|| -> Result<()> {
+            if let Some(query) = cli.search_pattern.as_deref() {
+                let case_insensitive = cli.case_insensitive;
+                let searcher = searcher::Searcher::new(query, case_insensitive);
 
-        search_files(re_searcher, paths, verbose, &mut *output)
-            .context("searching files for pattern")?;
+                search_files(searcher, paths, verbose, &mut *output)
+                    .context("searching files for pattern")?;
+            } else if let Some(pattern) = cli.regex_pattern.as_deref() {
+                let re_searcher =
+                    searcher::ReSearcher::new(pattern).context("compiling regex pattern")?;
+
+                search_files(re_searcher, paths, verbose, &mut *output)
+                    .context("searching files for pattern")?;
+            } else {
+                // File-only mode (no search pattern)
+                for path in paths {
+                    output.write_file(&path);
+                }
+            }
+            Ok(())
+        })?;
     } else {
-        // File-only mode (no search pattern)
-        for path in paths {
-            output.write_file(&path);
+        // Auto-detect: use global thread pool (default behavior)
+        if let Some(query) = cli.search_pattern.as_deref() {
+            let case_insensitive = cli.case_insensitive;
+            let searcher = searcher::Searcher::new(query, case_insensitive);
+
+            search_files(searcher, paths, verbose, &mut *output)
+                .context("searching files for pattern")?;
+        } else if let Some(pattern) = cli.regex_pattern.as_deref() {
+            let re_searcher =
+                searcher::ReSearcher::new(pattern).context("compiling regex pattern")?;
+
+            search_files(re_searcher, paths, verbose, &mut *output)
+                .context("searching files for pattern")?;
+        } else {
+            // File-only mode (no search pattern)
+            for path in paths {
+                output.write_file(&path);
+            }
         }
     }
 
