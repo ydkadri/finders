@@ -289,22 +289,20 @@ Key benchmark categories:
 
 **Comparison Benchmarks**: See how `finder` performs against `find+grep` and `ripgrep` at [ydkadri.github.io/finders/benchmarks](https://ydkadri.github.io/finders/benchmarks/)
 
-### Performance Summary (as of 2026-04-21)
+### Performance Summary (as of 2026-05-01)
 
-> **Note:** These benchmarks were run with the sequential version. The current parallel implementation (v3.2.0+) is expected to show 30-60% improvement on medium and large repositories. New benchmarks will be published with the next release.
+| Scenario | Repository Size | finder | find+grep | ripgrep |
+|----------|----------------|--------|-----------|---------|
+| Common pattern | Small (~100 files) | 2ms | 102ms | 4ms |
+| Common pattern | Medium (~1K files) | 9ms | 1022ms | 7ms |
+| Common pattern | Large (~5K files) | 37ms | 5222ms | 20ms |
+| Rare pattern | Small (~100 files) | 2ms | 103ms | 4ms |
+| Rare pattern | Medium (~1K files) | 5ms | 1025ms | 6ms |
+| Rare pattern | Large (~5K files) | 21ms | 5248ms | 15ms |
 
-| Scenario | Repository Size | finder (sequential) | find+grep | ripgrep |
-|----------|----------------|---------------------|-----------|---------|
-| Common pattern | Small (~100 files) | 2ms | 121ms | 5ms |
-| Common pattern | Medium (~1K files) | 13ms | 1216ms | 8ms |
-| Common pattern | Large (~5K files) | 61ms | 6216ms | 25ms |
-| Rare pattern | Small (~100 files) | 2ms | 123ms | 4ms |
-| Rare pattern | Medium (~1K files) | 9ms | 1226ms | 7ms |
-| Rare pattern | Large (~5K files) | 43ms | 6232ms | 17ms |
-
-**Expected with parallel processing (v3.2.0+):**
-- Medium repos: ~13ms → ~9ms (30% faster)
-- Large repos: ~61ms → ~35ms (40% faster)
+**Parallel processing improvements (v3.2.0+):**
+- Medium repos: 31-44% faster (13ms → 9ms common, 9ms → 5ms rare)
+- Large repos: 39-51% faster (61ms → 37ms common, 43ms → 21ms rare)
 
 Comparison benchmarks test 6 scenarios:
 - 3 repository sizes: small (~100 files), medium (~1K files), large (~5K files)
