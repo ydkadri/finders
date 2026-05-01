@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CLI:** `--threads` / `-j` flag to control parallelism
+  - `--threads 0` (default): Auto-detect CPU cores
+  - `--threads 1`: Sequential processing (deterministic output order)
+  - `--threads N`: Use N threads
+  - Useful for shared systems, debugging, or when deterministic order is required
+
 - **API:** `Outputs` trait now requires `Send` bound for thread safety
   - Enables safe use of output writers across multiple threads
   - All built-in output types (StandardOutput, JsonOutput, etc.) automatically implement Send

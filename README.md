@@ -183,6 +183,7 @@ Options:
   -l, --files-with-matches               Output only file paths with matches (like grep -l)
   -c, --count                            Output match count per file (like grep -c)
       --json                             Output results as JSON
+  -j, --threads <THREADS>                Number of threads to use (0 = auto-detect) [default: 0]
   -h, --help                             Print help
   -V, --version                          Print version
 ```
