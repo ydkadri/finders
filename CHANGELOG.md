@@ -9,12 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Performance:** Implement parallel file processing with Rayon for 30-60% speedup on medium/large repositories
+- **Performance:** Implement parallel file processing with Rayon for 31-51% speedup on medium/large repositories
   - Uses Rayon's work-stealing thread pool for automatic load balancing
   - Verified 593% CPU usage on 2000-file dataset (utilizing ~6 of 8 cores)
-  - Expected 30-40% improvement on repos with ~1K files
-  - Expected 40-60% improvement on repos with ~5K+ files
+  - Measured improvements: Medium repos 31-44% faster, large repos 39-51% faster
   - Closes performance gap with ripgrep from 2.4x slower to ~1.6x slower on large repos
+
+- **Performance:** Implement batched output writes to reduce mutex contention
+  - Collects all matches for a file before locking output mutex
+  - Reduces mutex operations from O(matches) to O(1) per file
+  - Expected 0-20% additional improvement depending on match density
+  - Profiling shows reduced thread wait times and better CPU utilization
+  - No user-visible changes; same results and format
 
 ### Added
 
@@ -35,7 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `docs/performance-analysis.md` - Initial bottleneck analysis and optimization opportunities
   - `docs/parallel-implementation-explained.md` - Deep dive on threading vs async, Mutex, Send trait, Rayon internals
   - `docs/parallel-performance-results.md` - Real-world verification results
-  - ADR 0006 - Architectural decision with alternatives and trade-offs
+  - `docs/profiling-results.md` - Xcode Instruments profiling showing 10% mutex overhead
+  - `docs/profiling-results-batched.md` - Profiling after batched output optimization
+  - ADR 0006 - Parallel file processing architectural decision
+  - ADR 0007 - Batched output writes architectural decision
 
 ### Developer Experience
 
