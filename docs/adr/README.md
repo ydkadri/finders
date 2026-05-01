@@ -48,6 +48,7 @@ ADRs are **encouraged but not required**. Consider writing an ADR for:
 - [0003: GitHub Pages Deployment Strategy](0003-github-pages-deployment-strategy.md) - Branch-based deployment for docs and benchmarks
 - [0004: Benchmark Report Generation with Historical Trends](0004-benchmark-report-generation-with-historical-trends.md) - Custom HTML reports with Jinja2 templating
 - [0005: Use anyhow for Error Handling](0005-anyhow-error-handling.md) - Application-wide error handling with context chains
+- [0006: Parallel File Processing with Rayon](0006-parallel-file-processing-with-rayon.md) - Data parallelism for 30-60% performance improvement
 
 ## Status Workflow
 
