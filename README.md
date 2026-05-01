@@ -272,9 +272,11 @@ See [CHANGELOG.md](CHANGELOG.md) for full details and migration guide.
 ## Performance
 
 FindeRS is designed for performance with:
+- **Parallel file processing** using Rayon (30-60% faster on medium/large repos)
 - Streaming file processing using 8KB chunks
 - Line-by-line searching to minimize memory usage
 - Efficient pattern matching with both simple string search and regex support
+- Multi-core utilization (verified ~600% CPU on 8-core machines)
 
 **Internal Benchmarks**: Run automatically on every pull request and merge to main. View the latest results in the [Actions tab](https://github.com/ydkadri/finders/actions/workflows/ci.yml).
 
@@ -288,14 +290,20 @@ Key benchmark categories:
 
 ### Performance Summary (as of 2026-04-21)
 
-| Scenario | Repository Size | finder | find+grep | ripgrep |
-|----------|----------------|--------|-----------|---------|
+> **Note:** These benchmarks were run with the sequential version. The current parallel implementation (v3.2.0+) is expected to show 30-60% improvement on medium and large repositories. New benchmarks will be published with the next release.
+
+| Scenario | Repository Size | finder (sequential) | find+grep | ripgrep |
+|----------|----------------|---------------------|-----------|---------|
 | Common pattern | Small (~100 files) | 2ms | 121ms | 5ms |
 | Common pattern | Medium (~1K files) | 13ms | 1216ms | 8ms |
 | Common pattern | Large (~5K files) | 61ms | 6216ms | 25ms |
 | Rare pattern | Small (~100 files) | 2ms | 123ms | 4ms |
 | Rare pattern | Medium (~1K files) | 9ms | 1226ms | 7ms |
 | Rare pattern | Large (~5K files) | 43ms | 6232ms | 17ms |
+
+**Expected with parallel processing (v3.2.0+):**
+- Medium repos: ~13ms → ~9ms (30% faster)
+- Large repos: ~61ms → ~35ms (40% faster)
 
 Comparison benchmarks test 6 scenarios:
 - 3 repository sizes: small (~100 files), medium (~1K files), large (~5K files)
