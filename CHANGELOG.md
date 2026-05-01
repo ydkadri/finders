@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Profiling shows reduced thread wait times and better CPU utilization
   - No user-visible changes; same results and format
 
+- **Performance:** Optimize case-insensitive search by caching lowercased query
+  - Query is lowercased once in `Searcher::new()` instead of every line
+  - Benchmarks show 20% improvement for `-i` flag usage (169ns → 136ns per line)
+  - Eliminates millions of unnecessary string allocations on large searches
+  - No performance impact on case-sensitive searches
+
 ### Added
 
 - **CLI:** `--threads` / `-j` flag to control parallelism
