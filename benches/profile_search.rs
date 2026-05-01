@@ -2,15 +2,18 @@
 // This creates a realistic test scenario and runs it many times
 // so the profiler has enough samples to work with
 
+use finders::{ColourMode, Finder, Searcher, StandardOutput, search_files};
 use std::fs;
 use std::path::PathBuf;
-use finders::{Finder, search_files, StandardOutput, Searcher, ColourMode};
 
 fn main() {
     // Create a test directory with realistic structure
     let temp_dir = setup_test_directory();
 
-    println!("Profiling finder search on {} files...", count_files(&temp_dir));
+    println!(
+        "Profiling finder search on {} files...",
+        count_files(&temp_dir)
+    );
     println!("Running 100 iterations for profiling...");
 
     // Run the search many times so profiler can collect samples

@@ -604,6 +604,38 @@ vec.par_iter().for_each(|x| process(x));
 
 ---
 
+## Controlling Parallelism
+
+Users can control thread count via CLI:
+
+```bash
+# Auto-detect (default) - uses all cores
+finder . -s "TODO"
+
+# Sequential - deterministic output order
+finder . -s "TODO" --threads 1
+
+# Custom thread count
+finder . -s "TODO" --threads 4
+```
+
+**Implementation:**
+```rust
+// CLI creates custom thread pool when --threads != 0
+let pool = ThreadPoolBuilder::new()
+    .num_threads(threads)
+    .build()?;
+
+pool.install(|| {
+    search_files(...)  // Runs within custom pool
+});
+```
+
+**Use cases:**
+- `--threads 1`: Deterministic output, easier debugging
+- `--threads N`: Limit resources on shared systems
+- Default: Maximum performance
+
 ## Key Lessons
 
 1. **Profile first** - We reasoned about I/O bottleneck
@@ -612,7 +644,8 @@ vec.par_iter().for_each(|x| process(x));
 4. **Trade-offs exist** - Non-deterministic order, mutex contention
 5. **Easy parallelism** - `.par_iter()` for big gains
 6. **Zero-cost** - Abstractions with safety guarantees
+7. **User control** - `--threads` flag for flexibility
 
-**Result:** 30-50% faster, ~50 lines of code, compile-time safety.
+**Result:** 30-50% faster, ~50 lines of code, compile-time safety, user control.
 
 Not bad for adding `.par_` to `.iter()`! 🚀
