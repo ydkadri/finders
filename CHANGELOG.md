@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Performance:** Implement parallel file processing with Rayon for 30-60% speedup on medium/large repositories
+  - Uses Rayon's work-stealing thread pool for automatic load balancing
+  - Verified 593% CPU usage on 2000-file dataset (utilizing ~6 of 8 cores)
+  - Expected 30-40% improvement on repos with ~1K files
+  - Expected 40-60% improvement on repos with ~5K+ files
+  - Closes performance gap with ripgrep from 2.4x slower to ~1.6x slower on large repos
+
+### Added
+
+- **API:** `Outputs` trait now requires `Send` bound for thread safety
+  - Enables safe use of output writers across multiple threads
+  - All built-in output types (StandardOutput, JsonOutput, etc.) automatically implement Send
+  - **Non-breaking:** Implementations don't need changes unless they use non-Send types
+
+- **Dependencies:** Added `rayon = "1.10"` for data parallelism
+
+- **Documentation:** Comprehensive performance analysis and implementation guides
+  - `docs/performance-analysis.md` - Initial bottleneck analysis and optimization opportunities
+  - `docs/parallel-implementation-explained.md` - Deep dive on threading vs async, Mutex, Send trait, Rayon internals
+  - `docs/parallel-performance-results.md` - Real-world verification results
+  - ADR 0006 - Architectural decision with alternatives and trade-offs
+
+### Developer Experience
+
+- Add profiling infrastructure: `benches/profile_search.rs` for performance testing
+- Enable debug symbols in bench profile for profiling tools
+
 ## [3.1.0] - 2026-04-22
 
 ### ⚠️ BREAKING CHANGES
